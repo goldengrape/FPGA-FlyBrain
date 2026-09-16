@@ -2,30 +2,41 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r1
+- Revision: v0.3-r2
 - Date: 2026-09-16
-- Purpose: synchronize ADD's product-FR/process-FR split and the new RMD learning-bridge slices.
+- Purpose: synchronize ADD's product/process FR split, RMD bridge slices, and the new Learning Architecture / Notebook teaching layer.
 
 ## 1. Purpose
-Link user needs → functional requirements → design parameters → modules → tests → implementation tasks so that humans and AI do not drift during long-term iteration.
+Link user needs → functional requirements → design parameters → teaching artifacts / modules → tests → implementation tasks so humans and AI do not drift during long-term iteration.
 
 ## 2. Top-level traceability
 | User task | Product / Process FR | DP | Module(s) / Process | Test(s) | RMD |
 |---|---|---|---|---|---|
-| U1 Understand a minimal neuron | FR1 | DP1 | MOD-001/002 | T-001~006 | 001~003 |
-| U2 Use AI while remaining able to explain the result | PFR1/PFR2 | PDP1/PDP2 | bridge slices + AI workflow | explanation checkpoints + module tests | all relevant |
+| U1 Understand a minimal neuron | FR1 | DP1 | LSN-001/002 + MOD-001/002 | T-001~006 | 001~003 |
+| U2 Use AI while remaining able to explain the result | PFR1/PFR2 | PDP1/PDP2 | Notebook AI Task/Human Check + bridge slices | explanation checkpoints + module tests | all relevant |
 | U3 Build multi-neuron and event networks | FR3/FR4/FR5 | DP3/DP4/DP5 | MOD-004~009 | T-007~013 | 006~011 + 007A |
 | U4 Run on FPGA | FR2/FR3/FR5/FR6 | DP2/DP3/DP5/DP6 | MOD-003/010/014 | L3~L5 + board replay | 011A~016 |
 | U5 Import real MaleCNS data | FR7 | DP7 | MOD-011 | T-014/015 | 017~021 |
-| U6 Build a layered verification chain | PFR4 | PDP4 | float/fixed/RTL/FPGA oracle chain | L0~L7 | all relevant |
-| U7 Learn Axiomatic Design and traceability | PFR2/PFR3 | PDP2/PDP3 | docs/ + .vibe/ + okf/ | trace checks + checkpoints | all |
-| U8 Become able to enter AI-hardware work | FR2~FR8 + PFR1~4 | DP2~DP8 + PDP1~4 | full system | performance + explanation | 003A~028 |
+| U6 Build a layered verification chain | PFR4 | PDP4 | LSN-002/003 + float/fixed/RTL/FPGA oracle chain | L0~L7 | all relevant |
+| U7 Learn Axiomatic Design and traceability | PFR2/PFR3 | PDP2/PDP3 | docs/ + lessons/ + .vibe/ + okf/ | trace checks + checkpoints | all |
+| U8 Become able to enter AI-hardware work | FR2~FR8 + PFR1~4 | DP2~DP8 + PDP1~4 | full learning + engineering system | performance + explanation | 003A~028 |
 
-## 3. Key trace examples
+## 3. Teaching-artifact traceability
+| Lesson | Primary objective | FR / PFR | Test / Check | RMD | Notebook |
+|---|---|---|---|---|---|
+| LSN-001 | Abstract executable LIF behavior from neurophysiology | FR1/DP1 | T-001~004 + Human Check | RMD-001 | `lessons/en/01_membrane_to_lif.ipynb` |
+| LSN-002 | Understand how fixed-point/quantization changes behavior | FR1/FR2 + PFR4 | T-005~006 + Human Check | RMD-002 | `lessons/en/02_float_to_fixed.ipynb` |
+| LSN-003 | Freeze testable neuron semantics | PFR3/PFR4 | semantic ambiguity tests + spec checkpoint | RMD-003 | `lessons/en/03_freeze_neuron_semantics.ipynb` |
+| LSN-004 | Build intuition for registers, clocks, combinational and sequential logic | PFR1; prepares FR2/DP2 | explanation checkpoint | RMD-003A | `lessons/en/04_state_and_clock.ipynb` |
+
+Principle: Notebooks may prototype and demonstrate, but formal algorithms, RTL, interfaces, and oracles remain authoritative in `python/`, `rtl/`, MDD, TDD, and other engineering sources.
+
+## 4. Key trace examples
 ### TRACE-N-001 — Neuron semantics to RTL
 Requirement: the neuron accumulates input and emits a spike on threshold crossing.  
 FR: FR1/FR2  
 DP: DP1/DP2  
+Teaching: LSN-001~004  
 Modules: MOD-001, MOD-002, MOD-003  
 Tests: T-001~T-006  
 Tasks: RMD-001, 002, 003, 003A, 004, 005, 005A
@@ -66,44 +77,51 @@ Tasks: RMD-017~020
 Requirement: a learning task should not require multiple still-unmastered concepts at the same time.  
 FR: PFR1  
 DP: PDP1  
-Implementation: RMD bridge slices + chapter structure  
-Check: every slice names its `major new concept`; split slices when multiple unknown dependencies appear.  
+Implementation: `LEARNING_PATH.md` + `LSN-*` Notebooks + RMD bridge slices  
+Check: every lesson/slice names one major new concept; split when multiple unknown dependencies appear.  
 Tasks: RMD-003A, 007A, 011A, 012A, 012B, 013A, 014A
 
-## 4. Document authority
+## 5. Document authority
 - URD: users, scope, and success definition.
 - ADD: product/process FR/DP, matrices, and coupling.
 - MDD: modules and interfaces.
 - TDD: oracles and tests.
-- RMD: implementation and learning order.
-- TRACE: cross-document links.
+- RMD: engineering implementation order.
+- LEARNING_PATH: conceptual teaching order and lesson-design rules.
+- `lessons/`: student-facing executable textbook/lab layer; it does not replace formal engineering specifications.
+- TRACE: links across documents, lessons, and implementation.
 
 Change routing:
 - user goal changes → URD
 - system decomposition or learning-independence rule changes → ADD
 - module/interface changes → MDD
 - correctness definition changes → TDD
-- implementation/teaching order changes → RMD
+- engineering implementation order changes → RMD
+- teaching concept order or lesson structure changes → LEARNING_PATH + matching Notebook
 - any ID/link changes → TRACE
 
-## 5. Bilingual traceability rules
-- `docs/zh/` and `docs/en/` share the same ID namespace.
-- A translation must not invent a new FR, DP, MOD, T, P, or RMD ID.
-- When design meaning changes, update the source-of-truth text and synchronize the other language in the same change set.
-- A future automated check should compare the ID sets found in both languages.
+## 6. Bilingual traceability rules
+- `docs/zh/` and `docs/en/`, and `lessons/zh/` and `lessons/en/`, share the same ID namespace.
+- A translation must not invent a new FR, DP, PFR, PDP, MOD, T, P, RMD, or LSN ID.
+- Code cells should remain identical whenever practical; language versions primarily translate narrative and questions.
+- Design or teaching meaning changes must be synchronized in both languages within the same change cycle.
+- A future automated check should compare ID sets and Notebook pairs across languages.
 
-## 6. Current status
+## 7. Current status
 - URD: initialized
 - ADD: revised; product matrix lower-triangular / decoupled
 - MDD: initialized; review again when first interfaces freeze
 - TDD: initialized
 - RMD: revised with four bridge zones
-- TRACE: synchronized with ADD/RMD revision
-- First implementation slice: not started
+- LEARNING_PATH: initialized bilingually
+- LSN-001~004: first bilingual executable Notebook versions established
+- TRACE: synchronized across engineering and teaching paths
+- First formal implementation slice: not started
 
-## 7. Events that require a TRACE update
+## 8. Events that require a TRACE update
 - first freeze of an `IF-NEURON-*` interface;
-- first addition or removal of a MOD ID;
+- when LSN-001~004 move from prototype code to importing formal `python/`/`rtl/` modules;
+- first addition or removal of a MOD or LSN ID;
 - final FPGA board selection;
 - freezing the MaleCNS binary-image schema;
 - any RMD renumbering.
