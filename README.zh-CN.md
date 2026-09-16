@@ -24,6 +24,13 @@
 
 ## 文档
 
+### 面向读者的指南
+| 中文 | English |
+|---|---|
+| [项目创作圣经](docs/zh/PROJECT_BIBLE.md) | [Project Bible](docs/en/PROJECT_BIBLE.md) |
+| [高层学习路线](docs/zh/ROADMAP.md) | [High-level Roadmap](docs/en/ROADMAP.md) |
+
+### 工程事实文档
 | 中文 | English |
 |---|---|
 | [项目需求 / URD](docs/zh/URD.md) | [Idea Brief / URD](docs/en/URD.md) |
@@ -32,6 +39,8 @@
 | [测试验证 / TDD](docs/zh/TDD.md) | [Check Plan / TDD](docs/en/TDD.md) |
 | [实施路线 / RMD](docs/zh/RMD.md) | [Build Path / RMD](docs/en/RMD.md) |
 | [追踪矩阵 / TRACE](docs/zh/TRACE.md) | [Project Map / TRACE](docs/en/TRACE.md) |
+
+`URD/ADD/MDD/TDD/RMD/TRACE` 是工程事实来源；创作圣经和高层路线负责帮助人理解项目，但不替代这些规范。
 
 ## 当前状态
 
