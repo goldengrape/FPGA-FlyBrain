@@ -4,13 +4,23 @@
 
 **从膜电位到硅：** 一个面向生命科学学生的学习与工程项目，目标是逐步构建一套运行在 FPGA 上、由真实果蝇 MaleCNS 连接组约束的事件驱动脉冲神经系统。
 
-本仓库采用中英文双语维护。`FR1`、`DP4`、`MOD-007`、`T-010`、`RMD-013A`、`LSN-004` 等工程与教学 ID 在两种语言中保持一致，使需求、设计、实现、测试和课程可以长期追踪。
+本仓库采用中英文双语维护。`FR1`、`DP4`、`MOD-007`、`T-010`、`RMD-013A` 等工程 ID 在两种语言中完全一致，使需求、设计、实现、教学和测试可以长期追踪。
 
 ## 北极星目标
 
-从一个可以理解和验证的 LIF 神经元开始，逐步构建一套可验证的 FPGA 系统，最终能够加载并运行来自 MaleCNS 连接组的脉冲神经网络；电脑负责感觉输入、输出解码、可视化和实验控制。
+从一个可以理解和验证的神经元模型开始，逐步构建一套可验证的 FPGA 系统，最终能够加载并运行来自 MaleCNS 连接组的脉冲神经网络；电脑负责感觉输入、输出解码、可视化和实验控制。
 
 本项目**不**声称复制完整的生物学果蝇脑，也不涉及意识上传。它是一个由连接组约束的计算模型，同时也是生命科学学生进入 AI hardware / neuromorphic computing 的学习载体。
+
+## 教学原则
+
+课程面向这样一类学习者：可能学过基础神经生理，但**不默认知道 FPGA、LIF、RTL、FIFO、DDR、AXI 是什么**。
+
+统一教学顺序是：
+
+> 为什么会遇到这个问题 → 建立直觉 → 准确定义术语 → 运行实验 → 观察 → 回到定义解释结果
+
+Jupyter Notebook 被当作真正的教材章节，而不是代码外面包几句说明。缩写第一次出现必须展开；工程追踪 ID 放在课末；每一课只承担一个主要陌生概念。
 
 ## 方法
 
@@ -19,9 +29,18 @@
 - 神经生理学 → 数学模型 → 数字硬件的三层翻译；
 - AI-assisted / vibe coding，但需求、模型、架构和 test oracle 由人负责；
 - MIT 公理设计思想：`FR`/`DP`、耦合分析、下三角可解耦设计；
-- Learning Independence Axiom：每个学习 slice 只引入一个主要陌生概念；
+- 用 **Learning Independence Axiom** 约束课程设计；
 - 分层验证：Python float → Python fixed-point → RTL simulation → FPGA replay；
 - Git checkpoint 和端到端 TRACE。
+
+## 从这里开始学
+
+第一组可执行课程位于 [`lessons/`](lessons/README.md)：
+
+1. [从膜电位到一个最小计算神经元](lessons/zh/01_membrane_to_lif.ipynb)
+2. [数字硬件怎样保存 0.22？](lessons/zh/02_float_to_fixed.ipynb)
+3. [“都叫 LIF”为什么还不够？](lessons/zh/03_freeze_neuron_semantics.ipynb)
+4. [电路怎样记住上一时刻的膜电位？](lessons/zh/04_state_and_clock.ipynb)
 
 ## 文档
 
@@ -30,7 +49,8 @@
 |---|---|
 | [项目创作圣经](docs/zh/PROJECT_BIBLE.md) | [Project Bible](docs/en/PROJECT_BIBLE.md) |
 | [高层学习路线](docs/zh/ROADMAP.md) | [High-level Roadmap](docs/en/ROADMAP.md) |
-| [教学路径 / Learning Architecture](docs/zh/LEARNING_PATH.md) | [Learning Architecture](docs/en/LEARNING_PATH.md) |
+| [教学路径](docs/zh/LEARNING_PATH.md) | [Learning Architecture](docs/en/LEARNING_PATH.md) |
+| [初学者术语表](docs/zh/GLOSSARY.md) | [Beginner Glossary](docs/en/GLOSSARY.md) |
 
 ### 工程事实文档
 | 中文 | English |
@@ -42,26 +62,17 @@
 | [实施路线 / RMD](docs/zh/RMD.md) | [Build Path / RMD](docs/en/RMD.md) |
 | [追踪矩阵 / TRACE](docs/zh/TRACE.md) | [Project Map / TRACE](docs/en/TRACE.md) |
 
-`URD/ADD/MDD/TDD/RMD/TRACE` 是工程事实来源；创作圣经、高层路线、教学路径与 Notebook 负责帮助人学习和理解项目，但不替代这些规范。
-
-## 可执行课程
-
-Notebook 层把叙事、可运行实验、AI 协作任务、人类理解检查和正式工程交接放在一起。
-
-1. [LSN-001 — 从膜电位到 LIF](lessons/zh/01_membrane_to_lif.ipynb)
-2. [LSN-002 — 从浮点数到有限位宽](lessons/zh/02_float_to_fixed.ipynb)
-3. [LSN-003 — 冻结神经元语义](lessons/zh/03_freeze_neuron_semantics.ipynb)
-4. [LSN-004 — 状态与时钟](lessons/zh/04_state_and_clock.ipynb)
-
-参见[双语课程索引](lessons/README.md)。
+`URD/ADD/MDD/TDD/RMD/TRACE` 是工程事实来源；创作圣经、高层路线、教学路径、术语表和 Notebook 负责帮助人理解和学习项目，但不替代这些规范。
 
 ## 当前状态
 
-规划、体系结构和第一组教学内容已经初始化。前四个中英文可执行课程已经分别映射到：
+项目规划、系统架构和第一次课程审计已经完成；第一段正式工程实现尚未声明完成。
+
+当前工程顺序：
 
 1. `RMD-001` — Python LIF 浮点参考模型
 2. `RMD-002` — fixed-point 探索
 3. `RMD-003` — 冻结 v0 神经元语义
 4. `RMD-003A` — Digital Hardware Bridge
 
-**正式工程实现**的 RMD-001 仍未宣告完成。在早期仿真与概念验证通过之前，暂不购买 FPGA 硬件。
+在早期仿真与概念验证通过之前，暂不购买 FPGA 硬件。
