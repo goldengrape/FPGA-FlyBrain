@@ -24,6 +24,13 @@ The project combines:
 
 ## Documentation
 
+### Human-facing guides
+| English | 中文 |
+|---|---|
+| [Project Bible](docs/en/PROJECT_BIBLE.md) | [项目创作圣经](docs/zh/PROJECT_BIBLE.md) |
+| [High-level Roadmap](docs/en/ROADMAP.md) | [高层学习路线](docs/zh/ROADMAP.md) |
+
+### Engineering source documents
 | English | 中文 |
 |---|---|
 | [Idea Brief / URD](docs/en/URD.md) | [项目需求 / URD](docs/zh/URD.md) |
@@ -32,6 +39,8 @@ The project combines:
 | [Check Plan / TDD](docs/en/TDD.md) | [测试验证 / TDD](docs/zh/TDD.md) |
 | [Build Path / RMD](docs/en/RMD.md) | [实施路线 / RMD](docs/zh/RMD.md) |
 | [Project Map / TRACE](docs/en/TRACE.md) | [追踪矩阵 / TRACE](docs/zh/TRACE.md) |
+
+`URD/ADD/MDD/TDD/RMD/TRACE` are the engineering source of truth. The Project Bible and Roadmap explain the project to human readers without replacing those specifications.
 
 ## Current status
 
