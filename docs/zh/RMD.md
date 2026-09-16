@@ -1,0 +1,227 @@
+# RMD — Build Path / 实施路线
+
+## 0. 文档信息
+- 项目：FPGA果蝇 / From Membrane Potential to Silicon
+- 修订：v0.3-r1
+- 日期：2026-09-16
+- 目的：根据 Learning Independence Axiom 压平学习曲线；保留已有 RMD 编号，并用字母后缀插入 bridge slice，避免破坏既有追踪。
+
+## 1. 总原则
+每个 slice 必须：
+1. 目标小而明确。
+2. 有测试 oracle。
+3. 有可运行/可观察产物。
+4. 有 Git checkpoint 或 spec checkpoint。
+5. 不提前引入当前 slice 不需要的复杂度。
+6. 最多引入一个主要陌生概念，或一个不可分割的紧密概念簇。
+7. AI 可以生成代码；学习者必须能解释输入、状态、输出、时序和验收标准。
+
+## 2. 五个平台
+```text
+平台 1 计算神经元
+Python / LIF / fixed point
+
+平台 2 数字神经元
+clock / register / RTL / waveform
+
+平台 3 事件神经网络
+RAM / sparse graph / FIFO / event routing
+
+平台 4 真实硬件与内存
+FPGA / host transport / DDR / AXI / bandwidth
+
+平台 5 真实连接组
+MaleCNS / scaling / closed loop / benchmark
+```
+
+# 平台 1 — 我理解一个神经元如何成为计算
+
+### RMD-001 Python LIF float reference
+主要新概念：**模型是有目的的简化**。  
+产物：`python/reference/lif_float.py`  
+测试：T-001~T-004。  
+完成：给定输入可输出膜电位轨迹和 spike，并能解释每一项生理学含义。
+
+### RMD-002 Fixed-point exploration
+主要新概念：**有限位宽数值表示**。  
+产物：`python/reference/lif_fixed.py`。  
+比较多个 Q-format、rounding、saturation/overflow 策略。  
+测试：T-005~T-006。
+
+### RMD-003 First spec checkpoint
+冻结 v0 neuron semantics；更新 MDD 数值接口、TDD oracle、TRACE。  
+Git checkpoint：`spec: freeze v0 neuron semantics`。
+
+**平台 1 完成标志：** 屏幕上的神经元按可重复规则放电，float 与 fixed-point 差异可测。
+
+## Bridge 1 — 从程序变量到数字状态
+### RMD-003A Digital Hardware Bridge
+主要新概念：**硬件状态与时钟**。
+
+只做三个微实验：
+1. combinational adder；
+2. clocked counter；
+3. accumulator + threshold。
+
+建立对应关系：
+```text
+Python variable  → register / RAM state
+if               → comparator + mux/control
+loop             → parallel hardware 或 time multiplexing
+function/module  → hardware module + interface contract
+```
+
+完成：能从 waveform 指出状态何时改变，并解释 combinational 与 sequential 的区别。
+
+# 平台 2 — 我理解计算如何成为数字电路
+
+### RMD-004 SystemVerilog single neuron
+主要新概念：**用 RTL 描述已知状态机/数据通路**。  
+产物：`rtl/neuron/lif_neuron_engine.sv`。  
+测试：Python fixed-point vector → RTL compare。  
+约束：不得在 RTL 中重新发明 neuron semantics。
+
+### RMD-005 Testbench + waveform lesson
+主要新概念：**仿真与 testbench 是硬件的可执行实验**。  
+产物：`tb/lif_neuron_engine_tb.sv`。
+
+### RMD-005A RTL explanation checkpoint
+学习者必须不用 AI 解释：哪些是 state、哪些是 combinational path、bit width 的理由、输入在哪个 clock edge 生效、测试失败时先查哪个层级。
+
+**平台 2 完成标志：** RTL waveform 与 Python fixed-point reference 在规定测试上匹配。
+
+# 平台 3 — 我理解很多神经元如何成为一台事件计算机
+
+### RMD-006 128-neuron time multiplexing
+主要新概念：**一个物理计算单元轮流服务大量虚拟状态**。  
+产物：state RAM + scheduler。
+
+### RMD-007 1K-neuron simulation
+主要新概念：**吞吐量和资源使用成为架构指标**。  
+测量：cycles per neuron update、RAM usage。
+
+## Bridge 2 — 从“神经元数组”到“事件传播”
+### RMD-007A Four-neuron event walk-through
+主要新概念：**事件携带 source，系统据此查找下游连接**。
+
+使用 4 个神经元、3–6 条手写连接，观察：
+`spike(source)` → queue → lookup → `(target, weight)` → target update。
+
+完成：在接触 CSR/backpressure 前，能口头描述一个 spike 从 source 到 target 的完整旅程。
+
+### RMD-008 Sparse adjacency image
+主要新概念：**稀疏图的数据表示**。  
+Host 生成 source index + synapse records。
+
+### RMD-009 Spike FIFO
+主要新概念：**事件排队与流控**。  
+测试：ordering、full/empty、backpressure。
+
+### RMD-010 Synapse reader + engine
+主要新概念：**从稀疏连接记录形成 weighted event stream**。
+
+### RMD-011 Small event-driven SNN
+集成前面模块，不新增主要概念。  
+规模：100–1000 neurons。
+
+**平台 3 完成标志：** 小网络只靠 spike event 自主传播活动，而不扫描所有连接。
+
+# Bridge 3 — 从仿真里的硬件到真的 FPGA
+
+### RMD-011A FPGA toolchain dry run（无需买板）
+主要新概念：**synthesis 与 simulation 回答不同问题**。  
+综合 counter/accumulator，阅读基础 resource/timing report；不学习 AXI/DDR。
+
+### RMD-012 Select board and create platform shell
+此时才购买硬件。默认候选：KV260 级 SoC FPGA；保持平台接口可替换。
+
+### RMD-012A First physical proof
+主要新概念：**bitstream 把 RTL 变成真实芯片中的实现**。  
+用 counter / LED 或可观察寄存器验证。
+
+### RMD-012B Host ↔ FPGA minimal loopback
+主要新概念：**host 与 programmable logic 是两个执行域**。  
+最小实验：host 写值 → FPGA accumulator/register → host 读回。暂不深入 AXI 细节。
+
+### RMD-013 Run small network on FPGA
+迁移平台 3 已验证的小网络，做 L5 replay。
+
+# Bridge 4 — 内存不是“一个很大的 RAM”
+
+### RMD-013A Memory hierarchy & bandwidth bridge
+主要新概念：**数据移动成本可以高于算术成本**。  
+先比较 sequential、random、batched/burst-like access，理解 latency 与 throughput。
+
+### RMD-014 DDR hello-world
+主要新概念：**外部存储具有独立访问延迟与控制路径**。  
+通过平台控制器/IP 做稳定 read/write + integrity test；不手写 DDR 物理控制器。
+
+### RMD-014A AXI burst practical bridge
+主要新概念：**用标准总线事务批量搬运连续数据**。  
+只学习本项目需要的 AXI subset；比较小/random transaction 与 burst 的有效带宽。
+
+### RMD-015 Move synapse store to DDR
+替换存储后端，不改变 `IF-SYNAPSE-STREAM`。  
+测试：同一网络片上/DDR 结果一致。
+
+### RMD-016 Throughput baseline
+测 P-001~P-008 中当前可测项目。
+
+**平台 4 完成标志：** FPGA 网络使用外部内存，并能解释和测量内存瓶颈。
+
+# 平台 5 — 我可以运行真实神经系统数据
+
+### RMD-017 MaleCNS converter v1
+主要新概念：**科学数据需要转换成稳定、版本化的硬件 image**。  
+输出 manifest/checksum + binary image。
+
+### RMD-018 1K real subset
+把真实 connectome 第一次送入已验证系统；软件与 FPGA differential test。
+
+### RMD-019 10K / 50K scaling
+主要新概念：**性能瓶颈随规模变化**。  
+定位 DDR、FIFO、bank conflict、hotspot。
+
+### RMD-020 Full MaleCNS image
+装载完整目标数据。
+
+### RMD-021 Full network execution
+完成 correctness + stability + performance 报告。
+
+### RMD-022 Event-driven optimization
+baseline 正确后才优化：lazy membrane update、cache、banking、多 synapse engines 等。
+
+### RMD-023 Sensory encoder v1
+人工映射必须文档化，明确实验事实与工程假设。
+
+### RMD-024 Output decoder v1
+输出 descending neurons → 简单行为。
+
+### RMD-025 Closed-loop demo
+先用二维简化环境，再考虑游戏/机器人。
+
+### RMD-026 Chapterize each build slice
+每个 slice 对应一章/实验；bridge slice 也是正式教学内容。
+
+### RMD-027 Public reproducibility pass
+在新机器上按 README 从零复现。
+
+### RMD-028 CPU/GPU/FPGA benchmark
+同模型、同数据、同输入，对比延迟、吞吐、内存流量与功耗。
+
+**平台 5 完成标志：** 真实 MaleCNS 数据可转换、加载并在 FPGA 上运行；闭环输入输出与性能验证可重复。
+
+## 3. 学习曲线风险表
+| 跃迁 | 原风险 | 修订后的缓冲 |
+|---|---|---|
+| Python → RTL | 同时遇到 clock/register/HDL/waveform/bit width | RMD-003A 三个微型数字硬件实验 |
+| 多神经元 → event-driven | sparse graph/FIFO/router 同时出现 | RMD-007A 四神经元事件传播 |
+| Simulation → FPGA | 工具链、bitstream、host I/O 同时出现 | RMD-011A、012A、012B 分开 |
+| FPGA → DDR/AXI | memory hierarchy、DDR、AXI、bandwidth 同时出现 | RMD-013A、014、014A 分层引入 |
+
+## 4. 当前第一批只执行的任务
+1. RMD-001 Python LIF float reference
+2. RMD-002 Fixed-point exploration
+3. RMD-003 Freeze v0 neuron semantics
+
+前三项完成前，不启动 FPGA 工具链和硬件购买。`RMD-003A` 是下一批第一项。
