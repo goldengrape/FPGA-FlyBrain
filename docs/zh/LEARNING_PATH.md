@@ -1,117 +1,236 @@
 # LEARNING_PATH — 教学路径 / Learning Architecture
 
-## 0. 目的
+## 0. 这份文档解决什么问题
 
-`RMD.md` 回答“系统按什么顺序实现”；本文件回答“学生按什么概念顺序学习”。两者并行，但不互相取代。
+`RMD.md` 回答“系统按什么顺序实现”；本文件回答“学生按什么概念顺序学习”。两条路径互相追踪，但不能互相替代。
+
+本项目面向的典型读者是学过大学基础生理学、知道膜电位、动作电位和突触，但几乎没有数字硬件背景的生命科学学生。因此课程不能把 `FPGA`、`LIF`、`RTL`、`FIFO`、`AXI` 等缩写当作默认常识。
 
 教学界面采用三层结构：
 
 ```text
 LEARNING_PATH.md
-    ↓ 定义概念顺序与学习目标
+    ↓ 定义概念顺序、术语引入顺序与学习目标
 Jupyter Notebook lessons
-    ↓ 解释 + 实验 + AI 协作 + 人类检查
+    ↓ 像教材一样解释 + 像实验室一样运行 + AI 协作 + 人类检查
 正式工程文件（python/ rtl/ tb/ tests/）
     ↓ 可测试、可复用、可进入 CI 的实现
 ```
 
-**核心边界：Notebook 是可执行教材和实验台，不是正式实现的事实来源。** 正式算法、RTL、测试与接口最终必须落到普通源码文件中。
+**核心边界：Notebook 是“可执行教材 + 实验台”，不是正式实现的唯一事实来源。** 成熟算法、RTL、测试和接口最终必须进入普通源码文件；Notebook 再 import/调用它们完成教学实验。
 
-## 1. 教学设计原则
+---
+
+## 1. 读者承诺
+
+课程默认读者：
+
+- 知道膜电位、动作电位、阈值、突触、兴奋/抑制和不应期的大致含义；
+- 会基本代数、简单微积分、向量和矩阵；
+- 可能听过 AND / OR / NOT，但不要求会数字电路设计；
+- **不要求**事先知道 FPGA、HDL、RTL、SystemVerilog、RAM、FIFO、DDR、AXI、计算机体系结构；
+- Python 可以边做边学。
+
+因此，如果一个概念不在上述“已知”中，教材第一次使用它时必须负责解释。
+
+---
+
+## 2. 术语与缩写规则
+
+### LP-T1 首次出现必须展开
+
+任何缩写第一次出现时，必须写成：
+
+> **中文名称（English Full Name, ABBR）**：一句白话定义；再说明“为什么现在需要它”。
+
+例如：
+
+> **现场可编程门阵列（Field-Programmable Gate Array, FPGA）**：一种上电后可以按照我们的设计配置成不同数字电路的芯片。这个项目最终会把神经元计算真正变成 FPGA 内部的数字电路。
+
+> **漏电积分发放模型（Leaky Integrate-and-Fire, LIF）**：一种把神经元简化为“膜电位逐渐衰减、输入不断累积、超过阈值就产生一次 spike 并复位”的计算模型。
+
+之后才可以只写 `FPGA`、`LIF`。
+
+### LP-T2 不允许“缩写瀑布”
+
+一段话中如果连续出现多个新缩写，必须拆开。一个 lesson 只能有一个主要新概念；支持它的术语可以出现，但必须逐个解释。
+
+### LP-T3 Notebook 应能独立阅读
+
+即使某个缩写上一课讲过，本课第一次出现时也至少做简短回顾；读者不应因为漏上一页就完全失去上下文。
+
+### LP-T4 工程 ID 不抢占学生注意力
+
+`FR1`、`DP2`、`RMD-003A`、`T-006` 等是项目追踪 ID，不是教学概念。它们不再放在 Notebook 第一屏，而统一放到课末的 **Project Trace / 项目追踪** 区。
+
+### LP-T5 全局术语表只做备查
+
+`docs/zh/GLOSSARY.md` 保存项目术语表，但**不能用“去查 glossary”代替首次解释**。
+
+---
+
+## 3. 教学设计原则
 
 ### LP-1 一个 lesson 只引入一个主要陌生概念
-遵守 ADD 中的 `Learning Independence Axiom`。如果一个 lesson 需要同时理解两个以上尚未掌握的新概念，就拆分或插入 bridge lesson。
+遵守 ADD 中的 `Learning Independence Axiom`。如果完成一个 lesson 必须同时理解两个以上尚未掌握的新概念，就拆课或增加 bridge lesson。
 
 ### LP-2 从学生已有知识出发
 优先采用：
 
 ```text
-已知神经生理 → 数学抽象 → 可执行实验 → 硬件概念 → 正式工程实现
+已知神经生理
+    ↓
+一个明确问题
+    ↓
+数学/计算抽象
+    ↓
+可执行实验
+    ↓
+一个新的硬件概念
+    ↓
+正式工程实现
 ```
 
 而不是先系统讲完数字电路、HDL 或计算机体系结构。
 
-### LP-3 AI 降低实现摩擦，但不能替代模型所有权
-Notebook 可以明确给出 `AI Task`，让 AI 协助生成样板代码、测试或解释；随后必须有 `Human Check`，要求学习者解释状态、输入、输出、时序和测试 oracle。
+### LP-3 先建立直觉，再给定义，再给代码
+一个陌生词不应通过代码“顺便出现”。推荐顺序：
 
-### LP-4 每课必须产生可观察结果
-至少出现一种：数值轨迹、波形、事件序列、资源报告、带宽测量、板上输出或可视化。
+1. 为什么会遇到这个问题；
+2. 生活/生理学类比；
+3. 准确定义；
+4. 最小例子；
+5. 代码或电路；
+6. 观察结果；
+7. 回到定义解释结果。
 
-### LP-5 每课必须有工程交接点
-Notebook 中成熟的实现必须移入正式源码路径。Notebook 应 import/调用正式模块，而不是长期复制一份实现。
+### LP-4 AI 降低实现摩擦，但不能替代模型所有权
+Notebook 可以给出 `AI Task`，让 AI 协助生成样板代码、测试或解释；随后必须有 `Human Check`，要求学习者解释状态、输入、输出、时序和 test oracle。
 
-## 2. 每个 Notebook 的固定结构
+### LP-5 每课必须产生可观察结果
+至少有一种：数值轨迹、图、波形、事件序列、资源报告、带宽测量、板上输出或可视化。
 
-1. **你已经知道什么** — 从生理学/数学直觉出发。
-2. **本课问题** — 一个具体问题。
-3. **一个新概念** — 本课唯一主要陌生概念。
-4. **最小模型** — 用最少数学或硬件抽象表达。
-5. **Run** — 可执行实验。
-6. **Observe** — 要观察的轨迹、波形或事件。
-7. **AI Task** — 可以交给 AI 的实现工作。
-8. **Human Check** — 不依赖 AI 必须回答的问题。
-9. **Engineering Handoff** — 对应正式源码、测试和 RMD slice。
-10. **Exit Ticket** — 通过后才能进入下一课的标准。
+### LP-6 每课必须有工程交接点
+Notebook 中成熟的实现必须迁移到正式源码。Notebook 随后调用正式模块，不长期维护第二份“影子实现”。
 
-## 3. 第一组课程：从膜电位到数字状态
+### LP-7 每课都维护“概念账本”
+Notebook 应明确写出：
 
-| Lesson | Notebook | 主要新概念 | RMD | 工程输出 |
-|---|---|---|---|---|
-| LSN-001 | `lessons/zh/01_membrane_to_lif.ipynb` | 模型是有目的的简化 | RMD-001 | `python/reference/lif_float.py` |
-| LSN-002 | `lessons/zh/02_float_to_fixed.ipynb` | 有限位宽数值表示 | RMD-002 | `python/reference/lif_fixed.py` + 数值决策 |
-| LSN-003 | `lessons/zh/03_freeze_neuron_semantics.ipynb` | 先冻结语义，再实现硬件 | RMD-003 | MDD/TDD/TRACE spec checkpoint |
-| LSN-004 | `lessons/zh/04_state_and_clock.ipynb` | 数字状态与时钟 | RMD-003A | 3 个微型硬件实验的准备与解释 |
+- **本课以前已经知道**；
+- **本课第一次学习**；
+- **只预告、暂时不要求掌握**。
+
+这样避免预告词被误认为考试范围。
+
+---
+
+## 4. 每个 Notebook 的推荐结构
+
+1. **欢迎与本课位置** — 我们在整条路线的哪里。
+2. **你已经知道什么** — 从生理学/数学直觉出发。
+3. **今天只解决一个问题**。
+4. **术语卡片** — 第一次出现的术语逐个展开。
+5. **直觉模型**。
+6. **准确模型/定义**。
+7. **逐行阅读最小代码或电路**。
+8. **Run** — 运行。
+9. **Observe** — 明确告诉学生看什么。
+10. **Try It** — 改一个参数，先预测再运行。
+11. **AI Task** — 允许委托给 AI 的工作。
+12. **Human Check** — 必须自己能回答。
+13. **Engineering Handoff** — 正式源码/测试落在哪里。
+14. **Project Trace** — LSN/RMD/FR/DP/T ID，放在最后。
+15. **Exit Ticket** — 通过标准。
+
+Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
+
+---
+
+## 5. 第一组课程：从膜电位到数字状态
+
+| Lesson | Notebook | 主要新概念 | 工程映射 |
+|---|---|---|---|
+| LSN-001 | `lessons/zh/01_membrane_to_lif.ipynb` | 科学模型是有目的的简化；认识 LIF | RMD-001 |
+| LSN-002 | `lessons/zh/02_float_to_fixed.ipynb` | 有限位宽数值表示 | RMD-002 |
+| LSN-003 | `lessons/zh/03_freeze_neuron_semantics.ipynb` | 先冻结可测试语义，再实现 | RMD-003 |
+| LSN-004 | `lessons/zh/04_state_and_clock.ipynb` | 数字状态与时钟 | RMD-003A |
 
 ### LSN-001 — 从膜电位到 LIF
-起点：知道膜电位、阈值、动作电位、不应期。  
-问题：为了研究网络计算，我们最少保留哪些神经元性质？  
-完成标志：能解释 `V`、输入、threshold、spike、reset 的生理与计算含义，并运行确定性的 LIF 轨迹。
+先解释 Jupyter Notebook 是什么、整个项目最终为什么会用 FPGA，再完整解释 **Leaky Integrate-and-Fire (LIF)** 三个词分别是什么意思。第一课不要求理解 FPGA 内部结构。
 
 ### LSN-002 — 从浮点数到有限位宽
-起点：已经有可运行的 LIF。  
-问题：真实数字硬件为什么不能默认把 `V` 当作无限精度实数？  
-完成标志：能解释 scale、quantization、rounding、saturation，并比较至少两种位宽选择对 spike timing 的影响。
+先解释 bit、二进制、floating-point、fixed-point、quantization、rounding、overflow、saturation，再做位宽实验。明确 Python `float` 也不是无限精度实数。
 
 ### LSN-003 — 冻结神经元语义
-起点：float 和 fixed-point 行为都已观察。  
-问题：如果 AI、Python 和 RTL 各自“理解”不同的 LIF，谁才是对的？  
-完成标志：明确一次 update 的输入、状态、输出、更新顺序、threshold/reset/refractory 规则和数值语义；写入工程规范后再进入 RTL。
+解释 specification、semantics、test oracle。通过 `>=` 与 `>`、更新顺序等最小反例说明：“都叫 LIF”并不足以让两个实现相同。
 
 ### LSN-004 — 状态与时钟
-起点：知道软件变量会保存值，但尚未学 RTL。  
-问题：电路怎样“记住”上一时刻的膜电位？  
-完成标志：能解释 combinational 与 sequential、register 与 clock edge，并把 `variable → register`、`if → comparator/control`、`loop → parallel/time-multiplex` 对应起来。
+从“软件变量为什么能记住值”进入数字状态；只要求理解 combinational logic、state/register、clock/clock edge 和 next state。SystemVerilog/RTL 只做预告，不在本课要求掌握。
 
-## 4. 后续课程平台
+---
 
-### 平台 2：数字神经元
-目标：从 clock/register 过渡到 SystemVerilog、testbench 和 waveform；对应 RMD-004~005A。
+## 6. 后续课程的概念路径（规划）
 
-### 平台 3：事件神经网络
-目标：RAM、time multiplexing、4-neuron event walk-through、sparse adjacency、FIFO、event routing；对应 RMD-006~011。
+下面是教学顺序，不表示这些 Notebook 已经全部创建。
 
-### 平台 4：真实 FPGA 与内存
-目标：synthesis、bitstream、host↔FPGA、memory hierarchy、DDR、AXI subset、bandwidth；对应 RMD-011A~016。
+### 平台 2：从数字状态到第一个 RTL 神经元
 
-### 平台 5：真实连接组
-目标：MaleCNS converter、真实子图、规模扩展、完整网络、闭环与 benchmark；对应 RMD-017~028。
+| 计划 Lesson | 第一次重点解释 | 工程映射 |
+|---|---|---|
+| LSN-005 数字逻辑积木 | bit、Boolean logic、AND/OR/NOT、comparator | RMD-003A |
+| LSN-006 什么是 RTL | Register-Transfer Level、HDL、SystemVerilog、module/port | RMD-004 |
+| LSN-007 第一个 RTL 神经元 | combinational path、sequential update、`always_comb`/`always_ff` | RMD-004 |
+| LSN-008 我们怎么知道硬件是对的 | testbench、waveform、simulation | RMD-005/005A |
 
-## 5. Notebook 与正式代码的关系
+### 平台 3：很多神经元如何成为事件计算机
+
+| 计划 Lesson | 第一次重点解释 | 工程映射 |
+|---|---|---|
+| LSN-009 一个计算单元服务很多神经元 | memory、address、RAM、time multiplexing | RMD-006/007 |
+| LSN-010 spike 为什么需要排队 | event、queue、FIFO、backpressure | RMD-007A/009 |
+| LSN-011 不要扫描所有突触 | sparse graph、adjacency list、CSR | RMD-008 |
+| LSN-012 一个 spike 的完整旅程 | router、synapse stream、event-driven computation | RMD-010/011 |
+
+### 平台 4：从仿真到真实 FPGA 与外部内存
+
+| 计划 Lesson | 第一次重点解释 | 工程映射 |
+|---|---|---|
+| LSN-013 仿真不是芯片 | synthesis、implementation、timing、bitstream | RMD-011A |
+| LSN-014 什么是 FPGA 板 | FPGA、I/O、clock/reset、开发板 | RMD-012/012A |
+| LSN-015 电脑怎样和 FPGA 说话 | host、CPU、SoC、programmable logic | RMD-012B/013 |
+| LSN-016 为什么搬数据比加法更难 | memory hierarchy、latency、throughput、bandwidth | RMD-013A |
+| LSN-017 外部内存是什么 | DDR、burst、random vs sequential access | RMD-014 |
+| LSN-018 AXI 只学我们需要的部分 | Advanced eXtensible Interface (AXI)、transaction、valid/ready | RMD-014A/015/016 |
+
+### 平台 5：真实连接组与完整系统
+
+| 计划 Lesson | 第一次重点解释 | 工程映射 |
+|---|---|---|
+| LSN-019 什么是 connectome | connectome、neuron ID、edge、metadata | RMD-017 |
+| LSN-020 第一次装入真实 MaleCNS 子图 | manifest、checksum、differential test | RMD-018 |
+| LSN-021 规模变大以后发生什么 | bottleneck、utilization、hotspot | RMD-019~022 |
+| LSN-022 给果蝇一个世界 | sensory encoder、decoder、closed loop | RMD-023~025 |
+| LSN-023 三种机器做同一个实验 | CPU、GPU、FPGA、latency/throughput/power | RMD-028 |
+
+---
+
+## 7. Notebook 与正式代码的关系
 
 允许 Notebook：
+- 完整教学叙事；
 - 小规模演示代码；
 - 参数扫描；
-- 图表与波形展示；
+- 图表、波形和可视化；
 - AI prompt / critique；
 - 实验控制和 benchmark 分析。
 
 不允许 Notebook 长期成为：
 - `lif_float` 的唯一实现；
-- RTL 模块的唯一存放位置；
-- test oracle 的唯一来源；
-- 接口/数值规范的唯一说明。
+- RTL 模块唯一存放位置；
+- test oracle 唯一来源；
+- 接口/数值规范唯一说明。
 
-当一个实验成熟后：
+成熟后：
 
 ```text
 Notebook prototype
@@ -120,17 +239,21 @@ formal source module
       ↓
 unit test / oracle
       ↓
-Notebook imports formal module for demonstration
+Notebook imports formal module for teaching and experiments
 ```
 
-## 6. 双语维护规则
+---
+
+## 8. 双语维护规则
 
 - 中英文 lesson 使用相同 `LSN-*`、`RMD-*`、`FR/DP`、`T-*` ID。
-- 代码 cell 尽量完全相同；只翻译叙事和问题。
-- 修改课程结构时，中英文 `LEARNING_PATH.md` 和对应 Notebook 必须在同一变更中同步。
+- 代码 cell 尽量完全相同；翻译叙事和问题，不改变工程语义。
+- 缩写的 full name 在两种语言中必须一致。
+- 修改课程结构时，中英文 `LEARNING_PATH.md` 和对应 Notebook 在同一变更中同步。
 
-## 7. 当前教学状态
+## 9. 当前教学状态
 
-- Learning Architecture：已定义。
-- LSN-001~004：建立第一版可执行 Notebook。
-- 第一项正式工程实现：仍为 `RMD-001`，尚未声明完成。
+- Learning Architecture：已定义并完成首次教学审计。
+- LSN-001~004：进入“教材化”修订，要求术语首次展开、工程 ID 后置、叙事先于代码。
+- LSN-005 之后：已规划概念顺序，尚未创建正式 Notebook。
+- 第一项正式工程实现仍为 `RMD-001`，尚未声明完成。
