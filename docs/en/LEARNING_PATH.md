@@ -1,117 +1,236 @@
 # LEARNING_PATH — Learning Architecture
 
-## 0. Purpose
+## 0. What this document is for
 
-`RMD.md` answers “in what order do we build the system?” This document answers “in what conceptual order does a student learn?” The two paths run in parallel but do not replace each other.
+`RMD.md` answers “in what order do we build the system?” This document answers “in what conceptual order does a student learn?” The two paths are traceable to each other, but neither replaces the other.
+
+The typical learner has taken basic university physiology and understands membrane potential, action potentials, and synapses, but has little or no digital-hardware background. Therefore the course must not treat abbreviations such as `FPGA`, `LIF`, `RTL`, `FIFO`, or `AXI` as assumed knowledge.
 
 The teaching surface has three layers:
 
 ```text
 LEARNING_PATH.md
-    ↓ defines concept order and learning objectives
+    ↓ defines concept order, terminology order, and learning objectives
 Jupyter Notebook lessons
-    ↓ explanation + experiment + AI collaboration + human check
+    ↓ textbook-style explanation + laboratory-style execution + AI collaboration + human checks
 formal engineering files (python/ rtl/ tb/ tests/)
     ↓ testable, reusable implementations that can enter CI
 ```
 
-**Core boundary: a Notebook is an executable textbook and laboratory, not the source of truth for the formal implementation.** Mature algorithms, RTL, tests, and interfaces must move into ordinary source files.
+**Core boundary: a Notebook is an executable textbook plus laboratory, not the sole source of truth for the formal implementation.** Mature algorithms, RTL, tests, and interfaces move into ordinary source files; the Notebook then imports/calls them for teaching experiments.
 
-## 1. Teaching design principles
+---
+
+## 1. Learner promise
+
+The course assumes the learner:
+
+- broadly understands membrane potential, action potential, threshold, synapse, excitation/inhibition, and refractory period;
+- knows basic algebra, introductory calculus, vectors, and matrices;
+- may have heard of AND / OR / NOT but is not expected to know digital-circuit design;
+- is **not expected** to know FPGA, HDL, RTL, SystemVerilog, RAM, FIFO, DDR, AXI, or computer architecture;
+- may learn Python as the course proceeds.
+
+If a concept is not in the assumed knowledge above, the course must explain it the first time it is used.
+
+---
+
+## 2. Terminology and abbreviation rules
+
+### LP-T1 Expand every abbreviation on first use
+
+The first use of an abbreviation must follow this pattern:
+
+> **English Full Name (ABBR)**: a one-sentence plain-language definition, followed by why the learner needs it now.
+
+Examples:
+
+> **Field-Programmable Gate Array (FPGA)**: a chip whose digital circuitry can be configured after manufacturing to implement our own hardware design. This project will eventually turn neuron computation into real digital circuits inside an FPGA.
+
+> **Leaky Integrate-and-Fire (LIF)**: a neuron model that keeps only a few behaviors: membrane state decays, inputs accumulate, and crossing a threshold emits a spike and resets the state.
+
+Only after that may the lesson use `FPGA` or `LIF` alone.
+
+### LP-T2 No acronym waterfalls
+
+If a paragraph contains several unfamiliar abbreviations, split it. A lesson has one primary new concept; supporting terms may appear, but each must be introduced explicitly.
+
+### LP-T3 Each Notebook should remain readable on its own
+
+Even if an abbreviation was introduced in the previous lesson, the first appearance in the current lesson should include a brief reminder.
+
+### LP-T4 Project IDs must not compete with teaching
+
+`FR1`, `DP2`, `RMD-003A`, and `T-006` are traceability IDs, not learner concepts. They belong in a **Project Trace** section near the end of the lesson, not in the opening screen.
+
+### LP-T5 The global glossary is backup, not an excuse
+
+`docs/en/GLOSSARY.md` is a reference, but “look it up in the glossary” never replaces first-use explanation.
+
+---
+
+## 3. Teaching design principles
 
 ### LP-1 One major unfamiliar concept per lesson
-Follow the `Learning Independence Axiom` in ADD. If a lesson requires two or more major concepts the learner has not yet mastered, split it or insert a bridge lesson.
+Follow the `Learning Independence Axiom` in ADD. If a lesson requires two or more still-unmastered major concepts, split the lesson or insert a bridge lesson.
 
 ### LP-2 Start from what the learner already knows
 Prefer:
 
 ```text
-known neurophysiology → mathematical abstraction → executable experiment → hardware concept → formal engineering implementation
+known neurophysiology
+    ↓
+one concrete question
+    ↓
+mathematical/computational abstraction
+    ↓
+executable experiment
+    ↓
+one new hardware concept
+    ↓
+formal engineering implementation
 ```
 
 rather than teaching all of digital logic, HDL, or computer architecture up front.
 
-### LP-3 AI lowers implementation friction but does not own the model
-A Notebook may contain an explicit `AI Task` for generating boilerplate, tests, or explanations. It must be followed by a `Human Check` requiring the learner to explain state, inputs, outputs, timing, and the test oracle.
+### LP-3 Build intuition, then define, then code
+A new term should not appear “incidentally” inside code. Preferred order:
 
-### LP-4 Every lesson produces something observable
-At least one of: a numerical trace, waveform, event sequence, resource report, bandwidth measurement, on-board output, or visualization.
+1. why the problem appears;
+2. an intuitive analogy;
+3. a precise definition;
+4. the smallest example;
+5. code or circuit;
+6. observation;
+7. return to the definition and explain the result.
 
-### LP-5 Every lesson has an engineering handoff
-A mature Notebook experiment must migrate into a formal source path. The Notebook should then import/call the formal module rather than maintain a permanent duplicate implementation.
+### LP-4 AI lowers implementation friction but does not own the model
+A Notebook may include an `AI Task` for boilerplate, tests, or explanations. It must be followed by a `Human Check` that requires the learner to explain state, inputs, outputs, timing, and the test oracle.
 
-## 2. Standard Notebook structure
+### LP-5 Every lesson produces something observable
+At least one of: a numerical trace, plot, waveform, event sequence, resource report, bandwidth measurement, on-board output, or visualization.
 
-1. **What you already know** — begin from physiology or mathematical intuition.
-2. **Question for this lesson** — one concrete problem.
-3. **One new concept** — the primary unfamiliar concept for the lesson.
-4. **Minimal model** — the smallest useful mathematical/hardware abstraction.
-5. **Run** — executable experiment.
-6. **Observe** — the trace, waveform, or event to inspect.
-7. **AI Task** — implementation work that may be delegated to AI.
-8. **Human Check** — questions the learner must answer without outsourcing understanding.
-9. **Engineering Handoff** — formal source/test path and RMD slice.
-10. **Exit Ticket** — criteria required before the next lesson.
+### LP-6 Every lesson has an engineering handoff
+A mature Notebook experiment migrates into formal source. The Notebook later imports the formal module rather than maintaining a shadow implementation.
 
-## 3. First lesson set: from membrane potential to digital state
+### LP-7 Every lesson maintains a concept ledger
+Each Notebook should state:
 
-| Lesson | Notebook | Primary new concept | RMD | Engineering output |
-|---|---|---|---|---|
-| LSN-001 | `lessons/en/01_membrane_to_lif.ipynb` | A model is a purposeful simplification | RMD-001 | `python/reference/lif_float.py` |
-| LSN-002 | `lessons/en/02_float_to_fixed.ipynb` | Finite-width numerical representation | RMD-002 | `python/reference/lif_fixed.py` + numeric decision |
-| LSN-003 | `lessons/en/03_freeze_neuron_semantics.ipynb` | Freeze semantics before hardware implementation | RMD-003 | MDD/TDD/TRACE spec checkpoint |
-| LSN-004 | `lessons/en/04_state_and_clock.ipynb` | Digital state and the clock | RMD-003A | Preparation and explanation for three micro hardware experiments |
+- **already known before this lesson**;
+- **first learned in this lesson**;
+- **preview only — not yet required**.
+
+This prevents preview terms from quietly becoming assumed knowledge.
+
+---
+
+## 4. Recommended Notebook structure
+
+1. **Welcome and where we are**.
+2. **What you already know**.
+3. **One question for today**.
+4. **Term cards** for first-use vocabulary.
+5. **Intuitive model**.
+6. **Precise model/definition**.
+7. **Read the minimal code or circuit line by line**.
+8. **Run**.
+9. **Observe** — explicitly tell the learner what to look for.
+10. **Try It** — change one thing, predict first, then run.
+11. **AI Task**.
+12. **Human Check**.
+13. **Engineering Handoff**.
+14. **Project Trace** — LSN/RMD/FR/DP/T IDs, placed near the end.
+15. **Exit Ticket**.
+
+Notebook Markdown is textbook content, not decoration between code cells.
+
+---
+
+## 5. First lesson set: from membrane potential to digital state
+
+| Lesson | Notebook | Primary new concept | Engineering mapping |
+|---|---|---|---|
+| LSN-001 | `lessons/en/01_membrane_to_lif.ipynb` | Scientific models are purposeful simplifications; meet LIF | RMD-001 |
+| LSN-002 | `lessons/en/02_float_to_fixed.ipynb` | Finite-width numerical representation | RMD-002 |
+| LSN-003 | `lessons/en/03_freeze_neuron_semantics.ipynb` | Freeze testable semantics before implementation | RMD-003 |
+| LSN-004 | `lessons/en/04_state_and_clock.ipynb` | Digital state and the clock | RMD-003A |
 
 ### LSN-001 — From membrane potential to LIF
-Starting knowledge: membrane potential, threshold, action potential, refractory period.  
-Question: what is the minimum neuronal behavior we need to preserve to study network computation?  
-Exit: explain the physiological and computational meaning of `V`, input, threshold, spike, and reset, and run a deterministic LIF trace.
+Explain what a Jupyter Notebook is, briefly introduce FPGA as the destination, then fully unpack **Leaky Integrate-and-Fire (LIF)** word by word. The learner is not expected to understand FPGA internals yet.
 
 ### LSN-002 — From floating point to finite width
-Starting point: a working LIF model.  
-Question: why can real digital hardware not assume that `V` is an infinite-precision real number?  
-Exit: explain scale, quantization, rounding, and saturation, and compare at least two width choices for their effect on spike timing.
+Explain bit, binary, floating point, fixed point, quantization, rounding, overflow, and saturation before the width experiments. State clearly that Python `float` is also finite precision.
 
 ### LSN-003 — Freeze neuron semantics
-Starting point: both float and fixed-point behavior have been observed.  
-Question: if AI, Python, and RTL each implement a different interpretation of LIF, which one is correct?  
-Exit: define the inputs, state, outputs, update ordering, threshold/reset/refractory behavior, and numeric semantics for one update; commit the specification before RTL begins.
+Explain specification, semantics, and test oracle. Use minimal counterexamples such as `>=` versus `>` and update ordering to show that sharing the name “LIF” does not guarantee identical behavior.
 
 ### LSN-004 — State and clock
-Starting point: the learner understands that software variables retain values but has not learned RTL.  
-Question: how can a circuit “remember” the previous membrane potential?  
-Exit: explain combinational vs sequential logic, register vs clock edge, and map `variable → register`, `if → comparator/control`, and `loop → parallel/time-multiplex`.
+Start from “how does a software variable remember a value?” Introduce combinational logic, state/register, clock/clock edge, and next state. SystemVerilog and RTL are previews only, not mastery targets in this lesson.
 
-## 4. Later learning platforms
+---
 
-### Platform 2: Digital neuron
-SystemVerilog, testbench, waveform, and the first RTL neuron; maps to RMD-004~005A.
+## 6. Planned concept path for later lessons
 
-### Platform 3: Event neural network
-RAM, time multiplexing, four-neuron event walk-through, sparse adjacency, FIFO, and event routing; maps to RMD-006~011.
+The sequence below is a teaching plan; these Notebooks are not all created yet.
 
-### Platform 4: Physical FPGA and memory
-Synthesis, bitstream, host↔FPGA, memory hierarchy, DDR, the required AXI subset, and bandwidth; maps to RMD-011A~016.
+### Platform 2: from digital state to the first RTL neuron
 
-### Platform 5: Real connectome
-MaleCNS converter, real subsets, scaling, the full network, closed loop, and benchmarks; maps to RMD-017~028.
+| Planned lesson | First-use concepts | Engineering mapping |
+|---|---|---|
+| LSN-005 Digital logic building blocks | bit, Boolean logic, AND/OR/NOT, comparator | RMD-003A |
+| LSN-006 What is RTL? | Register-Transfer Level, HDL, SystemVerilog, module/port | RMD-004 |
+| LSN-007 First RTL neuron | combinational path, sequential update, `always_comb`/`always_ff` | RMD-004 |
+| LSN-008 How do we know hardware is correct? | testbench, waveform, simulation | RMD-005/005A |
 
-## 5. Relationship between Notebooks and formal code
+### Platform 3: many neurons become an event computer
+
+| Planned lesson | First-use concepts | Engineering mapping |
+|---|---|---|
+| LSN-009 One engine, many neurons | memory, address, RAM, time multiplexing | RMD-006/007 |
+| LSN-010 Why spikes need a queue | event, queue, FIFO, backpressure | RMD-007A/009 |
+| LSN-011 Do not scan every synapse | sparse graph, adjacency list, CSR | RMD-008 |
+| LSN-012 The full journey of one spike | router, synapse stream, event-driven computation | RMD-010/011 |
+
+### Platform 4: from simulation to real FPGA and external memory
+
+| Planned lesson | First-use concepts | Engineering mapping |
+|---|---|---|
+| LSN-013 Simulation is not a chip | synthesis, implementation, timing, bitstream | RMD-011A |
+| LSN-014 What is an FPGA board? | FPGA, I/O, clock/reset, development board | RMD-012/012A |
+| LSN-015 How does the computer talk to the FPGA? | host, CPU, SoC, programmable logic | RMD-012B/013 |
+| LSN-016 Why moving data can be harder than adding | memory hierarchy, latency, throughput, bandwidth | RMD-013A |
+| LSN-017 What is external memory? | DDR, burst, random vs sequential access | RMD-014 |
+| LSN-018 Learn only the AXI we need | Advanced eXtensible Interface (AXI), transaction, valid/ready | RMD-014A/015/016 |
+
+### Platform 5: real connectome and full system
+
+| Planned lesson | First-use concepts | Engineering mapping |
+|---|---|---|
+| LSN-019 What is a connectome? | connectome, neuron ID, edge, metadata | RMD-017 |
+| LSN-020 First real MaleCNS subset | manifest, checksum, differential test | RMD-018 |
+| LSN-021 What changes when scale grows? | bottleneck, utilization, hotspot | RMD-019~022 |
+| LSN-022 Give the fly a world | sensory encoder, decoder, closed loop | RMD-023~025 |
+| LSN-023 Run the same experiment on three machines | CPU, GPU, FPGA, latency/throughput/power | RMD-028 |
+
+---
+
+## 7. Relationship between Notebooks and formal code
 
 Notebooks may contain:
+- full teaching narrative;
 - small demonstration code;
 - parameter sweeps;
-- plots and waveform presentation;
+- plots, waveforms, and visualization;
 - AI prompts and critique;
 - experiment control and benchmark analysis.
 
 Notebooks must not remain the only home for:
-- the `lif_float` implementation;
+- `lif_float`;
 - RTL modules;
 - test oracles;
-- interface or numeric specifications.
+- interface/numeric specifications.
 
-When an experiment matures:
+When mature:
 
 ```text
 Notebook prototype
@@ -120,17 +239,21 @@ formal source module
       ↓
 unit test / oracle
       ↓
-Notebook imports formal module for demonstration
+Notebook imports formal module for teaching and experiments
 ```
 
-## 6. Bilingual maintenance
+---
+
+## 8. Bilingual maintenance
 
 - English and Chinese lessons share the same `LSN-*`, `RMD-*`, `FR/DP`, and `T-*` IDs.
-- Code cells should remain identical whenever practical; translate the narrative and questions, not the engineering semantics.
-- Any lesson-structure change should update both `LEARNING_PATH.md` files and the matching bilingual Notebooks in the same change.
+- Code cells should remain identical whenever practical; translate narrative and questions without changing engineering semantics.
+- Abbreviation full names must match across languages.
+- Any lesson-structure change updates both `LEARNING_PATH.md` files and the matching bilingual Notebooks in the same change set.
 
-## 7. Current teaching status
+## 9. Current teaching status
 
-- Learning Architecture: defined.
-- LSN-001~004: first executable Notebook versions being established.
-- First formal implementation: still `RMD-001`; it is not yet declared complete.
+- Learning Architecture: defined and through its first curriculum audit.
+- LSN-001~004: being revised from experiment skeletons into textbook-quality executable lessons, with first-use terminology and project IDs moved to the end.
+- LSN-005 onward: concept sequence planned; formal Notebooks not yet created.
+- First formal implementation remains `RMD-001`; it is not yet declared complete.
