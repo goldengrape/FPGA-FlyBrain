@@ -77,6 +77,14 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 3. [“都叫 LIF”为什么还不够？](lessons/zh/03_freeze_neuron_semantics.ipynb)
 4. [电路怎样记住上一时刻的膜电位？](lessons/zh/04_state_and_clock.ipynb)
 
+### NotebookLM 公开课程笔记本
+
+如果更适合通过听讲、问答和快速复习来学习，也可以使用项目的公开 NotebookLM：
+
+[打开 FPGA FlyBrain NotebookLM](https://notebook.google.com/notebook/ad55b316-1d40-40e6-b2fa-2beef29a5b56)
+
+其中会基于课程资料生成各课的音频讲解等学习内容，也可以围绕课程内容直接提问。GitHub 仓库仍然是 Notebook、代码、作业、测试与工程文档的主要来源；NotebookLM 作为讲解与交互式学习入口与之配合使用。
+
 ## 文档
 
 ### 面向读者的指南
