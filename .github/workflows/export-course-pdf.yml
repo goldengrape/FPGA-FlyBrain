@@ -1,0 +1,91 @@
+name: Export course PDFs
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "lessons/zh/*.ipynb"
+      - "lessons/zh/*homework.md"
+      - "exercises/**"
+      - ".github/workflows/export-course-pdf.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install project dependencies
+        run: uv sync --group dev
+
+      - name: Install PDF exporter and browser
+        run: |
+          uv pip install "nbconvert[webpdf]" pypdf
+          uv run playwright install --with-deps chromium
+
+      - name: Install Chinese fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+
+      - name: Execute notebooks and export PDFs
+        run: |
+          mkdir -p dist/course-pdfs
+          for notebook in \
+            lessons/zh/01_membrane_to_lif.ipynb \
+            lessons/zh/02_float_to_fixed.ipynb \
+            lessons/zh/03_freeze_neuron_semantics.ipynb \
+            lessons/zh/04_state_and_clock.ipynb
+          do
+            uv run jupyter nbconvert \
+              --to webpdf \
+              --execute "$notebook" \
+              --output-dir dist/course-pdfs \
+              --ExecutePreprocessor.timeout=180 \
+              --WebPDFExporter.allow_chromium_download=True
+          done
+
+      - name: Merge lessons 01-04
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader, PdfWriter
+
+          out = Path("dist/course-pdfs")
+          names = [
+              "01_membrane_to_lif.pdf",
+              "02_float_to_fixed.pdf",
+              "03_freeze_neuron_semantics.pdf",
+              "04_state_and_clock.pdf",
+          ]
+          writer = PdfWriter()
+          for name in names:
+              path = out / name
+              reader = PdfReader(str(path))
+              for page in reader.pages:
+                  writer.add_page(page)
+          combined = out / "FPGA-FlyBrain-lessons-01-04-zh.pdf"
+          with combined.open("wb") as f:
+              writer.write(f)
+          print(f"Wrote {combined}")
+          PY
+
+      - name: List generated files
+        run: ls -lh dist/course-pdfs
+
+      - name: Upload course PDFs
+        uses: actions/upload-artifact@v4
+        with:
+          name: FPGA-FlyBrain-course-pdfs-zh
+          path: dist/course-pdfs/*.pdf
+          if-no-files-found: error
+          retention-days: 30
