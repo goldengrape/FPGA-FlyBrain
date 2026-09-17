@@ -33,6 +33,41 @@ Jupyter Notebook 被当作真正的教材章节，而不是代码外面包几句
 - 分层验证：Python float → Python fixed-point → RTL simulation → FPGA replay；
 - Git checkpoint 和端到端 TRACE。
 
+## 快速开始：本地运行环境
+
+本项目使用 [uv](https://github.com/astral-sh/uv) 统一管理 Python 依赖、虚拟环境与 Jupyter 运行流程。克隆仓库后，无需手动建立 Conda 环境或逐个执行 `pip install`。
+
+### 1. 同步依赖
+
+```bash
+git clone https://github.com/goldengrape/FPGA-FlyBrain
+cd FPGA-FlyBrain
+uv sync
+```
+
+该命令会依据 `uv.lock` 自动在 `.venv` 中安装运行所需的全部依赖库（包括课程代码所需的 `numpy`、`matplotlib` 以及实验界面所需的 `jupyterlab`、`ipykernel`、`pytest`）。
+
+### 2. 启动课程界面
+
+```bash
+uv run jupyter lab
+```
+
+### 3. 注册课程专属内核（推荐）
+
+为了避免在 Jupyter 中混淆不同环境的 Python 内核，建议注册一个显式内核：
+
+```bash
+uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA FlyBrain"
+```
+
+注册后，在 JupyterLab 打开 Notebook 时，内核选择 **FPGA FlyBrain** 即可。
+
+### 4. 依赖管理原则
+
+- **禁止在 Notebook 中临时安装**：不要在 Notebook 单元格中使用 `%pip install` 或 `!pip install`，以免破坏环境的可复现性。
+- **声明式增补依赖**：如果后续需要新增科学计算库，请在命令行执行 `uv add <package>`；若需要开发或测试工具，执行 `uv add --dev <package>`。版本变动会记录在 `pyproject.toml` 与 `uv.lock` 中。
+
 ## 从这里开始学
 
 第一组可执行课程位于 [`lessons/`](lessons/README.md)：

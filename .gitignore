@@ -1,0 +1,25 @@
+# Python virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints & untitled scratchbooks
+.ipynb_checkpoints/
+Untitled*.ipynb
+
+# Testing & linting caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

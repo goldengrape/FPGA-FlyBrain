@@ -33,6 +33,41 @@ The project combines:
 - layered verification: Python float → Python fixed-point → RTL simulation → FPGA replay;
 - Git checkpoints and end-to-end traceability.
 
+## Quickstart / Local Setup
+
+This project uses [uv](https://github.com/astral-sh/uv) to manage Python dependencies, the virtual environment, and the Jupyter workflow. After cloning the repository, there is no need to manually configure Conda or run individual `pip install` commands.
+
+### 1. Synchronize Dependencies
+
+```bash
+git clone https://github.com/goldengrape/FPGA-FlyBrain
+cd FPGA-FlyBrain
+uv sync
+```
+
+This command automatically provisions `.venv` with all runtime libraries (`numpy`, `matplotlib`) and development/lab tooling (`jupyterlab`, `ipykernel`, `pytest`) according to `uv.lock`.
+
+### 2. Launch JupyterLab
+
+```bash
+uv run jupyter lab
+```
+
+### 3. Register the Dedicated Kernel (Recommended)
+
+To avoid kernel confusion inside Jupyter, install a named kernel spec:
+
+```bash
+uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA FlyBrain"
+```
+
+Once registered, select **FPGA FlyBrain** as the notebook kernel in JupyterLab.
+
+### 4. Dependency Hygiene
+
+- **No in-notebook installations**: Do not run `%pip install` or `!pip install` inside Notebook cells.
+- **Declarative changes**: Add runtime packages via `uv add <package>` and dev tools via `uv add --dev <package>`. All changes are pinned in `pyproject.toml` and `uv.lock`.
+
 ## Start learning
 
 The first executable lessons are in [`lessons/`](lessons/README.md):

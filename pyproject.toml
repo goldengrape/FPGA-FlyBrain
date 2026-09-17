@@ -1,0 +1,17 @@
+[project]
+name = "fpga-flybrain"
+version = "0.1.0"
+description = "From membrane potential to silicon: an event-driven spiking neural system on FPGA"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "matplotlib",
+]
+
+[dependency-groups]
+dev = [
+    "jupyterlab",
+    "ipykernel",
+    "pytest",
+]
