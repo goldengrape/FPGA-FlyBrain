@@ -122,6 +122,17 @@ Each Notebook should state:
 
 This prevents preview terms from quietly becoming assumed knowledge.
 
+### LP-8 Use declarative diagram syntax (Mermaid), avoid ASCII art
+
+All conceptual flows, dataflow graphs, state transition diagrams, clock timing relationships, and hardware block diagrams must be expressed using declarative diagram code (primarily Mermaid fenced blocks: ```` ```mermaid ````). Do not draw diagrams by manually aligning spaces, hyphens, and slashes as ASCII art.
+
+**Engineering rationale:**
+
+1. **Rendering stability**: ASCII art relies on rigid monospace fonts and breaks easily across operating systems, mobile viewports, variable-width fonts, and screen readers;
+2. **Native vector rendering**: Modern JupyterLab 4, GitHub web viewer, and modern IDEs natively render Mermaid into crisp vector diagrams without extra plugins;
+3. **Traceability and Git diffs**: Declarative diagrams represent graph structure and semantics (`A --> B`). Modifying nodes or connections produces minimal, readable Git diffs, avoiding full-block whitespace realignments;
+4. **Human-AI collaboration**: Structured diagram code is precise and easy for both humans and AI to inspect, edit, and validate programmatically.
+
 ---
 
 ## 4. Recommended Notebook structure

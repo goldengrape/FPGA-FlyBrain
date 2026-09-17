@@ -37,6 +37,10 @@ Every lesson should obey these rules / 每课遵守以下规则：
 8. **Do not teach by technical inaccuracy / 不用技术错误换取“好懂”**  
    Simplification is encouraged, but a simplified explanation must remain technically defensible.
 
+9. **Declarative diagrams over ASCII / 用字符描述流程图而非 ASCII 字符画**  
+   All conceptual diagrams, state machines, timing flows, and hardware block diagrams must be written using declarative diagram code (primarily Mermaid fenced code blocks: ```` ```mermaid ````). Do not draw diagrams with spaces, hyphens, and ASCII art. Mermaid renders natively as clean vector graphics in JupyterLab and GitHub, is accessible, and keeps structural revisions clear in Git diffs.  
+   所有概念流程、状态机流转、时序因果与硬件模块图，一律使用字符声明式语法（以 Mermaid 代码块 ```` ```mermaid ```` 为主）进行结构化描述，禁止使用空格、连字符和文本折线拼凑 ASCII 字符画。字符描述图在 JupyterLab 与 GitHub 中可原生渲染为矢量图，支持精准的版本差异追踪，且便于长期维护。
+
 Reference / 备查：
 - [中文 Learning Path](../docs/zh/LEARNING_PATH.md)
 - [English Learning Path](../docs/en/LEARNING_PATH.md)

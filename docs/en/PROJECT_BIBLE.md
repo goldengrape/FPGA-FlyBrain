@@ -126,6 +126,8 @@ Bridge chapters are first-class course material, not remedial appendices.
 
 Future `okf/` content is an AI retrieval layer, while `.vibe/` stores machine-readable trace state. Neither may silently invent requirements. Design changes start in `docs/`.
 
+**Diagram specification**: All architecture diagrams, timing/state graphs, and workflows must be written in declarative diagram code (such as Mermaid code blocks) rather than fragile, unmaintainable ASCII art. Declarative diagrams render natively as vector graphics in JupyterLab and GitHub, keeping version diffs precise.
+
 ## 9. Standard chapter pattern
 Each chapter should begin from an actual problem and answer, in order:
 
