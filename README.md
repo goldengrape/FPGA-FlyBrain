@@ -85,6 +85,35 @@ If you prefer learning through narrated explanations, Q&A, and quick review, the
 
 It can generate lesson audio overviews and other study materials from the course sources, and you can ask questions about the course content directly. The GitHub repository remains the primary source for notebooks, code, exercises, tests, and engineering documents; NotebookLM is a complementary learning and discussion interface.
 
+## References and further reading
+
+These are the foundational sources currently used or repeatedly referenced by the project. This is not intended to be a complete bibliography; more specific papers and resources will be added to the corresponding notebooks as the course grows.
+
+### Drosophila connectomics
+
+- [Male CNS Connectome Project](https://male-cns.janelia.org/) — the primary portal for the complete adult male Drosophila central nervous system connectome, including cell-type browsing, connectivity queries, and data downloads.
+- [Berg et al., *Cell* (2026): *Sexual dimorphism in the complete Drosophila male central nervous system connectome*](https://doi.org/10.1016/j.cell.2026.08.015) — the formal publication describing the MaleCNS dataset and analyses.
+- [Schlegel et al., *Nature* (2024): *Whole-brain annotation and multi-connectome cell typing of Drosophila*](https://www.nature.com/articles/s41586-024-07686-5) — important background on FlyWire whole-brain annotations, cell types, and cross-connectome comparisons.
+
+### Neuron models and computational neuroscience
+
+- [Gerstner, Kistler, Naud & Paninski, *Neuronal Dynamics*](https://neuronaldynamics.epfl.ch/online/) — an open online text spanning single-neuron dynamics through network models; its [Integrate-and-Fire Models](https://neuronaldynamics.epfl.ch/online/Ch1.S3.html) chapter directly supports Lesson 1.
+
+### FPGA and digital design
+
+- [AMD FPGA Overview](https://www.amd.com/en/products/adaptive-socs-and-fpgas/fpga.html) — an entry point for FPGA architecture, devices, and terminology.
+- [AMD FPGA Architecture](https://docs.amd.com/r/en-US/ug1291-viv/FPGA-Architecture) — background on programmable logic, routing, I/O, clocking, and on-chip FPGA resources.
+
+### Design methodology
+
+- [MIT Axiomatic Design Introduction](https://web.mit.edu/axiom/www/introduction.shtml) — background for `FR`/`DP`, the Independence Axiom, coupling analysis, and uncoupled / decoupled designs.
+
+### Course toolchain
+
+- [JupyterLab Documentation](https://jupyterlab.readthedocs.io/en/stable/)
+- [uv Documentation](https://docs.astral.sh/uv/)
+- [pytest Documentation](https://docs.pytest.org/en/stable/)
+
 ## Documentation
 
 ### Human-facing guides
