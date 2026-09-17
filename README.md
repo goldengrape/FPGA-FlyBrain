@@ -77,6 +77,14 @@ The first executable lessons are in [`lessons/`](lessons/README.md):
 3. [Why is “we both use LIF” not enough?](lessons/en/03_freeze_neuron_semantics.ipynb)
 4. [How can a circuit remember the previous membrane potential?](lessons/en/04_state_and_clock.ipynb)
 
+### Public NotebookLM course companion
+
+If you prefer learning through narrated explanations, Q&A, and quick review, the project also has a public NotebookLM companion:
+
+[Open FPGA FlyBrain in NotebookLM](https://notebook.google.com/notebook/ad55b316-1d40-40e6-b2fa-2beef29a5b56)
+
+It can generate lesson audio overviews and other study materials from the course sources, and you can ask questions about the course content directly. The GitHub repository remains the primary source for notebooks, code, exercises, tests, and engineering documents; NotebookLM is a complementary learning and discussion interface.
+
 ## Documentation
 
 ### Human-facing guides
