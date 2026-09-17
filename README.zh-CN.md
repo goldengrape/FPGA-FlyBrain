@@ -85,6 +85,35 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 
 其中会基于课程资料生成各课的音频讲解等学习内容，也可以围绕课程内容直接提问。GitHub 仓库仍然是 Notebook、代码、作业、测试与工程文档的主要来源；NotebookLM 作为讲解与交互式学习入口与之配合使用。
 
+## 参考资料
+
+下面列出本项目目前直接依赖或会反复引用的基础资料。这里不是完整的 bibliography；随着课程推进，更具体的论文和资料会放到对应 Notebook 中。
+
+### 果蝇连接组
+
+- [Male CNS Connectome Project](https://male-cns.janelia.org/) — 本项目最终使用的完整雄性果蝇中枢神经系统连接组入口，可浏览细胞类型、查询连接并下载数据。
+- [Berg et al., *Cell* (2026): *Sexual dimorphism in the complete Drosophila male central nervous system connectome*](https://doi.org/10.1016/j.cell.2026.08.015) — MaleCNS 数据集和分析的正式论文。
+- [Schlegel et al., *Nature* (2024): *Whole-brain annotation and multi-connectome cell typing of Drosophila*](https://www.nature.com/articles/s41586-024-07686-5) — FlyWire 全脑注释、细胞类型和跨连接组比较的重要背景资料。
+
+### 神经元模型与计算神经科学
+
+- [Gerstner, Kistler, Naud & Paninski, *Neuronal Dynamics*](https://neuronaldynamics.epfl.ch/online/) — 从单神经元动力学到网络模型的开放在线教材；其中 [Integrate-and-Fire Models](https://neuronaldynamics.epfl.ch/online/Ch1.S3.html) 与第一课直接相关。
+
+### FPGA 与数字设计
+
+- [AMD FPGA Overview](https://www.amd.com/en/products/adaptive-socs-and-fpgas/fpga.html) — FPGA 产品、架构与基础概念入口。
+- [AMD FPGA Architecture](https://docs.amd.com/r/en-US/ug1291-viv/FPGA-Architecture) — 逻辑单元、可编程互连、I/O、时钟和片上资源等 FPGA 结构背景。
+
+### 设计方法
+
+- [MIT Axiomatic Design Introduction](https://web.mit.edu/axiom/www/introduction.shtml) — `FR`/`DP`、Independence Axiom、耦合分析以及 uncoupled / decoupled design 的基础来源。
+
+### 课程工具链
+
+- [JupyterLab Documentation](https://jupyterlab.readthedocs.io/en/stable/)
+- [uv Documentation](https://docs.astral.sh/uv/)
+- [pytest Documentation](https://docs.pytest.org/en/stable/)
+
 ## 文档
 
 ### 面向读者的指南
