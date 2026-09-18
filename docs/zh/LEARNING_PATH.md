@@ -202,6 +202,8 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 | LSN-011 不要扫描所有突触 | sparse graph、adjacency list、CSR-like source index | RMD-008 |
 | LSN-012 一个 spike 的完整旅程 | event-driven computation；整合 queue/lookup/weighted event | RMD-007A/010/011 |
 
+> **教学顺序与 RMD 工程实现顺序不要求逐项相同。** LSN-010/011 先用 Python 隔离理解 queue/backpressure 与 sparse lookup，LSN-012 再做 RMD-007A 式端到端整合；RMD-007A 仍位于正式 MOD-006/007/005 RTL 实现之前。
+
 ### 平台 4：从仿真到真实 FPGA 与外部内存
 
 | 计划 Lesson | 第一次重点解释 | 工程映射 |

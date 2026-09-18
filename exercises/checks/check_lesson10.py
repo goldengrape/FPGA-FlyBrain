@@ -25,3 +25,16 @@ def test_space_reopens_after_pop():
     assert e == 2
     q,ok=fifo_push(q,7,2)
     assert ok is True and q == [5,7]
+
+def test_blocked_event_can_be_retried_after_space_opens():
+    blocked_event = 7
+    q, ok = fifo_push([2, 5], blocked_event, 2)
+    assert ok is False
+    assert q == [2, 5]
+
+    q, popped = fifo_pop(q)
+    assert popped == 2
+
+    q, ok = fifo_push(q, blocked_event, 2)
+    assert ok is True
+    assert q == [5, 7]

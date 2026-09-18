@@ -107,7 +107,7 @@ function/module  → hardware module + interface contract
 使用 4 个神经元、3–6 条手写连接，观察：
 `spike(source)` → queue → lookup → `(target, weight)` → target update。
 
-完成：在接触 CSR/backpressure 前，能口头描述一个 spike 从 source 到 target 的完整旅程。
+完成：在进入正式 CSR/FIFO RTL 与接口实现前，能口头描述一个 spike 从 source 到 target 的完整旅程。教学 Notebook 可以先用小型 Python 模型分别认识 queue/backpressure 与 sparse lookup，再回到本 checkpoint 做端到端整合。
 
 ### RMD-008 Sparse adjacency image
 主要新概念：**稀疏图的数据表示**。  

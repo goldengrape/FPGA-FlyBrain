@@ -202,6 +202,8 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 | LSN-011 Do not scan every synapse | sparse graph, adjacency list, CSR-like source index | RMD-008 |
 | LSN-012 The complete journey of one spike | event-driven computation; integrate queue/lookup/weighted events | RMD-007A/010/011 |
 
+> **Teaching order and RMD engineering implementation order do not have to match step-for-step.** LSN-010/011 isolate queue/backpressure and sparse lookup with Python first; LSN-012 then performs the RMD-007A-style end-to-end integration. RMD-007A still precedes formal MOD-006/007/005 RTL implementation.
+
 ### Platform 4: from simulation to real FPGA and external memory
 
 | Planned lesson | First-use concepts | Engineering mapping |
