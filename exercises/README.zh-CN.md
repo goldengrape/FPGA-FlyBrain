@@ -1,123 +1,88 @@
-# FPGA FlyBrain 作业与检查
+# FPGA FlyBrain 作业册
 
-适合 Python 判定的课程采用同一种作业格式：**固定函数签名 + 小段 TODO + 公开的 pytest 检查 + Human Check**。
+[English](README.md)
 
-作业的目标不是考 Python 花活，而是确认你能把课程中的模型规则写成一个可测试的函数。除 TODO 区域外，尽量不要修改函数名、参数和返回值；这些接口本身就是本课规范的一部分。
+Python 作业使用 Jupyter Notebook。每份作业都应当能独立阅读：先说明为什么做、要完成什么和有哪些约束，再提供小范围 TODO、自动检查入口和 Human Check。
 
-## 怎么做
+完整设计规范见：[作业 Notebook 设计规范](../docs/zh/EXERCISE_DESIGN.md)。
 
-先同步环境：
+## 学生怎么做
 
-```bash
+从仓库根目录启动：
+
+~~~bash
 uv sync --group dev
-```
+uv run jupyter lab
+~~~
 
-完成某一课的 TODO 后，只运行那一课的检查。例如第一课：
+然后打开 exercises/zh/ 下对应课程的 Notebook。
 
-```bash
-uv run pytest exercises/checks/check_lesson01.py -q
-```
+典型流程是：
 
-检查文件故意命名为 `check_lessonXX.py`，而不是普通的 `test_*.py`。这样未完成的学生作业不会被项目常规测试自动收集；只有你显式运行某课检查时，它才参与判定。
+~~~text
+读题
+  ↓
+先预测 / 手算
+  ↓
+完成 TODO
+  ↓
+运行“检查你的实现”
+  ↓
+根据结果修订
+  ↓
+完成 Human Check
+~~~
 
-所有检查都是公开的。可以打开检查文件看每个测试在验证什么。课程希望你逐渐学会把测试当成 specification 的可执行版本，而不是把测试当成“老师藏起来的答案”。
+学生可见 Notebook **不直接展示自动测试的 assert、具体测试向量或完整判题逻辑**。检查单元会把当前 Jupyter kernel 中刚定义的函数传给 exercises/grader/ 下的外部 grader。
 
-## 什么叫“通过”
+grader 只报告概念分组是否通过，例如：
 
-自动检查只判断**可执行行为**。如果所有测试通过，说明你的函数满足当前公开测试覆盖到的接口与规则；它不等于已经理解了概念。
+~~~text
+第 05 课检查
 
-每课还有 Human Check。这里不自动评分：你应该能在不让 AI 代答的情况下，用自己的话解释为什么代码和测试应该这样工作。如果自动测试通过，但无法解释某个测试为什么成立，这一课还没有完成。
+✓ Boolean gates
+✓ Threshold behavior
+✗ Enable behavior
 
-AI 可以用于解释报错、比较两种实现、生成额外测试或审查代码。若 AI 直接写了 TODO，也要继续完成 Human Check，并至少能手算一个测试用例。
+2 / 3 groups passed
+~~~
 
-## Python 作业课程
+失败信息可以提示应检查哪个概念，但不会打印具体失败输入和期望答案。
 
-| Lesson | Starter code | 自动检查 | 主要检查内容 | Human Check |
-|---|---|---|---|---|
-| 01 | `lesson01_lif.py` | `check_lesson01.py` | leak、integration、`>=` threshold、reset | 手算一步 LIF；解释为什么 `V_rest` 是无输入固定点 |
-| 02 | `lesson02_fixed_point.py` | `check_lesson02.py` | signed range、rounding、quantization、saturation | 解释 range/precision 权衡；说明 saturation 与 wraparound 为什么不同 |
-| 03 | `lesson03_semantics.py` | `check_lesson03.py` | 冻结 v0 语义；构造 boundary/counterexample | 解释为什么随机测试可能漏掉 `>` 与 `>=` 的差异 |
-| 04 | `lesson04_state_clock.py` | `check_lesson04.py` | combinational next-state、register update、clocked sequence | 指出一个 cycle 中哪些值属于旧 state、candidate、真正保存的 state |
-| 05 | `lesson05_logic.py` | `check_lesson05.py` | Boolean gates、threshold boundary、enable | 解释为什么 `candidate == threshold` 是区分 `>=` / `>` 的关键 case |
-| 09 | `lesson09_time_multiplexing.py` | `check_lesson09.py` | addressed state、round-robin service | 解释 address 与 state 的区别，以及一个 engine 如何服务多个虚拟 neuron |
-| 10 | `lesson10_fifo.py` | `check_lesson10.py` | FIFO ordering、full/empty、backpressure | 解释 full 时为什么不能覆盖旧 spike |
-| 11 | `lesson11_sparse_graph.py` | `check_lesson11.py` | source index、exact sparse range | 手工还原每个 source 的 `(start,count)`，包括 zero fanout |
-| 12 | `lesson12_event_journey.py` | `check_lesson12.py` | source spike → weighted target events | 区分 queue、source index、synapse record、target accumulator 各保存什么 |
+## Python 作业目录
 
-也可以一次运行当前 Python 作业集合：
+| Lesson | 作业 Notebook | 主要练习 |
+|---|---|---|
+| 01 | [从膜电位到 LIF 的一步更新](zh/01_membrane_to_lif.ipynb) | leak、integration、threshold、reset |
+| 02 | [把小数放进有限位宽](zh/02_float_to_fixed.ipynb) | signed range、rounding、quantization、saturation |
+| 03 | [把 LIF 变成明确 specification](zh/03_freeze_neuron_semantics.ipynb) | 固定语义、boundary、counterexample |
+| 04 | [next state 与 register state](zh/04_state_and_clock.ipynb) | combinational next-state、clock edge、state history |
+| 05 | [逻辑门、比较器与 enable](zh/05_logic_building_blocks.ipynb) | Boolean logic、threshold、enable |
+| 09 | [一个 engine 轮流服务多个 state](zh/09_time_multiplex_many_neurons.ipynb) | addressed state、round robin |
+| 10 | [有界 FIFO 与 backpressure](zh/10_spike_fifo_backpressure.ipynb) | FIFO ordering、full/empty、retry |
+| 11 | [稀疏连接的顺序读取表示](zh/11_sparse_synapse_lookup.ipynb) | source index、contiguous records、zero fanout |
+| 12 | [一个 source spike 的完整旅程](zh/12_one_spike_journey.ipynb) | source range、weighted event、target accumulator |
 
-```bash
-uv run pytest \
-  exercises/checks/check_lesson01.py \
-  exercises/checks/check_lesson02.py \
-  exercises/checks/check_lesson03.py \
-  exercises/checks/check_lesson04.py \
-  exercises/checks/check_lesson05.py \
-  exercises/checks/check_lesson09.py \
-  exercises/checks/check_lesson10.py \
-  exercises/checks/check_lesson11.py \
-  exercises/checks/check_lesson12.py -q
-```
+第 6–8 课主要练习 SystemVerilog、testbench 和 waveform，继续使用 RTL 教学检查：
 
-Starter code 初始状态包含 `NotImplementedError`，所以在没有完成 TODO 前检查失败是预期行为。
+~~~bash
+./scripts/check_rtl_learning.sh
+~~~
 
-## 作业 1：从 Leak 到完整 LIF
+后续如果为 6–8 课增加独立作业册，也遵守同一套“题目先于代码、检查不泄露答案、Human Check 补充理解”的原则。
 
-文件：`exercises/lesson01_lif.py`
+## 对课程维护者
 
-完成 `leak_step(...)` 与 `lif_step(...)`。第一课作业固定规则为：
+学生即时检查实现位于 exercises/grader/。
 
-- `V_next_candidate = V_rest + alpha * (V - V_rest) + input`；
-- `candidate >= threshold` 就 spike；
-- spike 后立即把保存状态设为 `reset`。
+维护者测试位于 exercises/checks/，当前主要入口：
 
-Human Check：给定 `V=-60, V_rest=-70, alpha=0.9, input=11, threshold=-50`，先不用代码手算 candidate voltage，并解释为什么这是一个 threshold boundary case。
+~~~bash
+uv run pytest   exercises/checks/test_graders.py   exercises/checks/test_notebook_structure.py -q
+~~~
 
-## 作业 2：把小数放进有限位宽
+test_graders.py 验证 grader 能接受 reference implementation，并能抓住典型错误实现。test_notebook_structure.py 验证双语 Notebook 可以解析、保留 TODO、使用外部 grader，并且学生代码单元没有内嵌测试函数或 assert。
 
-文件：`exercises/lesson02_fixed_point.py`
+GitHub Actions 的 Python exercise infrastructure workflow 会自动运行这两组检查。
 
-完成 `signed_limits(total_bits)` 与 `quantize(x, total_bits, frac_bits)`。本课固定使用 Python `round()`，并采用 saturation overflow policy。测试覆盖正数、负数、格点值以及正负溢出。
-
-Human Check：在 `total_bits=8, frac_bits=4` 时说明最小刻度；如果只增加 `frac_bits` 而总位宽不变，为什么精度增加的同时范围会缩小？
-
-## 作业 3：让 specification 变成可区分的测试
-
-文件：`exercises/lesson03_semantics.py`
-
-按明确给出的 v0 contract 实现 `lif_step_v0(...)`，然后自己构造两个**区分测试（distinguishing probes）**：一个恰好落在 threshold 上，用来区分 `>=` 与 `>`；另一个让 `alpha * v + current` 与 `alpha * (v + current)` 得到不同结果。
-
-检查程序不会要求某一组固定数字，而是检查你返回的例子是否真的能区分两种规则。
-
-Human Check：解释为什么一万个普通随机样本也可能没有一个精心构造的 boundary case 更能说明 `>` 和 `>=` 的语义差异。
-
-## 作业 4：把 next state 和 register state 分开
-
-文件：`exercises/lesson04_state_clock.py`
-
-完成 `combinational_step(...)`、`clock_edge(...)` 与 `run_clocked_accumulator(...)` 中的状态更新。检查会验证课程示例 `[1, 1, 1, 1, 2, 2]` 在 threshold 为 4 时的 state 与 spike 历史。
-
-Human Check：解释为什么 `candidate_state=4` 和 `state_after=0` 可以在同一个 cycle 都是正确的，它们分别表示什么。
-
-
-## 作业 5：Boolean 判断与 boundary
-
-完成 AND / OR / NOT、threshold 与 enable 逻辑。Human Check：解释为什么 `candidate == threshold` 比大量普通随机输入更直接地检查 `>=` 与 `>` 的差异。
-
-## 作业 9：一个 engine 轮流服务多个 state
-
-完成 addressed state update 与一轮 round-robin service。Human Check：解释 address 为什么只是选择 state 的编号，而不是 neuron state 本身。
-
-## 作业 10：有界 FIFO 与 backpressure
-
-完成 bounded FIFO push/pop。Human Check：解释 queue full 时为什么必须拒绝/延迟新 event，而不是覆盖最早进入的 spike。
-
-## 作业 11：稀疏 source index
-
-把 edge 压成项目风格的 `(start,count)` source index + contiguous synapse records。Human Check：手工还原每个 source 的 slice，并检查 zero-fanout source。
-
-## 作业 12：处理一个 source spike
-
-只读取该 source 对应的 synapse range，产生 weighted events 并更新 target accumulators。Human Check：分别说明 spike queue、source index、synapse record、target accumulator 保存什么。
-
-第 6–8 课使用 HDL compile/simulation/lint，而不是 Python TODO；统一入口是 `./scripts/check_rtl_learning.sh`。
+当前不使用 nbgrader，也不使用 testbook。只有出现明确的新需求时再评估。
