@@ -2,8 +2,8 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r2
-- Date: 2026-09-16
+- Revision: v0.3-r3
+- Date: 2026-09-18
 - Purpose: synchronize ADD's product/process FR split, RMD bridge slices, and the new Learning Architecture / Notebook teaching layer.
 
 ## 1. Purpose
@@ -28,14 +28,14 @@ Link user needs → functional requirements → design parameters → teaching a
 | LSN-002 | Understand how fixed-point/quantization changes behavior | FR1/FR2 + PFR4 | T-005~006 + Human Check | RMD-002 | `lessons/en/02_float_to_fixed.ipynb` |
 | LSN-003 | Freeze testable neuron semantics | PFR3/PFR4 | semantic ambiguity tests + spec checkpoint | RMD-003 | `lessons/en/03_freeze_neuron_semantics.ipynb` |
 | LSN-004 | Build intuition for registers, clocks, combinational and sequential logic | PFR1; prepares FR2/DP2 | explanation checkpoint | RMD-003A | `lessons/en/04_state_and_clock.ipynb` |
-| LSN-005 | Build minimal Boolean decisions | PFR1; prepares FR2/DP2 | `check_lesson05.py` + Human Check | RMD-003A | `lessons/en/05_logic_building_blocks.ipynb` |
+| LSN-005 | Build minimal Boolean decisions | PFR1; prepares FR2/DP2 | `exercises/en/05_logic_building_blocks.ipynb` (grader: `exercises/grader/lesson05.py`) + Human Check | RMD-003A | `lessons/en/05_logic_building_blocks.ipynb` |
 | LSN-006 | Understand RTL/HDL/SystemVerilog/module/port | PFR1; prepares FR2/DP2 | teaching RTL simulation + Human Check | prepares RMD-004 | `lessons/en/06_what_is_rtl.ipynb` |
 | LSN-007 | Known neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | Python oracle + RTL review | RMD-004 teaching precursor | `lessons/en/07_first_rtl_neuron.ipynb` |
 | LSN-008 | Verify RTL with testbench/waveform/simulation | PFR4/PDP4 | self-checking testbench + explanation | RMD-005/005A | `lessons/en/08_testbench_waveform_simulation.ipynb` |
-| LSN-009 | Understand how one physical engine time-multiplexes many virtual neuron states | FR3/DP3 + PFR1 | `check_lesson09.py` + Human Check | RMD-006/007 teaching precursor | `lessons/en/09_time_multiplex_many_neurons.ipynb` |
-| LSN-010 | Understand bounded-FIFO ordering and backpressure | FR4/DP4 + PFR4 | `check_lesson10.py`; prepares T-007/008 | RMD-007A/009 teaching precursor | `lessons/en/10_spike_fifo_backpressure.ipynb` |
-| LSN-011 | Locate exact real synapse ranges with a sparse source index | FR4/DP4 + PFR4 | `check_lesson11.py`; prepares T-009 | RMD-008 | `lessons/en/11_sparse_synapse_lookup.ipynb` |
-| LSN-012 | Compose queue → lookup → weighted event → target update | FR4/FR5 + DP4/DP5 + PFR4 | `check_lesson12.py`; prepares T-010~013 | RMD-007A/010/011 teaching integration | `lessons/en/12_one_spike_journey.ipynb` |
+| LSN-009 | Understand how one physical engine time-multiplexes many virtual neuron states | FR3/DP3 + PFR1 | `exercises/en/09_time_multiplex_many_neurons.ipynb` (grader: `exercises/grader/lesson09.py`) + Human Check | RMD-006/007 teaching precursor | `lessons/en/09_time_multiplex_many_neurons.ipynb` |
+| LSN-010 | Understand bounded-FIFO ordering and backpressure | FR4/DP4 + PFR4 | `exercises/en/10_spike_fifo_backpressure.ipynb` (grader: `exercises/grader/lesson10.py`); prepares T-007/008 | RMD-007A/009 teaching precursor | `lessons/en/10_spike_fifo_backpressure.ipynb` |
+| LSN-011 | Locate exact real synapse ranges with a sparse source index | FR4/DP4 + PFR4 | `exercises/en/11_sparse_synapse_lookup.ipynb` (grader: `exercises/grader/lesson11.py`); prepares T-009 | RMD-008 | `lessons/en/11_sparse_synapse_lookup.ipynb` |
+| LSN-012 | Compose queue → lookup → weighted event → target update | FR4/FR5 + DP4/DP5 + PFR4 | `exercises/en/12_one_spike_journey.ipynb` (grader: `exercises/grader/lesson12.py`); prepares T-010~013 | RMD-007A/010/011 teaching integration | `lessons/en/12_one_spike_journey.ipynb` |
 
 Principle: Notebooks may prototype and demonstrate, but formal algorithms, RTL, interfaces, and oracles remain authoritative in `python/`, `rtl/`, MDD, TDD, and other engineering sources.
 
