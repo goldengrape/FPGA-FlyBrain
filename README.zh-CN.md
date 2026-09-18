@@ -153,6 +153,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 | [高层学习路线](docs/zh/ROADMAP.md) | [High-level Roadmap](docs/en/ROADMAP.md) |
 | [教学路径](docs/zh/LEARNING_PATH.md) | [Learning Architecture](docs/en/LEARNING_PATH.md) |
 | [初学者术语表](docs/zh/GLOSSARY.md) | [Beginner Glossary](docs/en/GLOSSARY.md) |
+| [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) | [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) |
 
 ### 工程事实文档
 | 中文 | English |
