@@ -68,6 +68,28 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 - **禁止在 Notebook 中临时安装**：不要在 Notebook 单元格中使用 `%pip install` 或 `!pip install`，以免破坏环境的可复现性。
 - **声明式增补依赖**：如果后续需要新增科学计算库，请在命令行执行 `uv add <package>`；若需要开发或测试工具，执行 `uv add --dev <package>`。版本变动会记录在 `pyproject.toml` 与 `uv.lock` 中。
 
+### 5. 第六到八课的 RTL 工具链
+
+RTL 课程使用 **SystemVerilog-2012**，包括 `logic`、`always_ff`、`always_comb` 等语法。Python 依赖继续由 `uv` 管理；HDL simulator 与 synthesis tool 是独立的系统工具，不属于 Python 包。
+
+GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys，并在每次 CI 中打印实际版本。目前已经完整验证通过的一组基线是：
+
+- Icarus Verilog 12.0
+- Verilator 5.020
+- Yosys 0.33
+
+开发 VM 也已使用 OSS CAD Suite 2026-09-18 验证过（Icarus 14.0、Verilator 5.053、Yosys 0.69）。
+
+较老的 Icarus 10.x **不作为本课程支持基线**。不要仅仅为了适配旧 simulator，把课程中的 `always_ff` / `always_comb` 降级成旧式 Verilog；更合适的做法是使用支持当前 SystemVerilog 的工具链。
+
+本地完整检查：
+
+```bash
+./scripts/check_rtl_learning.sh
+```
+
+它会运行 Icarus self-checking simulation、Verilator lint、Yosys synthesis sanity check，并确认 Lesson 8 的 VCD 波形确实生成。
+
 ## 从这里开始学
 
 第一组可执行课程位于 [`lessons/`](lessons/README.md)：

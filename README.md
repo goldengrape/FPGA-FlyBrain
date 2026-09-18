@@ -68,6 +68,28 @@ Once registered, select **FPGA FlyBrain** as the notebook kernel in JupyterLab.
 - **No in-notebook installations**: Do not run `%pip install` or `!pip install` inside Notebook cells.
 - **Declarative changes**: Add runtime packages via `uv add <package>` and dev tools via `uv add --dev <package>`. All changes are pinned in `pyproject.toml` and `uv.lock`.
 
+### 5. RTL Toolchain for Lessons 6–8
+
+The RTL lessons use **SystemVerilog-2012**, including constructs such as `logic`, `always_ff`, and `always_comb`. Python dependencies are managed by `uv`; HDL simulators and synthesis tools are separate system tools.
+
+The project CI installs Icarus Verilog, Verilator, and Yosys from the GitHub Actions Ubuntu runner and prints their exact versions on every run. The baseline that has been verified end-to-end is:
+
+- Icarus Verilog 12.0
+- Verilator 5.020
+- Yosys 0.33
+
+The development VM has also been checked with the OSS CAD Suite 2026-09-18 bundle (Icarus 14.0, Verilator 5.053, Yosys 0.69).
+
+Older Icarus 10.x installations are **not** a supported baseline for these lessons. Do not rewrite `always_ff` / `always_comb` into legacy Verilog solely to accommodate an old simulator; use a current SystemVerilog-capable toolchain instead.
+
+To run the complete teaching RTL checks locally:
+
+```bash
+./scripts/check_rtl_learning.sh
+```
+
+This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanity checks, and verifies that the Lesson 8 VCD waveform was actually generated.
+
 ## Start learning
 
 The first executable lessons are in [`lessons/`](lessons/README.md):
