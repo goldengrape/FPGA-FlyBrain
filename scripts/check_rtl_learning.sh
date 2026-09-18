@@ -33,7 +33,7 @@ vvp "${BUILD_DIR}/lesson06/clocked_accumulator.vvp"
 
 echo
 echo "== Lesson 6: Verilator lint =="
-verilator --lint-only -Wall -Wno-TIMESCALEMOD \
+verilator --lint-only --timing -Wall -Wno-TIMESCALEMOD \
     "${ROOT_DIR}/rtl/learning/clocked_accumulator.sv" \
     "${ROOT_DIR}/tb/learning/clocked_accumulator_tb.sv"
 
@@ -61,7 +61,7 @@ echo "Waveform: ${VCD_PATH} ($(wc -c < "${VCD_PATH}") bytes)"
 
 echo
 echo "== Lesson 8: Verilator lint =="
-verilator --lint-only -Wall -Wno-TIMESCALEMOD \
+verilator --lint-only --timing -Wall -Wno-TIMESCALEMOD \
     "${ROOT_DIR}/rtl/learning/tutorial_if_neuron.sv" \
     "${ROOT_DIR}/tb/learning/tutorial_if_neuron_tb.sv"
 
