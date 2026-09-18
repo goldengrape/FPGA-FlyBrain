@@ -153,6 +153,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 | [High-level Roadmap](docs/en/ROADMAP.md) | [高层学习路线](docs/zh/ROADMAP.md) |
 | [Learning Architecture](docs/en/LEARNING_PATH.md) | [教学路径](docs/zh/LEARNING_PATH.md) |
 | [Beginner Glossary](docs/en/GLOSSARY.md) | [初学者术语表](docs/zh/GLOSSARY.md) |
+| [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) | [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) |
 
 ### Engineering source documents
 | English | 中文 |
