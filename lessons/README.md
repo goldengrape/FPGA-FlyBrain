@@ -74,3 +74,30 @@ Reference / 备查：
 `rtl/learning/` and `tb/learning/` are teaching artifacts. They do **not** declare formal `MOD-003 lif_neuron_engine` complete.
 
 This sequencing follows the **Learning Independence Axiom**: clocks, Boolean logic, HDL syntax, RTL structure, and verification are introduced separately.
+
+
+## RTL learning checks / RTL 教学检查
+
+After installing an HDL toolchain that provides Icarus Verilog, Verilator, and Yosys, run the complete teaching-RTL check with:
+
+```bash
+./scripts/check_rtl_learning.sh
+```
+
+安装包含 Icarus Verilog、Verilator 与 Yosys 的 HDL 工具链后，可以用一条命令检查当前教学 RTL：
+
+```bash
+./scripts/check_rtl_learning.sh
+```
+
+The script checks / 脚本会执行：
+
+1. Lesson 6 Icarus compile + self-checking simulation；
+2. Lesson 6 Verilator lint；
+3. Lesson 6 Yosys synthesis sanity check；
+4. Lesson 8 Icarus compile + self-checking simulation；
+5. Lesson 8 VCD waveform existence/non-empty check；
+6. Lesson 8 Verilator lint；
+7. Lesson 8 Yosys synthesis sanity check。
+
+Build artifacts are written under `build/rtl-learning/` and are ignored by Git.
