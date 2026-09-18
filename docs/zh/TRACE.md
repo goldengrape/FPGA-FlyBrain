@@ -2,8 +2,8 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r2
-- 日期：2026-09-16
+- 修订：v0.3-r3
+- 日期：2026-09-18
 - 目的：同步 ADD 的产品/过程 FR 分层、RMD bridge slices，以及新的 Learning Architecture / Notebook 教学层。
 
 ## 1. 目的
@@ -28,14 +28,14 @@
 | LSN-002 | 理解 fixed-point/quantization 对行为的影响 | FR1/FR2 + PFR4 | T-005~006 + Human Check | RMD-002 | `lessons/zh/02_float_to_fixed.ipynb` |
 | LSN-003 | 冻结可测试的 neuron semantics | PFR3/PFR4 | semantic ambiguity tests + spec checkpoint | RMD-003 | `lessons/zh/03_freeze_neuron_semantics.ipynb` |
 | LSN-004 | 建立 register/clock/combinational/sequential 直觉 | PFR1；准备 FR2/DP2 | explanation checkpoint | RMD-003A | `lessons/zh/04_state_and_clock.ipynb` |
-| LSN-005 | Boolean logic 最小组合判断 | PFR1；准备 FR2/DP2 | `check_lesson05.py` + Human Check | RMD-003A | `lessons/zh/05_logic_building_blocks.ipynb` |
+| LSN-005 | Boolean logic 最小组合判断 | PFR1；准备 FR2/DP2 | `exercises/zh/05_logic_building_blocks.ipynb`（grader: `exercises/grader/lesson05.py`）+ Human Check | RMD-003A | `lessons/zh/05_logic_building_blocks.ipynb` |
 | LSN-006 | 理解 RTL/HDL/SystemVerilog/module/port | PFR1；准备 FR2/DP2 | teaching RTL simulation + Human Check | 准备 RMD-004 | `lessons/zh/06_what_is_rtl.ipynb` |
 | LSN-007 | 已知 neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | Python oracle + RTL review | RMD-004 教学前置 | `lessons/zh/07_first_rtl_neuron.ipynb` |
 | LSN-008 | testbench/waveform/simulation 验证 RTL | PFR4/PDP4 | self-checking testbench + explanation | RMD-005/005A | `lessons/zh/08_testbench_waveform_simulation.ipynb` |
-| LSN-009 | 理解一个物理 engine 如何 time-multiplex 多个虚拟 neuron state | FR3/DP3 + PFR1 | `check_lesson09.py` + Human Check | RMD-006/007 教学前置 | `lessons/zh/09_time_multiplex_many_neurons.ipynb` |
-| LSN-010 | 理解 bounded FIFO ordering 与 backpressure | FR4/DP4 + PFR4 | `check_lesson10.py`; T-007/008 前置 | RMD-007A/009 教学前置 | `lessons/zh/10_spike_fifo_backpressure.ipynb` |
-| LSN-011 | 用 sparse source index 精确定位真实 synapse range | FR4/DP4 + PFR4 | `check_lesson11.py`; T-009 前置 | RMD-008 | `lessons/zh/11_sparse_synapse_lookup.ipynb` |
-| LSN-012 | 串起 queue → lookup → weighted event → target update | FR4/FR5 + DP4/DP5 + PFR4 | `check_lesson12.py`; prepares T-010~013 | RMD-007A/010/011 教学整合 | `lessons/zh/12_one_spike_journey.ipynb` |
+| LSN-009 | 理解一个物理 engine 如何 time-multiplex 多个虚拟 neuron state | FR3/DP3 + PFR1 | `exercises/zh/09_time_multiplex_many_neurons.ipynb`（grader: `exercises/grader/lesson09.py`）+ Human Check | RMD-006/007 教学前置 | `lessons/zh/09_time_multiplex_many_neurons.ipynb` |
+| LSN-010 | 理解 bounded FIFO ordering 与 backpressure | FR4/DP4 + PFR4 | `exercises/zh/10_spike_fifo_backpressure.ipynb`（grader: `exercises/grader/lesson10.py`）；T-007/008 前置 | RMD-007A/009 教学前置 | `lessons/zh/10_spike_fifo_backpressure.ipynb` |
+| LSN-011 | 用 sparse source index 精确定位真实 synapse range | FR4/DP4 + PFR4 | `exercises/zh/11_sparse_synapse_lookup.ipynb`（grader: `exercises/grader/lesson11.py`）；T-009 前置 | RMD-008 | `lessons/zh/11_sparse_synapse_lookup.ipynb` |
+| LSN-012 | 串起 queue → lookup → weighted event → target update | FR4/FR5 + DP4/DP5 + PFR4 | `exercises/zh/12_one_spike_journey.ipynb`（grader: `exercises/grader/lesson12.py`）；T-010~013 前置 | RMD-007A/010/011 教学整合 | `lessons/zh/12_one_spike_journey.ipynb` |
 
 原则：Notebook 可以 prototype/展示，但正式算法、RTL、接口与 oracle 的事实来源仍在 `python/`、`rtl/`、MDD、TDD 等正式工程位置。
 
