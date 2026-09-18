@@ -57,3 +57,42 @@ def test_student_notebooks_use_external_graders_and_keep_todos():
             assert "from exercises.grader." in code
             assert "YOUR CODE STARTS HERE" in code
             assert "NotImplementedError" in code
+
+
+
+def test_each_exercise_has_pre_code_reasoning():
+    headings = {
+        "zh": "先不用代码",
+        "en": "Before coding",
+    }
+    for language, heading in headings.items():
+        for name in NOTEBOOKS:
+            notebook = _read(ROOT / "exercises" / language / name)
+            markdown = "\n".join(
+                "".join(cell.get("source", []))
+                for cell in notebook["cells"]
+                if cell.get("cell_type") == "markdown"
+            )
+            assert heading in markdown, f"{language}/{name} is missing pre-code reasoning"
+
+
+def test_bilingual_exercises_keep_matching_structure_and_code():
+    for name in NOTEBOOKS:
+        zh = _read(ROOT / "exercises" / "zh" / name)
+        en = _read(ROOT / "exercises" / "en" / name)
+
+        assert [cell["cell_type"] for cell in zh["cells"]] == [
+            cell["cell_type"] for cell in en["cells"]
+        ], f"{name} has drifted cell structure"
+
+        zh_code = [
+            "".join(cell.get("source", [])).replace('language="zh"', 'language="LANG"')
+            for cell in zh["cells"]
+            if cell.get("cell_type") == "code"
+        ]
+        en_code = [
+            "".join(cell.get("source", [])).replace('language="en"', 'language="LANG"')
+            for cell in en["cells"]
+            if cell.get("cell_type") == "code"
+        ]
+        assert zh_code == en_code, f"{name} has drifted code between zh/en versions"
