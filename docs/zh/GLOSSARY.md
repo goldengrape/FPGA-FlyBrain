@@ -35,6 +35,16 @@
 | URAM | 超级随机存取存储器（UltraRAM） | 部分 FPGA 中容量更大的片上存储块。 |
 | CSR | 压缩稀疏行（Compressed Sparse Row） | 一种高效存储稀疏矩阵/图连接的数据结构；本项目后期可用于表示突触连接。 |
 | CI | 持续集成（Continuous Integration） | 每次代码变化后自动运行测试和检查的工程流程。 |
+| synapse stream | 突触记录流（synapse stream） | 按顺序产生的 synapse records 流，例如 source、target、weight 与结束标记。 |
+| router | 路由器 / 路由逻辑（router） | 根据 event 的 source 等信息决定后续查找或发送方向的控制逻辑。 |
+| source index | source 索引（source index） | 从 source neuron ID 映射到连续 synapse record 区间，例如 `(start_offset, fanout_count)`。 |
+| adjacency list | 邻接表（adjacency list） | 为每个 source 直接列出真实相邻 target 的稀疏图表示。 |
+| sparse graph | 稀疏图（sparse graph） | 可能连接很多 node，但真实 edge 只占所有可能连接很小一部分的图。 |
+| backpressure | 背压（backpressure） | 当下游暂时不能接收数据时，用控制信号要求上游等待/保持数据，避免静默丢失。 |
+| event | 事件（event） | 系统需要处理的一条离散记录；本项目中 spike event 最小可只携带 source neuron ID。 |
+| time multiplexing | 时间复用（time multiplexing） | 让同一物理计算单元在不同时间片轮流服务多个虚拟对象，以时间换取硬件资源。 |
+| address | 地址（address） | 选择 memory 中某个位置的编号；address 决定“访问哪里”，不是被保存的数据本身。 |
+| memory | 存储器（memory） | 保存许多数据或 state 的硬件/抽象；通过不同组织方式可实现 register file、RAM 等。 |
 
 ## 使用规则
 

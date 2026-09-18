@@ -1,6 +1,6 @@
 # FPGA FlyBrain exercises and checks
 
-The first four lessons use one consistent homework pattern: **fixed function signatures + small TODO regions + public pytest checks + a Human Check**.
+The Python-exercise lessons use one consistent homework pattern: **fixed function signatures + small TODO regions + public pytest checks + a Human Check**.
 
 The purpose is not to test Python cleverness. It is to verify that you can translate the lesson's model rules into a testable function. Keep function names, arguments, and return shapes unchanged unless a lesson explicitly asks otherwise; the interface is part of the specification.
 
@@ -19,7 +19,7 @@ Passing the automated checks means your code satisfies the behavior covered by t
 
 AI may help explain failures, compare implementations, propose extra tests, or review code. If AI writes a TODO region, you should still complete the Human Check and manually work through at least one test case.
 
-## Lessons 1–4
+## Python exercise lessons
 
 | Lesson | Starter | Check | Main target |
 |---|---|---|---|
@@ -27,15 +27,25 @@ AI may help explain failures, compare implementations, propose extra tests, or r
 | 02 | `lesson02_fixed_point.py` | `check_lesson02.py` | signed range, rounding, quantization, saturation |
 | 03 | `lesson03_semantics.py` | `check_lesson03.py` | frozen semantics and distinguishing probes |
 | 04 | `lesson04_state_clock.py` | `check_lesson04.py` | combinational next-state logic and clocked state |
+| 05 | `lesson05_logic.py` | `check_lesson05.py` | Boolean gates, threshold boundary, enable logic |
+| 09 | `lesson09_time_multiplexing.py` | `check_lesson09.py` | addressed state and round-robin service |
+| 10 | `lesson10_fifo.py` | `check_lesson10.py` | FIFO ordering, full/empty, backpressure |
+| 11 | `lesson11_sparse_graph.py` | `check_lesson11.py` | source index and exact sparse ranges |
+| 12 | `lesson12_event_journey.py` | `check_lesson12.py` | one source spike to weighted target events |
 
-Run all four explicitly with:
+Run a selected lesson explicitly, or run the current Python exercise set with:
 
 ```bash
 uv run pytest \
   exercises/checks/check_lesson01.py \
   exercises/checks/check_lesson02.py \
   exercises/checks/check_lesson03.py \
-  exercises/checks/check_lesson04.py -q
+  exercises/checks/check_lesson04.py \
+  exercises/checks/check_lesson05.py \
+  exercises/checks/check_lesson09.py \
+  exercises/checks/check_lesson10.py \
+  exercises/checks/check_lesson11.py \
+  exercises/checks/check_lesson12.py -q
 ```
 
 Starter files initially raise `NotImplementedError`, so failures before completing the TODO regions are expected.
@@ -51,3 +61,21 @@ Implement the frozen `lif_step_v0(...)` contract, then construct one case that d
 
 ### Lesson 4
 Implement `combinational_step(...)`, `clock_edge(...)`, and the clocked update in `run_clocked_accumulator(...)`. Human Check: explain how `candidate_state=4` and `state_after=0` can both be correct in the same cycle.
+
+
+### Lesson 5
+Implement NOT / AND / OR plus threshold and enable logic. Human Check: explain why `candidate == threshold` is the most direct probe for `>=` versus `>`.
+
+### Lesson 9
+Implement addressed state updates and one round-robin service pass. Human Check: explain why the address selects state but is not itself neuron state, and how one physical engine can serve many virtual neurons.
+
+### Lesson 10
+Implement bounded FIFO push/pop. Human Check: explain why a full queue must produce backpressure rather than overwrite an older spike.
+
+### Lesson 11
+Build a project-style `(start,count)` source index plus contiguous synapse records. Human Check: reconstruct every source range by hand, including a source with zero fanout.
+
+### Lesson 12
+Process one source spike through exactly its sparse synapse range. Human Check: distinguish what is stored in the spike queue, source index, synapse record, and target accumulator.
+
+Lessons 6–8 use HDL compile/simulation/lint checks rather than Python TODO exercises; see `./scripts/check_rtl_learning.sh`.

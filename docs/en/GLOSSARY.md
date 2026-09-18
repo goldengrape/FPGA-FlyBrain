@@ -35,6 +35,16 @@ This is a reference sheet, not a substitute for first-use explanations in the le
 | URAM | UltraRAM | Larger on-chip memory blocks available in some FPGA families. |
 | CSR | Compressed Sparse Row | A compact data structure for sparse matrices/graphs; later it can represent synaptic connectivity. |
 | CI | Continuous Integration | An engineering workflow that automatically runs tests and checks after code changes. |
+| synapse stream | synapse stream | An ordered stream of synapse records such as source, target, weight, and an end marker. |
+| router | router / routing logic | Control logic that uses event/source information to decide which lookup or destination comes next. |
+| source index | source index | A mapping from source neuron ID to a contiguous synapse-record range, such as `(start_offset, fanout_count)`. |
+| adjacency list | adjacency list | A sparse representation that directly lists the real neighboring targets for each source. |
+| sparse graph | sparse graph | A graph in which real edges occupy only a small fraction of all possible node-to-node connections. |
+| backpressure | backpressure | A control mechanism that makes an upstream producer wait/hold data when the downstream consumer cannot accept it. |
+| event | event | A discrete record that the system must process; a minimal spike event may carry only a source neuron ID. |
+| time multiplexing | time multiplexing | Reusing one physical compute unit for several virtual objects at different times, trading time for hardware resources. |
+| address | address | A number selecting a memory location; it says where to access, not what data is stored there. |
+| memory | memory | Storage for many values or pieces of state; different organizations can implement RAM, register files, and related structures. |
 
 ## Usage rules
 
