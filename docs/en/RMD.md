@@ -107,7 +107,7 @@ Major new concept: **an event carries a source identity, which is used to find d
 Use only four neurons and 3–6 handwritten edges. Observe:
 `spike(source)` → queue → lookup → `(target, weight)` → target update.
 
-Done when: before seeing CSR or backpressure, the learner can verbally trace one spike from source to target.
+Done when: before entering formal CSR/FIFO RTL and interface implementation, the learner can verbally trace one spike from source to target. Teaching Notebooks may first introduce queue/backpressure and sparse lookup separately with small Python models, then return to this checkpoint for end-to-end integration.
 
 ### RMD-008 Sparse adjacency image
 Major new concept: **data representation for a sparse graph**.  
