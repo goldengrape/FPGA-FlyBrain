@@ -41,9 +41,9 @@ Every lesson should obey these rules / 每课遵守以下规则：
    All conceptual diagrams, state machines, timing flows, and hardware block diagrams must be written using declarative diagram code (primarily Mermaid fenced code blocks: ```` ```mermaid ````). Do not draw diagrams with spaces, hyphens, and ASCII art. Mermaid renders natively as clean vector graphics in JupyterLab and GitHub, is accessible, and keeps structural revisions clear in Git diffs.  
    所有概念流程、状态机流转、时序因果与硬件模块图，一律使用字符声明式语法（以 Mermaid 代码块 ```` ```mermaid ```` 为主）进行结构化描述，禁止使用空格、连字符和文本折线拼凑 ASCII 字符画。字符描述图在 JupyterLab 与 GitHub 中可原生渲染为矢量图，支持精准的版本差异追踪，且便于长期维护。
 
-10. **Executable homework contracts / 可执行作业契约**  
-    For suitable programming exercises, provide a fixed function signature, a small TODO region, public pytest checks, and a Human Check. Automated checks verify executable behavior; Human Checks verify that the learner can explain why the behavior is correct. Homework checks use explicit `check_lessonXX.py` files so unfinished student work does not pollute normal project tests.  
-    对适合编程判定的作业，提供固定函数签名、小范围 TODO、公开 pytest 检查与 Human Check。自动检查负责验证可执行行为，Human Check 负责确认学生能解释规则为什么成立。学生作业检查使用显式 `check_lessonXX.py`，避免未完成作业污染项目常规测试。
+10. **Exercise Notebooks + external graders / 作业 Notebook + 外部 grader**  
+    Suitable programming exercises live in a separate Exercise Notebook with a fixed function signature, a small TODO region, an external grader call, and a Human Check. Student-facing notebooks do not directly display grading asserts or concrete grader vectors.  
+    适合编程判定的作业使用独立 Exercise Notebook：固定函数签名、小范围 TODO、外部 grader 检查和 Human Check。学生可见 Notebook 不直接展示判题 assert 或具体测试向量。
 
 Reference / 备查：
 - [中文 Learning Path](../docs/zh/LEARNING_PATH.md)
@@ -57,16 +57,16 @@ Reference / 备查：
 
 | ID | 中文 | English | Homework / 作业 | Primary concept / 主要概念 | Engineering slice |
 |---|---|---|---|---|---|
-| LSN-001 | [从膜电位到一个最小计算神经元](zh/01_membrane_to_lif.ipynb) | [From membrane potential to a minimal computational neuron](en/01_membrane_to_lif.ipynb) | [中文检查说明](zh/01_membrane_to_lif_homework.md) / [English](en/01_membrane_to_lif_homework.md) | 模型是有目的的简化 / purposeful modeling; LIF | RMD-001 |
-| LSN-002 | [数字硬件怎样保存 0.22？](zh/02_float_to_fixed.ipynb) | [How does digital hardware store 0.22?](en/02_float_to_fixed.ipynb) | `exercises/lesson02_fixed_point.py` | finite-width numbers | RMD-002 |
-| LSN-003 | [“都叫 LIF”为什么还不够？](zh/03_freeze_neuron_semantics.ipynb) | [Why is “we both use LIF” not enough?](en/03_freeze_neuron_semantics.ipynb) | `exercises/lesson03_semantics.py` | specification & semantics | RMD-003 |
-| LSN-004 | [电路怎样记住上一时刻的膜电位？](zh/04_state_and_clock.ipynb) | [How can a circuit remember the previous membrane potential?](en/04_state_and_clock.ipynb) | `exercises/lesson04_state_clock.py` | digital state & clock | RMD-003A |
+| LSN-001 | [从膜电位到一个最小计算神经元](zh/01_membrane_to_lif.ipynb) | [From membrane potential to a minimal computational neuron](en/01_membrane_to_lif.ipynb) | [中文](../exercises/zh/01_membrane_to_lif.ipynb) / [English](../exercises/en/01_membrane_to_lif.ipynb) | 模型是有目的的简化 / purposeful modeling; LIF | RMD-001 |
+| LSN-002 | [数字硬件怎样保存 0.22？](zh/02_float_to_fixed.ipynb) | [How does digital hardware store 0.22?](en/02_float_to_fixed.ipynb) | [中文](../exercises/zh/02_float_to_fixed.ipynb) / [English](../exercises/en/02_float_to_fixed.ipynb) | finite-width numbers | RMD-002 |
+| LSN-003 | [“都叫 LIF”为什么还不够？](zh/03_freeze_neuron_semantics.ipynb) | [Why is “we both use LIF” not enough?](en/03_freeze_neuron_semantics.ipynb) | [中文](../exercises/zh/03_freeze_neuron_semantics.ipynb) / [English](../exercises/en/03_freeze_neuron_semantics.ipynb) | specification & semantics | RMD-003 |
+| LSN-004 | [电路怎样记住上一时刻的膜电位？](zh/04_state_and_clock.ipynb) | [How can a circuit remember the previous membrane potential?](en/04_state_and_clock.ipynb) | [中文](../exercises/zh/04_state_and_clock.ipynb) / [English](../exercises/en/04_state_and_clock.ipynb) | digital state & clock | RMD-003A |
 
 ## Second learning block / 第二组课程
 
 | ID | 中文 | English | Practice / 检查 | Primary concept / 主要概念 | Engineering mapping |
 |---|---|---|---|---|---|
-| LSN-005 | [数字逻辑积木](zh/05_logic_building_blocks.ipynb) | [Digital logic building blocks](en/05_logic_building_blocks.ipynb) | `lesson05_logic.py` + pytest | Boolean logic | RMD-003A |
+| LSN-005 | [数字逻辑积木](zh/05_logic_building_blocks.ipynb) | [Digital logic building blocks](en/05_logic_building_blocks.ipynb) | [中文](../exercises/zh/05_logic_building_blocks.ipynb) / [English](../exercises/en/05_logic_building_blocks.ipynb) | Boolean logic | RMD-003A |
 | LSN-006 | [什么是 RTL？](zh/06_what_is_rtl.ipynb) | [What is RTL?](en/06_what_is_rtl.ipynb) | compile-only RTL check + state walkthrough | RTL / HDL / module / port | prepares RMD-004 |
 | LSN-007 | [第一个 RTL 神经元](zh/07_first_rtl_neuron.ipynb) | [The first RTL neuron](en/07_first_rtl_neuron.ipynb) | Python oracle + RTL review | combinational + sequential | RMD-004 teaching precursor |
 | LSN-008 | [我们怎么知道硬件是对的？](zh/08_testbench_waveform_simulation.ipynb) | [How do we know hardware is correct?](en/08_testbench_waveform_simulation.ipynb) | self-checking testbench + persistent VCD waveform | simulation/testbench | RMD-005/005A |
@@ -81,10 +81,10 @@ This sequencing follows the **Learning Independence Axiom**: clocks, Boolean log
 
 | ID | 中文 | English | Practice / 检查 | Primary concept / 主要概念 | Engineering mapping |
 |---|---|---|---|---|---|
-| LSN-009 | [一个计算单元服务很多神经元](zh/09_time_multiplex_many_neurons.ipynb) | [One compute unit serves many neurons](en/09_time_multiplex_many_neurons.ipynb) | `lesson09_time_multiplexing.py` + pytest | time multiplexing | RMD-006/007 precursor |
-| LSN-010 | [spike 为什么需要排队](zh/10_spike_fifo_backpressure.ipynb) | [Why spikes need a queue](en/10_spike_fifo_backpressure.ipynb) | `lesson10_fifo.py` + pytest | bounded FIFO + backpressure | RMD-007A/009 precursor |
-| LSN-011 | [不要扫描所有突触](zh/11_sparse_synapse_lookup.ipynb) | [Do not scan every synapse](en/11_sparse_synapse_lookup.ipynb) | `lesson11_sparse_graph.py` + pytest | sparse adjacency / CSR-like indexing | RMD-008 |
-| LSN-012 | [一个 spike 的完整旅程](zh/12_one_spike_journey.ipynb) | [The complete journey of one spike](en/12_one_spike_journey.ipynb) | `lesson12_event_journey.py` + pytest | event-driven causal chain | RMD-007A/010/011 |
+| LSN-009 | [一个计算单元服务很多神经元](zh/09_time_multiplex_many_neurons.ipynb) | [One compute unit serves many neurons](en/09_time_multiplex_many_neurons.ipynb) | [中文](../exercises/zh/09_time_multiplex_many_neurons.ipynb) / [English](../exercises/en/09_time_multiplex_many_neurons.ipynb) | time multiplexing | RMD-006/007 precursor |
+| LSN-010 | [spike 为什么需要排队](zh/10_spike_fifo_backpressure.ipynb) | [Why spikes need a queue](en/10_spike_fifo_backpressure.ipynb) | [中文](../exercises/zh/10_spike_fifo_backpressure.ipynb) / [English](../exercises/en/10_spike_fifo_backpressure.ipynb) | bounded FIFO + backpressure | RMD-007A/009 precursor |
+| LSN-011 | [不要扫描所有突触](zh/11_sparse_synapse_lookup.ipynb) | [Do not scan every synapse](en/11_sparse_synapse_lookup.ipynb) | [中文](../exercises/zh/11_sparse_synapse_lookup.ipynb) / [English](../exercises/en/11_sparse_synapse_lookup.ipynb) | sparse adjacency / CSR-like indexing | RMD-008 |
+| LSN-012 | [一个 spike 的完整旅程](zh/12_one_spike_journey.ipynb) | [The complete journey of one spike](en/12_one_spike_journey.ipynb) | [中文](../exercises/zh/12_one_spike_journey.ipynb) / [English](../exercises/en/12_one_spike_journey.ipynb) | event-driven causal chain | RMD-007A/010/011 |
 
 These lessons use small Python models to teach architecture semantics before formalizing `MOD-004~009` in RTL. They align dataflow and test intent with MDD/TDD without declaring those formal modules complete.
 
