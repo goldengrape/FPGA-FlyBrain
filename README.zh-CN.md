@@ -107,6 +107,8 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 11. [为什么不能每次 spike 都扫描所有突触？](lessons/zh/11_sparse_synapse_lookup.ipynb)
 12. [一个 spike 的完整旅程](lessons/zh/12_one_spike_journey.ipynb)
 
+对应的独立作业册位于 [`exercises/`](exercises/README.zh-CN.md)。Python 作业使用 Jupyter Notebook，自动检查由外部 grader 执行；作业页面不直接展示判题 `assert` 或具体测试向量。
+
 ### NotebookLM 公开课程笔记本
 
 如果更适合通过听讲、问答和快速复习来学习，也可以使用项目的公开 NotebookLM：
