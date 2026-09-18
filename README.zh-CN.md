@@ -102,6 +102,10 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 6. [什么是 RTL？](lessons/zh/06_what_is_rtl.ipynb)
 7. [第一个 RTL 神经元](lessons/zh/07_first_rtl_neuron.ipynb)
 8. [我们怎么知道硬件是对的？](lessons/zh/08_testbench_waveform_simulation.ipynb)
+9. [一个计算单元怎样服务很多神经元？](lessons/zh/09_time_multiplex_many_neurons.ipynb)
+10. [spike 为什么需要排队？](lessons/zh/10_spike_fifo_backpressure.ipynb)
+11. [为什么不能每次 spike 都扫描所有突触？](lessons/zh/11_sparse_synapse_lookup.ipynb)
+12. [一个 spike 的完整旅程](lessons/zh/12_one_spike_journey.ipynb)
 
 ### NotebookLM 公开课程笔记本
 

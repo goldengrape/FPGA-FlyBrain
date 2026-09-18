@@ -32,6 +32,10 @@
 | LSN-006 | 理解 RTL/HDL/SystemVerilog/module/port | PFR1；准备 FR2/DP2 | teaching RTL simulation + Human Check | 准备 RMD-004 | `lessons/zh/06_what_is_rtl.ipynb` |
 | LSN-007 | 已知 neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | Python oracle + RTL review | RMD-004 教学前置 | `lessons/zh/07_first_rtl_neuron.ipynb` |
 | LSN-008 | testbench/waveform/simulation 验证 RTL | PFR4/PDP4 | self-checking testbench + explanation | RMD-005/005A | `lessons/zh/08_testbench_waveform_simulation.ipynb` |
+| LSN-009 | 理解一个物理 engine 如何 time-multiplex 多个虚拟 neuron state | FR3/DP3 + PFR1 | `check_lesson09.py` + Human Check | RMD-006/007 教学前置 | `lessons/zh/09_time_multiplex_many_neurons.ipynb` |
+| LSN-010 | 理解 bounded FIFO ordering 与 backpressure | FR4/DP4 + PFR4 | `check_lesson10.py`; T-007/008 前置 | RMD-007A/009 教学前置 | `lessons/zh/10_spike_fifo_backpressure.ipynb` |
+| LSN-011 | 用 sparse source index 精确定位真实 synapse range | FR4/DP4 + PFR4 | `check_lesson11.py`; T-009 前置 | RMD-008 | `lessons/zh/11_sparse_synapse_lookup.ipynb` |
+| LSN-012 | 串起 queue → lookup → weighted event → target update | FR4/FR5 + DP4/DP5 + PFR4 | `check_lesson12.py`; prepares T-010~013 | RMD-007A/010/011 教学整合 | `lessons/zh/12_one_spike_journey.ipynb` |
 
 原则：Notebook 可以 prototype/展示，但正式算法、RTL、接口与 oracle 的事实来源仍在 `python/`、`rtl/`、MDD、TDD 等正式工程位置。
 
@@ -120,6 +124,7 @@ DP：PDP1
 - LEARNING_PATH：initialized bilingually
 - LSN-001~004：第一组双语可执行 Notebook 已建立
 - LSN-005~008：第二组双语课程已建立；`rtl/learning/` 与 `tb/learning/` 不代表 MOD-003 已完成
+- LSN-009~012：第三组双语课程已建立；Python teaching models 不代表 MOD-004~009 已完成
 - TRACE：已同步工程路径与教学路径
 - First formal implementation slice：not started
 

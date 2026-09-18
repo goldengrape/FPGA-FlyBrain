@@ -102,6 +102,10 @@ The first executable lessons are in [`lessons/`](lessons/README.md):
 6. [What is RTL?](lessons/en/06_what_is_rtl.ipynb)
 7. [The first RTL neuron](lessons/en/07_first_rtl_neuron.ipynb)
 8. [How do we know the hardware is correct?](lessons/en/08_testbench_waveform_simulation.ipynb)
+9. [How can one compute unit serve many neurons?](lessons/en/09_time_multiplex_many_neurons.ipynb)
+10. [Why do spikes need a queue?](lessons/en/10_spike_fifo_backpressure.ipynb)
+11. [Why not scan every synapse after every spike?](lessons/en/11_sparse_synapse_lookup.ipynb)
+12. [The complete journey of one spike](lessons/en/12_one_spike_journey.ipynb)
 
 ### Public NotebookLM course companion
 

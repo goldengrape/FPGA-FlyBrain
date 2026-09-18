@@ -197,10 +197,10 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 
 | 计划 Lesson | 第一次重点解释 | 工程映射 |
 |---|---|---|
-| LSN-009 一个计算单元服务很多神经元 | memory、address、RAM、time multiplexing | RMD-006/007 |
-| LSN-010 spike 为什么需要排队 | event、queue、FIFO、backpressure | RMD-007A/009 |
-| LSN-011 不要扫描所有突触 | sparse graph、adjacency list、CSR | RMD-008 |
-| LSN-012 一个 spike 的完整旅程 | router、synapse stream、event-driven computation | RMD-010/011 |
+| LSN-009 一个计算单元服务很多神经元 | time multiplexing；memory/address/RAM 为支持术语 | RMD-006/007 |
+| LSN-010 spike 为什么需要排队 | bounded FIFO 与 backpressure | RMD-007A/009 |
+| LSN-011 不要扫描所有突触 | sparse graph、adjacency list、CSR-like source index | RMD-008 |
+| LSN-012 一个 spike 的完整旅程 | event-driven computation；整合 queue/lookup/weighted event | RMD-007A/010/011 |
 
 ### 平台 4：从仿真到真实 FPGA 与外部内存
 
@@ -267,5 +267,6 @@ Notebook imports formal module for teaching and experiments
 - Learning Architecture：已定义并完成首次教学审计。
 - LSN-001~004：进入“教材化”修订，要求术语首次展开、工程 ID 后置、叙事先于代码。
 - LSN-005~008：第二组双语 Notebook 已建立；教学 RTL 放在 `rtl/learning/`，不替代正式 `MOD-003`。
-- LSN-009 之后：已规划概念顺序，尚未创建正式 Notebook。
+- LSN-009~012：第三组双语 Notebook 已建立；先用小规模 Python event-machine 实验讲清 time multiplexing、FIFO/backpressure、sparse lookup 与 event-driven causal chain，不宣称 MOD-004~009 已完成。
+- LSN-013 之后：已规划概念顺序，尚未创建正式 Notebook。
 - 第一项正式工程实现仍为 `RMD-001`，尚未声明完成。

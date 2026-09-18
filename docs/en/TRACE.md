@@ -32,6 +32,10 @@ Link user needs → functional requirements → design parameters → teaching a
 | LSN-006 | Understand RTL/HDL/SystemVerilog/module/port | PFR1; prepares FR2/DP2 | teaching RTL simulation + Human Check | prepares RMD-004 | `lessons/en/06_what_is_rtl.ipynb` |
 | LSN-007 | Known neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | Python oracle + RTL review | RMD-004 teaching precursor | `lessons/en/07_first_rtl_neuron.ipynb` |
 | LSN-008 | Verify RTL with testbench/waveform/simulation | PFR4/PDP4 | self-checking testbench + explanation | RMD-005/005A | `lessons/en/08_testbench_waveform_simulation.ipynb` |
+| LSN-009 | Understand how one physical engine time-multiplexes many virtual neuron states | FR3/DP3 + PFR1 | `check_lesson09.py` + Human Check | RMD-006/007 teaching precursor | `lessons/en/09_time_multiplex_many_neurons.ipynb` |
+| LSN-010 | Understand bounded-FIFO ordering and backpressure | FR4/DP4 + PFR4 | `check_lesson10.py`; prepares T-007/008 | RMD-007A/009 teaching precursor | `lessons/en/10_spike_fifo_backpressure.ipynb` |
+| LSN-011 | Locate exact real synapse ranges with a sparse source index | FR4/DP4 + PFR4 | `check_lesson11.py`; prepares T-009 | RMD-008 | `lessons/en/11_sparse_synapse_lookup.ipynb` |
+| LSN-012 | Compose queue → lookup → weighted event → target update | FR4/FR5 + DP4/DP5 + PFR4 | `check_lesson12.py`; prepares T-010~013 | RMD-007A/010/011 teaching integration | `lessons/en/12_one_spike_journey.ipynb` |
 
 Principle: Notebooks may prototype and demonstrate, but formal algorithms, RTL, interfaces, and oracles remain authoritative in `python/`, `rtl/`, MDD, TDD, and other engineering sources.
 
@@ -120,6 +124,7 @@ Change routing:
 - LEARNING_PATH: initialized bilingually
 - LSN-001~004: first bilingual executable lesson block established
 - LSN-005~008: second bilingual lesson block established; `rtl/learning/` and `tb/learning/` do not declare MOD-003 complete
+- LSN-009~012: third bilingual lesson block established; Python teaching models do not declare MOD-004~009 complete
 - TRACE: synchronized across engineering and teaching paths
 - First formal implementation slice: not started
 

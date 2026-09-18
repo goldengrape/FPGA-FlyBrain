@@ -76,6 +76,20 @@ Reference / 备查：
 This sequencing follows the **Learning Independence Axiom**: clocks, Boolean logic, HDL syntax, RTL structure, and verification are introduced separately.
 
 
+
+## Third learning block / 第三组课程
+
+| ID | 中文 | English | Practice / 检查 | Primary concept / 主要概念 | Engineering mapping |
+|---|---|---|---|---|---|
+| LSN-009 | [一个计算单元服务很多神经元](zh/09_time_multiplex_many_neurons.ipynb) | [One compute unit serves many neurons](en/09_time_multiplex_many_neurons.ipynb) | `lesson09_time_multiplexing.py` + pytest | time multiplexing | RMD-006/007 precursor |
+| LSN-010 | [spike 为什么需要排队](zh/10_spike_fifo_backpressure.ipynb) | [Why spikes need a queue](en/10_spike_fifo_backpressure.ipynb) | `lesson10_fifo.py` + pytest | bounded FIFO + backpressure | RMD-007A/009 precursor |
+| LSN-011 | [不要扫描所有突触](zh/11_sparse_synapse_lookup.ipynb) | [Do not scan every synapse](en/11_sparse_synapse_lookup.ipynb) | `lesson11_sparse_graph.py` + pytest | sparse adjacency / CSR-like indexing | RMD-008 |
+| LSN-012 | [一个 spike 的完整旅程](zh/12_one_spike_journey.ipynb) | [The complete journey of one spike](en/12_one_spike_journey.ipynb) | `lesson12_event_journey.py` + pytest | event-driven causal chain | RMD-007A/010/011 |
+
+These lessons use small Python models to teach architecture semantics before formalizing `MOD-004~009` in RTL. They align dataflow and test intent with MDD/TDD without declaring those formal modules complete.
+
+这四课先用小规模 Python 模型讲清架构语义，再进入 `MOD-004~009` 的正式 RTL。课程会对齐 MDD/TDD 中的数据流与测试意图，但不宣称这些正式模块已经完成。
+
 ## RTL learning checks / RTL 教学检查
 
 After installing an HDL toolchain that provides Icarus Verilog, Verilator, and Yosys, run the complete teaching-RTL check with:
