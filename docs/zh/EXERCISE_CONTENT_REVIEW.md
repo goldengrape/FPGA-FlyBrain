@@ -58,3 +58,54 @@ LSN-003 只需结构化整理，不需要重写核心任务。
 ## 7. 完成标准
 
 修订后的每份 Exercise Notebook 应满足：单独打开即可理解为什么做；至少有一个写代码前的手算、预测或 trace；例子不复用 grader 隐藏向量；TODO 只考本课核心概念；不直接展示 assert 或测试向量；Human Check 紧贴学生刚写的实现；不新增 grader 语义；中英文结构与要求同步。
+
+## 8. 第二轮纵向审稿：难度曲线与重复度
+
+### 8.1 难度曲线
+
+作业难度不需要单调增加。当前更合理的曲线是：
+
+| Lesson | 主要负担 | 相对难度 | 角色 |
+|---|---|---:|---|
+| 01 | 一步 LIF 算术 + threshold/reset | 低 | 起步 |
+| 02 | 数值编码、rounding、saturation | 中 | 第一次数值工程 |
+| 03 | 设计 distinguishing probe | 中高 | 从实现转向验证思维 |
+| 04 | state / next-state / clock 分层 | 中高 | 第一次硬件时序思维 |
+| 05 | truth table 与组合逻辑 | 低~中 | **有意的巩固谷**，为 RTL 腾出认知空间 |
+| 06~08 | RTL / SystemVerilog / simulation | 持续上升 | 不属于 Python 作业册，但承担主要语法与验证负担 |
+| 09 | time multiplexing / addressed state | 中 | 从 RTL 切回架构抽象的缓冲课 |
+| 10 | bounded FIFO + ownership/backpressure | 中 | 事件运输语义 |
+| 11 | sparse packing + lookup | 中高~高 | 当前最大算法跳级点 |
+| 12 | 多数据结构端到端整合 | 高（概念） | 集成课，代码量不必比 11 更大 |
+
+因此 LSN-005 和 LSN-009 比前一课“代码更容易”并不是问题。它们是有意降低语法/算法负担，让注意力转向新的硬件或架构概念。
+
+### 8.2 Human Check 重复度
+
+第二轮发现，部分 Human Check 虽然已经指向学生实现，但仍与 lesson 的 Human Check / Exit Ticket 高度重复。
+
+修订原则：
+
+- lesson Human Check：回答“概念是什么、为什么重要”；
+- exercise Human Check：回答“我的实现中哪一段体现这个概念、如果写错会出现什么症状、怎样定位”。
+
+重点调整 LSN-002、003、005、009、011。
+
+### 8.3 LSN-011 的脚手架边界
+
+LSN-011 可以提供“实现规划”，例如提醒学生最终需要完成：
+
+1. 为每个 source 确定自己的记录组；
+2. 按 source 顺序形成 contiguous records；
+3. 在每组开始时记录 start，并记录 count；
+4. runtime lookup 只依赖 start/count。
+
+这属于数据布局的设计分解，不直接给出 Python 语句，也不泄露 grader 向量。它能降低不必要的算法跳级，同时保留核心思考。
+
+### 8.4 第二轮修订目标
+
+- 不提高所有作业的代码难度；
+- 保留 05、09 的巩固作用；
+- 把 Human Check 从知识复述改成实现诊断；
+- 为 11 增加有限脚手架；
+- 不修改 grader 语义和测试向量。
