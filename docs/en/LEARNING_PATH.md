@@ -197,10 +197,10 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 
 | Planned lesson | First-use concepts | Engineering mapping |
 |---|---|---|
-| LSN-009 One engine, many neurons | memory, address, RAM, time multiplexing | RMD-006/007 |
-| LSN-010 Why spikes need a queue | event, queue, FIFO, backpressure | RMD-007A/009 |
-| LSN-011 Do not scan every synapse | sparse graph, adjacency list, CSR | RMD-008 |
-| LSN-012 The full journey of one spike | router, synapse stream, event-driven computation | RMD-010/011 |
+| LSN-009 One compute unit serves many neurons | time multiplexing; memory/address/RAM as supporting terms | RMD-006/007 |
+| LSN-010 Why spikes need a queue | bounded FIFO and backpressure | RMD-007A/009 |
+| LSN-011 Do not scan every synapse | sparse graph, adjacency list, CSR-like source index | RMD-008 |
+| LSN-012 The complete journey of one spike | event-driven computation; integrate queue/lookup/weighted events | RMD-007A/010/011 |
 
 ### Platform 4: from simulation to real FPGA and external memory
 
@@ -267,5 +267,6 @@ Notebook imports formal module for teaching and experiments
 - Learning Architecture: defined and through its first curriculum audit.
 - LSN-001~004: being revised from experiment skeletons into textbook-quality executable lessons, with first-use terminology and project IDs moved to the end.
 - LSN-005~008: the second bilingual lesson block is established; teaching RTL lives in `rtl/learning/` and does not replace formal `MOD-003`.
-- LSN-009 onward: concept sequence planned; formal Notebooks not yet created.
+- LSN-009~012: the third bilingual Notebook block is established; small Python event-machine experiments teach time multiplexing, FIFO/backpressure, sparse lookup, and the event-driven causal chain without declaring MOD-004~009 complete.
+- LSN-013 onward: concept sequence planned; formal Notebooks not yet created.
 - First formal implementation remains `RMD-001`; it is not yet declared complete.
