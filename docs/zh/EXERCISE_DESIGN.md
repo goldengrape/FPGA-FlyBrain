@@ -1,0 +1,218 @@
+# 作业 Notebook 设计规范
+
+## 1. 目的
+
+FPGA FlyBrain 的作业不是裸代码填空，而是一组可独立阅读、可立即运行、可自我检查的电子作业册。
+
+课程 Notebook 负责讲授概念；作业 Notebook 负责让学习者用代码、手算、预测和解释把概念转化为可执行能力。学习者不应为了弄清“题目是什么、为什么要做、做到什么算完成”而在 README、starter Python、测试文件之间来回跳转。
+
+本规范主要适用于 Python 作业。RTL 课程沿用相同的教学结构，但检查方式改为编译、仿真、lint 和波形观察。
+
+## 2. 核心原则
+
+每份作业 Notebook 必须做到：
+
+1. **可以独立阅读。** 单独打开 Notebook 时，学习者知道这份作业对应哪一课、练什么、为什么练、需要完成什么。
+2. **题目先于代码。** 先用 Markdown 写清背景、任务和约束，再出现 TODO。
+3. **不把测试写成提示。** 学生可见 Notebook 中不直接展示 assert、具体测试向量或完整判题逻辑。
+4. **即时反馈。** 学习者完成一个小任务后，可以在当前 Jupyter kernel 中立即运行检查。
+5. **检查与解释分开。** 自动检查只判断可执行行为；Human Check 判断学习者能否解释概念、边界和结果。
+6. **保持接口稳定。** 函数名、参数、返回值是课程规范的一部分；除非作业明确要求，不应由学习者任意修改。
+7. **测试公开与否不是安全边界。** 本项目是开源自学课程。grader 放在仓库中，是为了避免测试实现直接出现在作业页面并无意中提示答案，而不是为了防作弊。
+
+## 3. 学生看到的 Notebook 结构
+
+Python 作业统一采用以下顺序：
+
+1. 标题与对应课程
+2. 为什么做这道题
+3. 你将完成什么
+4. 规则与约束
+5. 手算 / 预测 / 小例子
+6. 学生代码单元
+7. 检查你的实现
+8. Human Check
+9. 可选延伸实验
+
+不是每一题都必须机械出现全部九个标题，但信息必须完整，并保持“解释 → 实现 → 检查 → 再解释”的顺序。
+
+### 3.1 学生代码单元
+
+TODO 区域应尽量短，只包含本课真正要学生完成的部分。不要把大量样板代码、I/O、测试框架或课程基础设施混入 TODO。
+
+示例：
+
+~~~python
+def threshold_reached(value: int, threshold: int) -> bool:
+    # YOUR CODE STARTS HERE
+    raise NotImplementedError("TODO")
+    # YOUR CODE ENDS HERE
+~~~
+
+### 3.2 检查单元
+
+Notebook 不直接包含 pytest 测试函数。它只导入外部 grader，并把当前 kernel 中的学生函数传入。
+
+示意：
+
+~~~python
+from exercises.grader.lesson05 import check
+
+check(
+    gate_not=gate_not,
+    gate_and=gate_and,
+    gate_or=gate_or,
+    threshold_reached=threshold_reached,
+    spike_enabled=spike_enabled,
+)
+~~~
+
+这样 grader 检查的就是学习者刚刚运行过的当前实现，不要求把 Notebook 另存为 Python 模块，也不需要重新启动 kernel。
+
+## 4. grader 设计
+
+grader 位于：
+
+~~~text
+exercises/
+├── grader/
+│   ├── __init__.py
+│   ├── lesson01.py
+│   ├── ...
+│   └── lesson12.py
+└── zh/
+    └── ...
+~~~
+
+每课 grader 对外暴露一个简单的 check(...) 接口。
+
+### 4.1 grader 的职责
+
+grader 应：
+
+- 接收当前 Notebook 中定义的 callable 或必要对象；
+- 运行一组足以判定课程要求的检查；
+- 捕获内部断言和异常；
+- 返回或打印适合学生阅读的简洁结果；
+- 不在失败信息中泄露具体测试向量、期望值或内部 assert 表达式。
+
+推荐输出：
+
+~~~text
+Lesson 05 checks
+
+✓ Boolean logic
+✓ Threshold behavior
+✗ Enable behavior
+
+7 / 8 checks passed
+~~~
+
+必要时可以给概念级提示，例如“检查 enable 为关闭状态时的行为”，但不要直接打印触发失败的输入和期望输出。
+
+### 4.2 grader 不负责什么
+
+grader 不负责教授题目、不在 Notebook 中展示完整测试、不证明学习者真正理解了概念，也不试图阻止学习者主动打开 grader 源码。
+
+题目和解释属于 Notebook；理解由 Human Check 补充。
+
+## 5. grader 自身如何测试
+
+grader 是课程基础设施，因此它本身必须被普通 pytest 测试。
+
+维护者测试继续放在 exercises/checks/。这些测试至少验证两类情况：
+
+1. 正确的 reference implementation 应通过；
+2. 典型错误实现应被 grader 捕获，例如 > 代替 >=、FIFO 满时覆盖旧事件、错误的 sparse range 等。
+
+这层 pytest 面向课程维护，不直接出现在学生作业页面。
+
+当前阶段不引入 nbgrader，也不引入 testbook。只有当项目出现明确的教师发布、学生提交或完整 Notebook 外部执行需求时再评估。
+
+## 6. Human Check
+
+每份作业至少包含一个不能只靠“测试通过”回答的问题，例如：
+
+- 手算一个状态更新；
+- 解释一个边界条件为什么重要；
+- 说明某个数据结构保存的是什么，而不是什么；
+- 预测修改参数后的行为，再运行验证；
+- 指出一个 cycle 中旧状态、candidate 和保存后状态的区别。
+
+AI 可以用于解释报错、比较实现或生成额外练习，但 Human Check 应尽量由学习者先独立作答。
+
+## 7. 文件布局
+
+Python 作业迁移为：
+
+~~~text
+exercises/
+├── README.md
+├── README.zh-CN.md
+├── grader/
+│   ├── __init__.py
+│   ├── lesson01.py
+│   ├── lesson02.py
+│   ├── lesson03.py
+│   ├── lesson04.py
+│   ├── lesson05.py
+│   ├── lesson09.py
+│   ├── lesson10.py
+│   ├── lesson11.py
+│   └── lesson12.py
+├── checks/
+│   └── ...
+├── en/
+│   └── ...
+└── zh/
+    ├── 01_membrane_to_lif.ipynb
+    ├── 02_float_to_fixed.ipynb
+    ├── 03_freeze_neuron_semantics.ipynb
+    ├── 04_state_and_clock.ipynb
+    ├── 05_logic_building_blocks.ipynb
+    ├── 09_time_multiplex_many_neurons.ipynb
+    ├── 10_spike_fifo_backpressure.ipynb
+    ├── 11_sparse_synapse_lookup.ipynb
+    └── 12_one_spike_journey.ipynb
+~~~
+
+作业文件名尽量与课程 Notebook 对应，使学习者可以自然地在 lessons/zh/ 与 exercises/zh/ 之间切换。
+
+第 6–8 课主要练习 SystemVerilog、testbench 和 waveform，暂不强行为 Python 作业 Notebook；后续按同样的作业册原则设计对应 HDL 实验。
+
+## 8. 完成标准
+
+一次 Python 作业重构只有在以下条件同时满足时才完成：
+
+- Notebook 单独打开可理解；
+- TODO 保留且没有答案泄露；
+- Notebook 中没有直接显示 assert 或完整测试向量；
+- grader 可以检查当前 kernel 中的实现；
+- grader 失败信息不会直接给出答案；
+- grader 有维护者 pytest 覆盖；
+- Human Check 与课程主要概念一致；
+- README 中的运行说明和路径已经更新；
+- 中英文版本保持相同结构和要求。
+
+## 9. 当前决策
+
+截至 2026-09-18，项目采用：
+
+~~~text
+Lesson Notebook
+    → 教材
+
+Exercise Notebook
+    → 正式作业册
+
+external grader
+    → 学生即时自动检查，不在 Notebook 展示 assert
+
+pytest
+    → 维护者验证 grader 与课程规则
+
+Human Check
+    → 理解与解释
+~~~
+
+当前不引入 nbgrader、testbook，也不采用以 Notebook 输出快照为核心的判题方案。这些工具只有在出现具体需求时再引入，而不是作为当前作业系统的前置复杂度。
