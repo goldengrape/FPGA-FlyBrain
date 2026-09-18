@@ -189,8 +189,8 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 | Planned lesson | First-use concepts | Engineering mapping |
 |---|---|---|
 | LSN-005 Digital logic building blocks | bit, Boolean logic, AND/OR/NOT, comparator | RMD-003A |
-| LSN-006 What is RTL? | Register-Transfer Level, HDL, SystemVerilog, module/port | RMD-004 |
-| LSN-007 First RTL neuron | combinational path, sequential update, `always_comb`/`always_ff` | RMD-004 |
+| LSN-006 What is RTL? | Register-Transfer Level, HDL, SystemVerilog, module/port | prepares RMD-004 |
+| LSN-007 First RTL neuron | combinational path, sequential update, `always_comb`/`always_ff` | RMD-004 teaching precursor |
 | LSN-008 How do we know hardware is correct? | testbench, waveform, simulation | RMD-005/005A |
 
 ### Platform 3: many neurons become an event computer
@@ -266,5 +266,6 @@ Notebook imports formal module for teaching and experiments
 
 - Learning Architecture: defined and through its first curriculum audit.
 - LSN-001~004: being revised from experiment skeletons into textbook-quality executable lessons, with first-use terminology and project IDs moved to the end.
-- LSN-005 onward: concept sequence planned; formal Notebooks not yet created.
+- LSN-005~008: the second bilingual lesson block is established; teaching RTL lives in `rtl/learning/` and does not replace formal `MOD-003`.
+- LSN-009 onward: concept sequence planned; formal Notebooks not yet created.
 - First formal implementation remains `RMD-001`; it is not yet declared complete.

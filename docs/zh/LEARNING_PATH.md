@@ -189,8 +189,8 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 | 计划 Lesson | 第一次重点解释 | 工程映射 |
 |---|---|---|
 | LSN-005 数字逻辑积木 | bit、Boolean logic、AND/OR/NOT、comparator | RMD-003A |
-| LSN-006 什么是 RTL | Register-Transfer Level、HDL、SystemVerilog、module/port | RMD-004 |
-| LSN-007 第一个 RTL 神经元 | combinational path、sequential update、`always_comb`/`always_ff` | RMD-004 |
+| LSN-006 什么是 RTL | Register-Transfer Level、HDL、SystemVerilog、module/port | 准备 RMD-004 |
+| LSN-007 第一个 RTL 神经元 | combinational path、sequential update、`always_comb`/`always_ff` | RMD-004 教学前置 |
 | LSN-008 我们怎么知道硬件是对的 | testbench、waveform、simulation | RMD-005/005A |
 
 ### 平台 3：很多神经元如何成为事件计算机
@@ -266,5 +266,6 @@ Notebook imports formal module for teaching and experiments
 
 - Learning Architecture：已定义并完成首次教学审计。
 - LSN-001~004：进入“教材化”修订，要求术语首次展开、工程 ID 后置、叙事先于代码。
-- LSN-005 之后：已规划概念顺序，尚未创建正式 Notebook。
+- LSN-005~008：第二组双语 Notebook 已建立；教学 RTL 放在 `rtl/learning/`，不替代正式 `MOD-003`。
+- LSN-009 之后：已规划概念顺序，尚未创建正式 Notebook。
 - 第一项正式工程实现仍为 `RMD-001`，尚未声明完成。

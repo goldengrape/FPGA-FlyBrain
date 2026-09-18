@@ -76,6 +76,10 @@ The first executable lessons are in [`lessons/`](lessons/README.md):
 2. [How does digital hardware store 0.22?](lessons/en/02_float_to_fixed.ipynb)
 3. [Why is “we both use LIF” not enough?](lessons/en/03_freeze_neuron_semantics.ipynb)
 4. [How can a circuit remember the previous membrane potential?](lessons/en/04_state_and_clock.ipynb)
+5. [What are the basic logical building blocks of a digital circuit?](lessons/en/05_logic_building_blocks.ipynb)
+6. [What is RTL?](lessons/en/06_what_is_rtl.ipynb)
+7. [The first RTL neuron](lessons/en/07_first_rtl_neuron.ipynb)
+8. [How do we know the hardware is correct?](lessons/en/08_testbench_waveform_simulation.ipynb)
 
 ### Public NotebookLM course companion
 

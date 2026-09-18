@@ -28,6 +28,10 @@ Link user needs → functional requirements → design parameters → teaching a
 | LSN-002 | Understand how fixed-point/quantization changes behavior | FR1/FR2 + PFR4 | T-005~006 + Human Check | RMD-002 | `lessons/en/02_float_to_fixed.ipynb` |
 | LSN-003 | Freeze testable neuron semantics | PFR3/PFR4 | semantic ambiguity tests + spec checkpoint | RMD-003 | `lessons/en/03_freeze_neuron_semantics.ipynb` |
 | LSN-004 | Build intuition for registers, clocks, combinational and sequential logic | PFR1; prepares FR2/DP2 | explanation checkpoint | RMD-003A | `lessons/en/04_state_and_clock.ipynb` |
+| LSN-005 | Build minimal Boolean decisions | PFR1; prepares FR2/DP2 | `check_lesson05.py` + Human Check | RMD-003A | `lessons/en/05_logic_building_blocks.ipynb` |
+| LSN-006 | Understand RTL/HDL/SystemVerilog/module/port | PFR1; prepares FR2/DP2 | teaching RTL simulation + Human Check | prepares RMD-004 | `lessons/en/06_what_is_rtl.ipynb` |
+| LSN-007 | Known neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | Python oracle + RTL review | RMD-004 teaching precursor | `lessons/en/07_first_rtl_neuron.ipynb` |
+| LSN-008 | Verify RTL with testbench/waveform/simulation | PFR4/PDP4 | self-checking testbench + explanation | RMD-005/005A | `lessons/en/08_testbench_waveform_simulation.ipynb` |
 
 Principle: Notebooks may prototype and demonstrate, but formal algorithms, RTL, interfaces, and oracles remain authoritative in `python/`, `rtl/`, MDD, TDD, and other engineering sources.
 
@@ -36,7 +40,7 @@ Principle: Notebooks may prototype and demonstrate, but formal algorithms, RTL, 
 Requirement: the neuron accumulates input and emits a spike on threshold crossing.  
 FR: FR1/FR2  
 DP: DP1/DP2  
-Teaching: LSN-001~004  
+Teaching: LSN-001~008  
 Modules: MOD-001, MOD-002, MOD-003  
 Tests: T-001~T-006  
 Tasks: RMD-001, 002, 003, 003A, 004, 005, 005A
@@ -114,7 +118,8 @@ Change routing:
 - TDD: initialized
 - RMD: revised with four bridge zones
 - LEARNING_PATH: initialized bilingually
-- LSN-001~004: first bilingual executable Notebook versions established
+- LSN-001~004: first bilingual executable lesson block established
+- LSN-005~008: second bilingual lesson block established; `rtl/learning/` and `tb/learning/` do not declare MOD-003 complete
 - TRACE: synchronized across engineering and teaching paths
 - First formal implementation slice: not started
 

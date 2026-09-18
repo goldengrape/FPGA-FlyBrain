@@ -76,6 +76,10 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 2. [数字硬件怎样保存 0.22？](lessons/zh/02_float_to_fixed.ipynb)
 3. [“都叫 LIF”为什么还不够？](lessons/zh/03_freeze_neuron_semantics.ipynb)
 4. [电路怎样记住上一时刻的膜电位？](lessons/zh/04_state_and_clock.ipynb)
+5. [数字电路有哪些最基本的逻辑积木？](lessons/zh/05_logic_building_blocks.ipynb)
+6. [什么是 RTL？](lessons/zh/06_what_is_rtl.ipynb)
+7. [第一个 RTL 神经元](lessons/zh/07_first_rtl_neuron.ipynb)
+8. [我们怎么知道硬件是对的？](lessons/zh/08_testbench_waveform_simulation.ipynb)
 
 ### NotebookLM 公开课程笔记本
 

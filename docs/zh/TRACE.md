@@ -28,6 +28,10 @@
 | LSN-002 | 理解 fixed-point/quantization 对行为的影响 | FR1/FR2 + PFR4 | T-005~006 + Human Check | RMD-002 | `lessons/zh/02_float_to_fixed.ipynb` |
 | LSN-003 | 冻结可测试的 neuron semantics | PFR3/PFR4 | semantic ambiguity tests + spec checkpoint | RMD-003 | `lessons/zh/03_freeze_neuron_semantics.ipynb` |
 | LSN-004 | 建立 register/clock/combinational/sequential 直觉 | PFR1；准备 FR2/DP2 | explanation checkpoint | RMD-003A | `lessons/zh/04_state_and_clock.ipynb` |
+| LSN-005 | Boolean logic 最小组合判断 | PFR1；准备 FR2/DP2 | `check_lesson05.py` + Human Check | RMD-003A | `lessons/zh/05_logic_building_blocks.ipynb` |
+| LSN-006 | 理解 RTL/HDL/SystemVerilog/module/port | PFR1；准备 FR2/DP2 | teaching RTL simulation + Human Check | 准备 RMD-004 | `lessons/zh/06_what_is_rtl.ipynb` |
+| LSN-007 | 已知 neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | Python oracle + RTL review | RMD-004 教学前置 | `lessons/zh/07_first_rtl_neuron.ipynb` |
+| LSN-008 | testbench/waveform/simulation 验证 RTL | PFR4/PDP4 | self-checking testbench + explanation | RMD-005/005A | `lessons/zh/08_testbench_waveform_simulation.ipynb` |
 
 原则：Notebook 可以 prototype/展示，但正式算法、RTL、接口与 oracle 的事实来源仍在 `python/`、`rtl/`、MDD、TDD 等正式工程位置。
 
@@ -36,7 +40,7 @@
 需求：神经元能累积输入并跨阈值产生 spike。  
 FR：FR1/FR2  
 DP：DP1/DP2  
-教学：LSN-001~004  
+教学：LSN-001~008  
 模块：MOD-001, MOD-002, MOD-003  
 测试：T-001~T-006  
 任务：RMD-001, 002, 003, 003A, 004, 005, 005A
@@ -114,7 +118,8 @@ DP：PDP1
 - TDD：initialized
 - RMD：revised with four bridge zones
 - LEARNING_PATH：initialized bilingually
-- LSN-001~004：第一版双语可执行 Notebook 已建立
+- LSN-001~004：第一组双语可执行 Notebook 已建立
+- LSN-005~008：第二组双语课程已建立；`rtl/learning/` 与 `tb/learning/` 不代表 MOD-003 已完成
 - TRACE：已同步工程路径与教学路径
 - First formal implementation slice：not started
 

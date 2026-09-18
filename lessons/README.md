@@ -62,13 +62,15 @@ Reference / 备查：
 | LSN-003 | [“都叫 LIF”为什么还不够？](zh/03_freeze_neuron_semantics.ipynb) | [Why is “we both use LIF” not enough?](en/03_freeze_neuron_semantics.ipynb) | `exercises/lesson03_semantics.py` | specification & semantics | RMD-003 |
 | LSN-004 | [电路怎样记住上一时刻的膜电位？](zh/04_state_and_clock.ipynb) | [How can a circuit remember the previous membrane potential?](en/04_state_and_clock.ipynb) | `exercises/lesson04_state_clock.py` | digital state & clock | RMD-003A |
 
-## Planned next learning block / 下一组课程规划
+## Second learning block / 第二组课程
 
-The next lessons are intentionally smaller than a traditional “intro to HDL” jump / 下一组继续小步前进：
+| ID | 中文 | English | Practice / 检查 | Primary concept / 主要概念 | Engineering mapping |
+|---|---|---|---|---|---|
+| LSN-005 | [数字逻辑积木](zh/05_logic_building_blocks.ipynb) | [Digital logic building blocks](en/05_logic_building_blocks.ipynb) | `lesson05_logic.py` + pytest | Boolean logic | RMD-003A |
+| LSN-006 | [什么是 RTL？](zh/06_what_is_rtl.ipynb) | [What is RTL?](en/06_what_is_rtl.ipynb) | accumulator self-checking testbench | RTL / HDL / module / port | prepares RMD-004 |
+| LSN-007 | [第一个 RTL 神经元](zh/07_first_rtl_neuron.ipynb) | [The first RTL neuron](en/07_first_rtl_neuron.ipynb) | Python oracle + RTL review | combinational + sequential | RMD-004 teaching precursor |
+| LSN-008 | [我们怎么知道硬件是对的？](zh/08_testbench_waveform_simulation.ipynb) | [How do we know hardware is correct?](en/08_testbench_waveform_simulation.ipynb) | self-checking testbench + waveform | simulation/testbench | RMD-005/005A |
 
-- `LSN-005` — digital logic building blocks / 数字逻辑积木：bit、Boolean logic、AND/OR/NOT、comparator
-- `LSN-006` — what is Register-Transfer Level (RTL)? / 什么是寄存器传输级：HDL、SystemVerilog、module/port
-- `LSN-007` — first RTL neuron / 第一个 RTL 神经元
-- `LSN-008` — testbench, waveform, and simulation / 测试平台、波形与仿真
+`rtl/learning/` and `tb/learning/` are teaching artifacts. They do **not** declare formal `MOD-003 lif_neuron_engine` complete.
 
-This sequencing follows the project's **Learning Independence Axiom**: do not require a beginner to learn clocks, SystemVerilog syntax, RTL semantics, and neuron hardware all at once.
+This sequencing follows the **Learning Independence Axiom**: clocks, Boolean logic, HDL syntax, RTL structure, and verification are introduced separately.
