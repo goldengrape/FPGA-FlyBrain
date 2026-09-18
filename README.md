@@ -107,6 +107,8 @@ The first executable lessons are in [`lessons/`](lessons/README.md):
 11. [Why not scan every synapse after every spike?](lessons/en/11_sparse_synapse_lookup.ipynb)
 12. [The complete journey of one spike](lessons/en/12_one_spike_journey.ipynb)
 
+The corresponding standalone exercise workbooks are under [`exercises/`](exercises/README.md). Python exercises use Jupyter Notebooks with external graders; grading asserts and concrete test vectors are not displayed directly in the workbook.
+
 ### Public NotebookLM course companion
 
 If you prefer learning through narrated explanations, Q&A, and quick review, the project also has a public NotebookLM companion:
