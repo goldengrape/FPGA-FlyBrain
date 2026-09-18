@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -44,7 +44,15 @@ jobs:
             lessons/zh/01_membrane_to_lif.ipynb \
             lessons/zh/02_float_to_fixed.ipynb \
             lessons/zh/03_freeze_neuron_semantics.ipynb \
-            lessons/zh/04_state_and_clock.ipynb
+            lessons/zh/04_state_and_clock.ipynb \
+            lessons/zh/05_logic_building_blocks.ipynb \
+            lessons/zh/06_what_is_rtl.ipynb \
+            lessons/zh/07_first_rtl_neuron.ipynb \
+            lessons/zh/08_testbench_waveform_simulation.ipynb \
+            lessons/zh/09_time_multiplex_many_neurons.ipynb \
+            lessons/zh/10_spike_fifo_backpressure.ipynb \
+            lessons/zh/11_sparse_synapse_lookup.ipynb \
+            lessons/zh/12_one_spike_journey.ipynb
           do
             uv run jupyter nbconvert \
               --to webpdf \
@@ -74,6 +82,68 @@ jobs:
               for page in reader.pages:
                   writer.add_page(page)
           combined = out / "FPGA-FlyBrain-lessons-01-04-zh.pdf"
+          with combined.open("wb") as f:
+              writer.write(f)
+          print(f"Wrote {combined}")
+          PY
+
+      - name: Merge lessons 05-12
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader, PdfWriter
+
+          out = Path("dist/course-pdfs")
+          names = [
+              "05_logic_building_blocks.pdf",
+              "06_what_is_rtl.pdf",
+              "07_first_rtl_neuron.pdf",
+              "08_testbench_waveform_simulation.pdf",
+              "09_time_multiplex_many_neurons.pdf",
+              "10_spike_fifo_backpressure.pdf",
+              "11_sparse_synapse_lookup.pdf",
+              "12_one_spike_journey.pdf",
+          ]
+          writer = PdfWriter()
+          for name in names:
+              path = out / name
+              reader = PdfReader(str(path))
+              for page in reader.pages:
+                  writer.add_page(page)
+          combined = out / "FPGA-FlyBrain-lessons-05-12-zh.pdf"
+          with combined.open("wb") as f:
+              writer.write(f)
+          print(f"Wrote {combined}")
+          PY
+
+      - name: Merge lessons 01-12
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader, PdfWriter
+
+          out = Path("dist/course-pdfs")
+          names = [
+              "01_membrane_to_lif.pdf",
+              "02_float_to_fixed.pdf",
+              "03_freeze_neuron_semantics.pdf",
+              "04_state_and_clock.pdf",
+              "05_logic_building_blocks.pdf",
+              "06_what_is_rtl.pdf",
+              "07_first_rtl_neuron.pdf",
+              "08_testbench_waveform_simulation.pdf",
+              "09_time_multiplex_many_neurons.pdf",
+              "10_spike_fifo_backpressure.pdf",
+              "11_sparse_synapse_lookup.pdf",
+              "12_one_spike_journey.pdf",
+          ]
+          writer = PdfWriter()
+          for name in names:
+              path = out / name
+              reader = PdfReader(str(path))
+              for page in reader.pages:
+                  writer.add_page(page)
+          combined = out / "FPGA-FlyBrain-lessons-01-12-zh.pdf"
           with combined.open("wb") as f:
               writer.write(f)
           print(f"Wrote {combined}")
