@@ -52,3 +52,54 @@ First revise LSN-001, 002, 004, and 005. Then revise LSN-009~012 mainly by addin
 ## 7. Definition of done
 
 Each revised Exercise Notebook should stand on its own, include a pre-code calculation/prediction/trace, avoid hidden grader vectors, keep TODOs focused, keep asserts out of the notebook, tie Human Checks to the implementation, preserve grader semantics, and keep Chinese/English structure synchronized.
+
+## 8. Second longitudinal review: difficulty curve and repetition
+
+### 8.1 Difficulty curve
+
+Exercise difficulty does not need to increase monotonically.
+
+| Lesson | Main load | Relative difficulty | Role |
+|---|---|---:|---|
+| 01 | One-step LIF arithmetic + threshold/reset | Low | Entry |
+| 02 | Numeric encoding, rounding, saturation | Medium | First numerical-engineering task |
+| 03 | Designing distinguishing probes | Medium-high | Shift from implementation to verification thinking |
+| 04 | State / next-state / clock separation | Medium-high | First hardware-timing mindset |
+| 05 | Truth tables and combinational logic | Low-medium | **Intentional consolidation valley** before RTL |
+| 06~08 | RTL / SystemVerilog / simulation | Rising | Main syntax and verification load outside the Python workbooks |
+| 09 | Time multiplexing / addressed state | Medium | Architecture reset after the RTL block |
+| 10 | Bounded FIFO + ownership/backpressure | Medium | Event-transport semantics |
+| 11 | Sparse packing + lookup | Medium-high to high | Largest current algorithmic jump |
+| 12 | End-to-end integration of data structures | High conceptually | Integration lesson; code need not exceed Lesson 11 |
+
+The lower code difficulty of Lessons 5 and 9 is therefore intentional rather than a defect.
+
+### 8.2 Human Check repetition
+
+Some Exercise Human Checks still overlap too heavily with lesson Human Checks and Exit Tickets.
+
+Revised distinction:
+
+- lesson Human Check: what the concept means and why it matters;
+- exercise Human Check: where the concept appears in the learner's implementation, what a mistake would look like, and how to diagnose it.
+
+Lessons 2, 3, 5, 9, and 11 receive targeted revisions.
+
+### 8.3 Scaffolding boundary for Lesson 11
+
+Lesson 11 may provide implementation planning without giving Python pseudocode:
+
+1. determine each source's record group;
+2. make records contiguous in source order;
+3. record start and count for each group;
+4. make runtime lookup depend only on start/count.
+
+This reduces an unnecessary algorithmic cliff without exposing grader vectors or a copyable implementation.
+
+### 8.4 Second-pass goals
+
+- do not increase code difficulty everywhere;
+- preserve Lessons 5 and 9 as consolidation steps;
+- shift Human Checks from recall to implementation diagnosis;
+- add bounded scaffolding to Lesson 11;
+- preserve grader semantics and test vectors.
