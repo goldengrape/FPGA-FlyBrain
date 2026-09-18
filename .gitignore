@@ -23,3 +23,8 @@ Untitled*.ipynb
 Thumbs.db
 .vscode/
 .idea/
+
+# HDL simulation/build artifacts
+build/
+*.vcd
+*.vvp

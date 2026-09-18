@@ -1,23 +1,24 @@
-module tutorial_if_neuron #(
-    parameter int WIDTH = 8
-) (
-    input  logic clk,
-    input  logic rst_n,
-    input  logic signed [WIDTH-1:0] input_current,
-    input  logic signed [WIDTH-1:0] threshold,
-    input  logic signed [WIDTH-1:0] reset_value,
-    output logic signed [WIDTH-1:0] membrane_v,
-    output logic spike
+module tutorial_if_neuron (
+    input  logic              clk,
+    input  logic              rst_n,
+    input  logic signed [7:0] input_current,
+    input  logic signed [7:0] threshold,
+    input  logic signed [7:0] reset_value,
+    output logic signed [7:0] membrane_v,
+    output logic              spike
 );
-    logic signed [WIDTH:0] candidate_ext;
-    logic signed [WIDTH-1:0] next_v;
+    logic signed [7:0] candidate;
+    logic signed [7:0] next_v;
     logic spike_next;
 
     always_comb begin
-        candidate_ext = $signed({membrane_v[WIDTH-1], membrane_v})
-                      + $signed({input_current[WIDTH-1], input_current});
-        spike_next = candidate_ext >= $signed({threshold[WIDTH-1], threshold});
-        next_v = spike_next ? reset_value : candidate_ext[WIDTH-1:0];
+        candidate = membrane_v + input_current;
+        spike_next = candidate >= threshold;
+
+        if (spike_next)
+            next_v = reset_value;
+        else
+            next_v = candidate;
     end
 
     always_ff @(posedge clk) begin
