@@ -1,81 +1,88 @@
-# FPGA FlyBrain exercises and checks
+# FPGA FlyBrain Exercise Workbooks
 
-The Python-exercise lessons use one consistent homework pattern: **fixed function signatures + small TODO regions + public pytest checks + a Human Check**.
+[简体中文](README.zh-CN.md)
 
-The purpose is not to test Python cleverness. It is to verify that you can translate the lesson's model rules into a testable function. Keep function names, arguments, and return shapes unchanged unless a lesson explicitly asks otherwise; the interface is part of the specification.
+Python exercises use Jupyter Notebooks. Each workbook should stand on its own: explain why the task exists, what must be completed, and which constraints apply before presenting a small TODO region, an automatic check, and a Human Check.
 
-## Running the checks
+See the full specification: [Exercise Notebook Design](../docs/en/EXERCISE_DESIGN.md).
 
-```bash
+## Student workflow
+
+From the repository root:
+
+~~~bash
 uv sync --group dev
-uv run pytest exercises/checks/check_lesson01.py -q
-```
+uv run jupyter lab
+~~~
 
-The files are intentionally named `check_lessonXX.py` instead of ordinary `test_*.py`. Unfinished student exercises therefore do not get collected by a normal project test run; they run only when explicitly requested.
+Then open the corresponding Notebook under exercises/en/.
 
-The checks are public. Read them. The course treats tests as executable specifications, not as hidden answers.
+The normal flow is:
 
-Passing the automated checks means your code satisfies the behavior covered by the current public tests. It does not by itself demonstrate conceptual understanding. Each lesson also has a Human Check that you should be able to explain in your own words without having AI answer it for you.
+~~~text
+read the task
+  ↓
+predict / hand-calculate
+  ↓
+complete the TODO
+  ↓
+run “Check your implementation”
+  ↓
+revise if needed
+  ↓
+complete the Human Check
+~~~
 
-AI may help explain failures, compare implementations, propose extra tests, or review code. If AI writes a TODO region, you should still complete the Human Check and manually work through at least one test case.
+Student-facing Notebooks **do not directly show grading asserts, concrete grader vectors, or the complete grading logic**. A check cell passes the functions defined in the current Jupyter kernel to the external grader under exercises/grader/.
 
-## Python exercise lessons
+The grader reports conceptual groups rather than failing vectors, for example:
 
-| Lesson | Starter | Check | Main target |
-|---|---|---|---|
-| 01 | `lesson01_lif.py` | `check_lesson01.py` | leak, integration, `>=` threshold, reset |
-| 02 | `lesson02_fixed_point.py` | `check_lesson02.py` | signed range, rounding, quantization, saturation |
-| 03 | `lesson03_semantics.py` | `check_lesson03.py` | frozen semantics and distinguishing probes |
-| 04 | `lesson04_state_clock.py` | `check_lesson04.py` | combinational next-state logic and clocked state |
-| 05 | `lesson05_logic.py` | `check_lesson05.py` | Boolean gates, threshold boundary, enable logic |
-| 09 | `lesson09_time_multiplexing.py` | `check_lesson09.py` | addressed state and round-robin service |
-| 10 | `lesson10_fifo.py` | `check_lesson10.py` | FIFO ordering, full/empty, backpressure |
-| 11 | `lesson11_sparse_graph.py` | `check_lesson11.py` | source index and exact sparse ranges |
-| 12 | `lesson12_event_journey.py` | `check_lesson12.py` | one source spike to weighted target events |
+~~~text
+Lesson 05 checks
 
-Run a selected lesson explicitly, or run the current Python exercise set with:
+✓ Boolean gates
+✓ Threshold behavior
+✗ Enable behavior
 
-```bash
-uv run pytest \
-  exercises/checks/check_lesson01.py \
-  exercises/checks/check_lesson02.py \
-  exercises/checks/check_lesson03.py \
-  exercises/checks/check_lesson04.py \
-  exercises/checks/check_lesson05.py \
-  exercises/checks/check_lesson09.py \
-  exercises/checks/check_lesson10.py \
-  exercises/checks/check_lesson11.py \
-  exercises/checks/check_lesson12.py -q
-```
+2 / 3 groups passed
+~~~
 
-Starter files initially raise `NotImplementedError`, so failures before completing the TODO regions are expected.
+Failure output may indicate which concept to revisit, but it does not print the exact failing input and expected answer.
 
-### Lesson 1
-Implement `leak_step(...)` and `lif_step(...)`. Human Check: manually evaluate `V=-60, V_rest=-70, alpha=0.9, input=11, threshold=-50` and explain why it is a threshold boundary case.
+## Python exercise index
 
-### Lesson 2
-Implement `signed_limits(...)` and `quantize(...)` using Python `round()` and saturation. Human Check: explain the range-versus-precision tradeoff when `total_bits` stays fixed while `frac_bits` increases.
+| Lesson | Exercise Notebook | Main practice |
+|---|---|---|
+| 01 | [One LIF membrane update](en/01_membrane_to_lif.ipynb) | leak, integration, threshold, reset |
+| 02 | [Finite-width values](en/02_float_to_fixed.ipynb) | signed range, rounding, quantization, saturation |
+| 03 | [Explicit LIF specification](en/03_freeze_neuron_semantics.ipynb) | frozen semantics, boundaries, counterexamples |
+| 04 | [Next state and register state](en/04_state_and_clock.ipynb) | combinational next-state, clock edge, state history |
+| 05 | [Logic gates, comparison, and enable](en/05_logic_building_blocks.ipynb) | Boolean logic, threshold, enable |
+| 09 | [One engine serving many states](en/09_time_multiplex_many_neurons.ipynb) | addressed state, round robin |
+| 10 | [Bounded FIFO and backpressure](en/10_spike_fifo_backpressure.ipynb) | FIFO ordering, full/empty, retry |
+| 11 | [Sequential sparse lookup representation](en/11_sparse_synapse_lookup.ipynb) | source index, contiguous records, zero fanout |
+| 12 | [The journey of one source spike](en/12_one_spike_journey.ipynb) | source range, weighted event, target accumulator |
 
-### Lesson 3
-Implement the frozen `lif_step_v0(...)` contract, then construct one case that distinguishes `>=` from `>` and one that distinguishes `alpha * v + current` from `alpha * (v + current)`. The checker validates the property of your cases rather than requiring predetermined numbers.
+Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms and continue to use the RTL learning check:
 
-### Lesson 4
-Implement `combinational_step(...)`, `clock_edge(...)`, and the clocked update in `run_clocked_accumulator(...)`. Human Check: explain how `candidate_state=4` and `state_after=0` can both be correct in the same cycle.
+~~~bash
+./scripts/check_rtl_learning.sh
+~~~
 
+Any future dedicated workbooks for Lessons 6–8 should follow the same rules: state the task before code, do not leak grading answers, and pair automatic checks with Human Checks.
 
-### Lesson 5
-Implement NOT / AND / OR plus threshold and enable logic. Human Check: explain why `candidate == threshold` is the most direct probe for `>=` versus `>`.
+## For maintainers
 
-### Lesson 9
-Implement addressed state updates and one round-robin service pass. Human Check: explain why the address selects state but is not itself neuron state, and how one physical engine can serve many virtual neurons.
+Student-facing grader implementations live under exercises/grader/.
 
-### Lesson 10
-Implement bounded FIFO push/pop. Human Check: explain why a full queue must produce backpressure rather than overwrite an older spike.
+Maintainer tests live under exercises/checks/. The current entry point is:
 
-### Lesson 11
-Build a project-style `(start,count)` source index plus contiguous synapse records. Human Check: reconstruct every source range by hand, including a source with zero fanout.
+~~~bash
+uv run pytest   exercises/checks/test_graders.py   exercises/checks/test_notebook_structure.py -q
+~~~
 
-### Lesson 12
-Process one source spike through exactly its sparse synapse range. Human Check: distinguish what is stored in the spike queue, source index, synapse record, and target accumulator.
+test_graders.py checks that graders accept reference implementations and reject representative conceptual mistakes. test_notebook_structure.py checks that bilingual Notebooks parse, retain TODOs, use external graders, and do not embed test functions or asserts in student code cells.
 
-Lessons 6–8 use HDL compile/simulation/lint checks rather than Python TODO exercises; see `./scripts/check_rtl_learning.sh`.
+The GitHub Actions Python exercise infrastructure workflow runs these checks automatically.
+
+The project does not currently use nbgrader or testbook. They will be reconsidered only when a concrete new requirement appears.
