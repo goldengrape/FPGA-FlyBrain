@@ -290,3 +290,10 @@ def test_lesson18_protocol_diagrams_use_inline_svg():
             for marker in markers:
                 assert marker in source
             assert not cell.get("attachments")
+
+
+
+def test_lesson18_markdown_has_no_literal_newline_escapes():
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "18_axi_subset.ipynb"))
+        assert "\\n" not in text
