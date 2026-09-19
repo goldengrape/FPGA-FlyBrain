@@ -47,13 +47,45 @@ uv sync
 
 该命令会依据 `uv.lock` 自动在 `.venv` 中安装运行所需的全部依赖库（包括课程代码所需的 `numpy`、`matplotlib` 以及实验界面所需的 `jupyterlab`、`ipykernel`、`pytest`）。
 
-### 2. 启动课程界面
+### 2. 建立个人作业副本
+
+不要直接在 Git 跟踪的 `exercises/zh/` 官方作业模板上写答案。先为当前课程建立一个不会被 Git 跟踪的个人副本：
+
+```bash
+uv run python scripts/start_exercise.py 01
+```
+
+它会创建：
+
+```text
+exercises/work/zh/01_membrane_to_lif.ipynb
+```
+
+`exercises/work/` 已加入 `.gitignore`，所以学生答案不会出现在普通 `git status` / commit 中，也不会和以后课程模板更新冲突。已有工作副本不会被脚本覆盖。
+
+英文作业使用：
+
+```bash
+uv run python scripts/start_exercise.py 01 --lang en
+```
+
+一次建立全部当前 Python 作业：
+
+```bash
+uv run python scripts/start_exercise.py all
+```
+
+更完整的作业流程见 [作业册 README](exercises/README.zh-CN.md)。
+
+### 3. 启动课程界面
 
 ```bash
 uv run jupyter lab
 ```
 
-### 3. 注册课程专属内核（推荐）
+做作业时打开 `exercises/work/zh/` 下的个人副本；`exercises/zh/` 是课程发布的官方 starter。
+
+### 4. 注册课程专属内核（推荐）
 
 为了避免在 Jupyter 中混淆不同环境的 Python 内核，建议注册一个显式内核：
 
@@ -63,12 +95,12 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 
 注册后，在 JupyterLab 打开 Notebook 时，内核选择 **FPGA FlyBrain** 即可。
 
-### 4. 依赖管理原则
+### 5. 依赖管理原则
 
 - **禁止在 Notebook 中临时安装**：不要在 Notebook 单元格中使用 `%pip install` 或 `!pip install`，以免破坏环境的可复现性。
 - **声明式增补依赖**：如果后续需要新增科学计算库，请在命令行执行 `uv add <package>`；若需要开发或测试工具，执行 `uv add --dev <package>`。版本变动会记录在 `pyproject.toml` 与 `uv.lock` 中。
 
-### 5. 第六到八课的 RTL 工具链
+### 6. 第六到八课的 RTL 工具链
 
 RTL 课程使用 **SystemVerilog-2012**，包括 `logic`、`always_ff`、`always_comb` 等语法。Python 依赖继续由 `uv` 管理；HDL simulator 与 synthesis tool 是独立的系统工具，不属于 Python 包。
 
