@@ -8,6 +8,10 @@ on:
       - "lessons/zh/*homework.md"
       - "exercises/**"
       - ".github/workflows/export-course-pdf.yml"
+  pull_request:
+    paths:
+      - "lessons/zh/*.ipynb"
+      - ".github/workflows/export-course-pdf.yml"
 
 permissions:
   contents: read
