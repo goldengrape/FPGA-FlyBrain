@@ -306,3 +306,28 @@ def test_lesson18_grader_rejects_valid_without_ready():
         return accepted,cycles
     assert _all_pass(lesson18.evaluate(good))
     assert _some_fail(lesson18.evaluate(bad))
+
+
+
+def test_lesson14_wrong_width_feedback_points_to_counter_width():
+    def bad(input_hz, target_hz):
+        cycles = input_hz // target_hz
+        return cycles, cycles.bit_length()
+
+    groups = {group.name: group.passed for group in lesson14.evaluate(bad)}
+    assert groups["Cycles per tick"] is True
+    assert groups["Counter width"] is False
+    assert groups["Minimum width"] is True
+
+
+def test_lesson13_wrong_critical_path_does_not_hide_other_feedback_groups():
+    def bad(delays, period):
+        true_critical = max(delays)
+        wrong_critical = min(delays)
+        slack = period - true_critical
+        return wrong_critical, slack, slack >= 0
+
+    groups = {group.name: group.passed for group in lesson13.evaluate(bad)}
+    assert groups["Critical path"] is False
+    assert groups["Slack boundary"] is True
+    assert groups["Timing failure"] is True
