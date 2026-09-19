@@ -221,7 +221,7 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 | Planned lesson | First-use concepts | Engineering mapping |
 |---|---|---|
 | LSN-019 What is a connectome? | connectome, neuron ID, edge, metadata | RMD-017 |
-| LSN-020 First MaleCNS-subset load: verify the image first | manifest, checksum, differential test; teaching fixture does not impersonate a formal artifact | RMD-017/018 |
+| LSN-020 Before loading a real MaleCNS subset: verify the network image | manifest, checksum, provenance, differential test; teaching fixture does not impersonate a formal artifact | RMD-017/018 |
 | LSN-021 What changes when scale grows? | bottleneck, utilization, hotspot | RMD-019~022 |
 | LSN-022 Give the fly a world | sensory encoder, decoder, closed loop | RMD-023~025 |
 | LSN-023 Run the same experiment on three machines | CPU, GPU, FPGA, latency/throughput/power | RMD-028 |
