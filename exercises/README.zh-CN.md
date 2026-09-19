@@ -162,8 +162,15 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 | 16 | [判断 compute / data movement bottleneck](zh/16_data_movement_cost.ipynb) | latency、bandwidth、simple cost model |
 | 17 | [估算 sequential/random burst 成本](zh/17_external_memory_ddr.ipynb) | burst grouping、setup cost、access pattern |
 | 18 | [识别 VALID/READY 接受的 data beat](zh/18_axi_subset.ipynb) | handshake、stall、accepted beat |
+| 19 | [计算 connectome 的 in/out degree](zh/19_what_is_connectome.ipynb) | directed graph structure、zero-degree neuron |
+| 20 | [建立最小 image manifest](zh/20_load_malecns_subset.ipynb) | schema version、byte count、SHA-256 integrity |
+| 21 | [找出 utilization 最高的 stage](zh/21_scaling_bottlenecks.ipynb) | utilization、scale-dependent bottleneck |
+| 22 | [生成 closed-loop position trace](zh/22_closed_loop_world.ipynb) | feedback、target-reaching trace |
+| 23 | [计算 throughput 与 energy per event](zh/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark metric、duration-aware energy |
 
 第 13–18 课进入 FPGA 板、host、DDR 与 AXI 主题，但正式作业仍提供**无板可完成**的 Python/推理版本；实体板实验作为对应 RMD slice 的工程延伸，不把购买硬件变成继续学习的门槛。
+
+第 19–23 课进入 connectome integrity、scaling、closed loop 与 benchmark。正式作业使用 teaching fixture 与 synthetic measurement，因此完整 MaleCNS 下载、正式 converter、GPU 或实体 FPGA 都不是继续学习这些 contract 的前置条件。
 
 第 6–8 课主要练习 SystemVerilog、testbench 和 waveform，继续使用 RTL 教学检查：
 
@@ -185,7 +192,9 @@ uv run pytest \
   exercises/checks/test_notebook_structure.py \
   exercises/checks/test_start_exercise.py \
   lessons/checks/test_platform4_notebook_structure.py \
-  lessons/checks/test_platform4_student_dryrun.py -q
+  lessons/checks/test_platform4_student_dryrun.py \
+  lessons/checks/test_platform5_notebook_structure.py \
+  lessons/checks/test_platform5_student_dryrun.py -q
 ```
 
 `test_start_exercise.py` 会验证 lesson 选择、工作副本路径以及“已有学生答案绝不覆盖”的行为。
