@@ -360,25 +360,35 @@ def test_lesson19_grader_rejects_reversed_edge_meaning():
     assert _some_fail(lesson19.evaluate(bad))
 
 
-def test_lesson20_grader_rejects_non_sha256_digest():
+def test_lesson20_grader_rejects_bad_integrity_or_provenance():
     import hashlib
 
-    def good(payload, schema_version):
+    def good(payload, schema_version, source_release, converter_version):
         return {
             "schema_version": schema_version,
+            "source_release": source_release,
+            "converter_version": converter_version,
             "byte_count": len(payload),
             "sha256": hashlib.sha256(payload).hexdigest(),
         }
 
-    def bad(payload, schema_version):
+    def bad_digest(payload, schema_version, source_release, converter_version):
         return {
             "schema_version": schema_version,
+            "source_release": source_release,
+            "converter_version": converter_version,
             "byte_count": len(payload),
             "sha256": str(len(payload)),
         }
 
+    def extra_key(payload, schema_version, source_release, converter_version):
+        result = good(payload, schema_version, source_release, converter_version)
+        result["extra"] = "not allowed"
+        return result
+
     assert _all_pass(lesson20.evaluate(good))
-    assert _some_fail(lesson20.evaluate(bad))
+    assert _some_fail(lesson20.evaluate(bad_digest))
+    assert _some_fail(lesson20.evaluate(extra_key))
 
 
 def test_lesson21_grader_rejects_raw_demand_as_bottleneck():
@@ -400,7 +410,7 @@ def test_lesson21_grader_rejects_raw_demand_as_bottleneck():
     assert _some_fail(lesson21.evaluate(bad))
 
 
-def test_lesson22_grader_rejects_open_loop_overshoot():
+def test_lesson22_grader_rejects_open_loop_or_one_direction_logic():
     def good(initial_position, target_position, steps):
         position = initial_position
         trace = [position]
@@ -412,12 +422,22 @@ def test_lesson22_grader_rejects_open_loop_overshoot():
             trace.append(position)
         return trace
 
-    def bad(initial_position, target_position, steps):
+    def overshoots(initial_position, target_position, steps):
         direction = 1 if target_position >= initial_position else -1
         return [initial_position + direction * step for step in range(steps + 1)]
 
+    def only_moves_right(initial_position, target_position, steps):
+        position = initial_position
+        trace = [position]
+        for _ in range(steps):
+            if position < target_position:
+                position += 1
+            trace.append(position)
+        return trace
+
     assert _all_pass(lesson22.evaluate(good))
-    assert _some_fail(lesson22.evaluate(bad))
+    assert _some_fail(lesson22.evaluate(overshoots))
+    assert _some_fail(lesson22.evaluate(only_moves_right))
 
 
 def test_lesson23_grader_rejects_energy_without_duration():
