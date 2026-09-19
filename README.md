@@ -192,6 +192,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 ### Engineering source documents
 | English | 中文 |
 |---|---|
+| [Documentation-First Governance](docs/en/DOCUMENT_AUTHORITY.md) | [文档优先与规范治理](docs/zh/DOCUMENT_AUTHORITY.md) |
 | [Idea Brief / URD](docs/en/URD.md) | [项目需求 / URD](docs/zh/URD.md) |
 | [Axiomatic Design / ADD](docs/en/ADD.md) | [公理设计 / ADD](docs/zh/ADD.md) |
 | [Building Blocks / MDD](docs/en/MDD.md) | [模块设计 / MDD](docs/zh/MDD.md) |
@@ -199,7 +200,9 @@ These are the foundational sources currently used or repeatedly referenced by th
 | [Build Path / RMD](docs/en/RMD.md) | [实施路线 / RMD](docs/zh/RMD.md) |
 | [Project Map / TRACE](docs/en/TRACE.md) | [追踪矩阵 / TRACE](docs/zh/TRACE.md) |
 
-`URD/ADD/MDD/TDD/RMD/TRACE` are the engineering source of truth. The Project Bible, Roadmap, Learning Architecture, Glossary, and Notebooks explain and teach the project without replacing those specifications.
+`docs/` is the priority source for project facts and design decisions. See [Documentation-First Governance](docs/en/DOCUMENT_AUTHORITY.md): specification changes update documentation first, then test oracles / TRACE, and only then code or RTL. Existing implementation does not become specification merely because it already runs.
+
+`URD/ADD/MDD/TDD/RMD/TRACE` are the engineering source documents. The Project Bible, Roadmap, Learning Architecture, Glossary, and Notebooks explain and teach the project without silently replacing formal engineering contracts.
 
 ## Current status
 
@@ -214,3 +217,8 @@ Current first implementation batch:
 `RMD-003A` — Digital Hardware Bridge is the **first item of the next batch**, not part of the current first batch.
 
 Hardware purchase is intentionally deferred until the early simulation stages are understood and verified.
+
+
+## License
+
+Unless a file or third-party dependency states otherwise, repository-authored documentation, notebooks, Python, SystemVerilog, testbenches, scripts, and other original content are licensed under the [MIT License](LICENSE).
