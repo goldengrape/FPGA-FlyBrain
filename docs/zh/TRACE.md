@@ -2,7 +2,7 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r3
+- 修订：v0.3-r4
 - 日期：2026-09-18
 - 目的：同步 ADD 的产品/过程 FR 分层、RMD bridge slices，以及新的 Learning Architecture / Notebook 教学层。
 
@@ -18,7 +18,7 @@
 | U4 FPGA 上运行 | FR2/FR3/FR5/FR6 | DP2/DP3/DP5/DP6 | MOD-003/010/014 | L3~L5 + board replay | 011A~016 |
 | U5 导入真实 MaleCNS | FR7 | DP7 | MOD-011 | T-014/015 | 017~021 |
 | U6 建立验证链 | PFR4 | PDP4 | LSN-002/003 + float/fixed/RTL/FPGA oracle chain | L0~L7 | all relevant |
-| U7 公理设计与追踪 | PFR2/PFR3 | PDP2/PDP3 | docs/ + lessons/ + .vibe/ + okf/ | trace checks + checkpoints | all |
+| U7 公理设计与追踪 | PFR2/PFR3 | PDP2/PDP3 | docs/ + lessons/ + exercises/ + CI checks | trace checks + checkpoints | all |
 | U8 进入 AI hardware | FR2~FR8 + PFR1~4 | DP2~DP8 + PDP1~4 | full learning + engineering system | T-016 + P-001~008 + explanation | 003A~028 |
 
 ## 3. 教学 artifact 追踪
@@ -36,6 +36,12 @@
 | LSN-010 | 理解 bounded FIFO ordering 与 backpressure | FR4/DP4 + PFR4 | `exercises/zh/10_spike_fifo_backpressure.ipynb`（grader: `exercises/grader/lesson10.py`）；T-007/008 前置 | RMD-007A/009 教学前置 | `lessons/zh/10_spike_fifo_backpressure.ipynb` |
 | LSN-011 | 用 sparse source index 精确定位真实 synapse range | FR4/DP4 + PFR4 | `exercises/zh/11_sparse_synapse_lookup.ipynb`（grader: `exercises/grader/lesson11.py`）；T-009 前置 | RMD-008 | `lessons/zh/11_sparse_synapse_lookup.ipynb` |
 | LSN-012 | 串起 queue → lookup → weighted event → target update | FR4/FR5 + DP4/DP5 + PFR4 | `exercises/zh/12_one_spike_journey.ipynb`（grader: `exercises/grader/lesson12.py`）；T-010~013 前置 | RMD-007A/010/011 教学整合 | `lessons/zh/12_one_spike_journey.ipynb` |
+| LSN-013 | 区分 simulation、synthesis、implementation 与 timing，并完成 Yosys dry run | FR2 + PFR1/PFR4 | Yosys synthesis dry run + timing summary + Human Check | RMD-011A | `lessons/zh/13_simulation_is_not_chip.ipynb` |
+| LSN-014 | 理解 FPGA 芯片与开发板、clock/reset/I/O 的关系 | FR2 + PFR1 | `exercises/zh/14_what_is_fpga_board.ipynb`（grader: `exercises/grader/lesson14.py`）+ Human Check | RMD-012/012A | `lessons/zh/14_what_is_fpga_board.ipynb` |
+| LSN-015 | 建立 host 与 programmable logic 两个执行域及最小往返语义 | FR2/FR6 + PFR1 | `exercises/zh/15_host_talks_to_fpga.ipynb`（grader: `exercises/grader/lesson15.py`）+ Human Check | RMD-012B/013 | `lessons/zh/15_host_talks_to_fpga.ipynb` |
+| LSN-016 | 区分 latency、throughput、bandwidth，并比较 compute/data-movement 成本 | FR5/FR6 + PFR1 | `exercises/zh/16_data_movement_cost.ipynb`（grader: `exercises/grader/lesson16.py`）+ Human Check | RMD-013A | `lessons/zh/16_data_movement_cost.ipynb` |
+| LSN-017 | 理解外部 DDR、burst 与访问模式成本 | FR6/DP6 + PFR1 | `exercises/zh/17_external_memory_ddr.ipynb`（grader: `exercises/grader/lesson17.py`）+ Human Check | RMD-014 | `lessons/zh/17_external_memory_ddr.ipynb` |
+| LSN-018 | 掌握 AXI transaction/beat 与 VALID/READY handshake 的最小子集 | FR6/DP6 + PFR4 | `exercises/zh/18_axi_subset.ipynb`（grader: `exercises/grader/lesson18.py`）+ Human Check | RMD-014A/015/016 | `lessons/zh/18_axi_subset.ipynb` |
 
 原则：Notebook 可以 prototype/展示，但正式算法、RTL、接口与 oracle 的事实来源仍在 `python/`、`rtl/`、MDD、TDD 等正式工程位置。
 
@@ -150,7 +156,8 @@ DP：PDP1
 - LSN-001~004：第一组双语可执行 Notebook 已建立
 - LSN-005~008：第二组双语课程已建立；`rtl/learning/` 与 `tb/learning/` 不代表 MOD-003 已完成
 - LSN-009~012：第三组双语课程已建立；Python teaching models 不代表 MOD-004~009 已完成
-- TRACE：已同步工程路径与教学路径
+- LSN-013~018：第四组双语课程已建立；synthesis/board/host/DDR/AXI 教学实验不代表对应正式 MOD 或实体平台实现已完成
+- TRACE：已同步工程路径与教学路径至 LSN-018
 - First formal implementation slice：not started
 
 ## 8. 下一次必须同步 TRACE 的触发条件
