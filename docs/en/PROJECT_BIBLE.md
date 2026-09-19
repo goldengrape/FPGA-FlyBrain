@@ -115,7 +115,7 @@ The route therefore includes explicit bridges for:
 Bridge chapters are first-class course material, not remedial appendices.
 
 ## 8. Engineering document system
-`docs/` is the source of truth.
+`docs/` is the source of truth. The project follows [Documentation-First Specification Governance](DOCUMENT_AUTHORITY.md): **update documentation first, then test oracles / TRACE, and code or RTL last.** Existing implementation behavior does not automatically define requirements, interfaces, or model semantics.
 
 - URD: why, for whom, and what success means;
 - ADD: FR/DP, design matrices, coupling;
