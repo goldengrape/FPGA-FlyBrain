@@ -20,6 +20,11 @@ from exercises.grader import (
     lesson16,
     lesson17,
     lesson18,
+    lesson19,
+    lesson20,
+    lesson21,
+    lesson22,
+    lesson23,
 )
 
 
@@ -331,3 +336,96 @@ def test_lesson13_wrong_critical_path_does_not_hide_other_feedback_groups():
     assert groups["Critical path"] is False
     assert groups["Slack boundary"] is True
     assert groups["Timing failure"] is True
+
+
+
+def test_lesson19_grader_rejects_reversed_edge_meaning():
+    def good(neuron_ids, edges):
+        incoming = {n: 0 for n in neuron_ids}
+        outgoing = {n: 0 for n in neuron_ids}
+        for source, target in edges:
+            outgoing[source] += 1
+            incoming[target] += 1
+        return incoming, outgoing
+
+    def bad(neuron_ids, edges):
+        incoming = {n: 0 for n in neuron_ids}
+        outgoing = {n: 0 for n in neuron_ids}
+        for source, target in edges:
+            incoming[source] += 1
+            outgoing[target] += 1
+        return incoming, outgoing
+
+    assert _all_pass(lesson19.evaluate(good))
+    assert _some_fail(lesson19.evaluate(bad))
+
+
+def test_lesson20_grader_rejects_non_sha256_digest():
+    import hashlib
+
+    def good(payload, schema_version):
+        return {
+            "schema_version": schema_version,
+            "byte_count": len(payload),
+            "sha256": hashlib.sha256(payload).hexdigest(),
+        }
+
+    def bad(payload, schema_version):
+        return {
+            "schema_version": schema_version,
+            "byte_count": len(payload),
+            "sha256": str(len(payload)),
+        }
+
+    assert _all_pass(lesson20.evaluate(good))
+    assert _some_fail(lesson20.evaluate(bad))
+
+
+def test_lesson21_grader_rejects_raw_demand_as_bottleneck():
+    def good(stage_demand, stage_capacity):
+        utilization = {
+            stage: stage_demand[stage] / stage_capacity[stage]
+            for stage in stage_demand
+        }
+        return utilization, max(utilization, key=utilization.get)
+
+    def bad(stage_demand, stage_capacity):
+        utilization = {
+            stage: stage_demand[stage] / stage_capacity[stage]
+            for stage in stage_demand
+        }
+        return utilization, max(stage_demand, key=stage_demand.get)
+
+    assert _all_pass(lesson21.evaluate(good))
+    assert _some_fail(lesson21.evaluate(bad))
+
+
+def test_lesson22_grader_rejects_open_loop_overshoot():
+    def good(initial_position, target_position, steps):
+        position = initial_position
+        trace = [position]
+        for _ in range(steps):
+            if position < target_position:
+                position += 1
+            elif position > target_position:
+                position -= 1
+            trace.append(position)
+        return trace
+
+    def bad(initial_position, target_position, steps):
+        direction = 1 if target_position >= initial_position else -1
+        return [initial_position + direction * step for step in range(steps + 1)]
+
+    assert _all_pass(lesson22.evaluate(good))
+    assert _some_fail(lesson22.evaluate(bad))
+
+
+def test_lesson23_grader_rejects_energy_without_duration():
+    def good(events, seconds, watts):
+        return events / seconds, watts * seconds / events
+
+    def bad(events, seconds, watts):
+        return events / seconds, watts / events
+
+    assert _all_pass(lesson23.evaluate(good))
+    assert _some_fail(lesson23.evaluate(bad))
