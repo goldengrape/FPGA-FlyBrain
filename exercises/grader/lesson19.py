@@ -34,8 +34,17 @@ def evaluate(degree_summary, language: str = "zh"):
         return outgoing == {10: 2, 20: 1, 30: 0}
 
     def zero_degree():
-        incoming, outgoing = degree_summary([1, 2, 3], [(1, 2)])
-        return incoming == {1: 0, 2: 1, 3: 0} and outgoing == {1: 1, 2: 0, 3: 0}
+        neuron_ids = [1, 2, 3]
+        edges = [(1, 2)]
+        neuron_ids_before = list(neuron_ids)
+        edges_before = list(edges)
+        incoming, outgoing = degree_summary(neuron_ids, edges)
+        return (
+            incoming == {1: 0, 2: 1, 3: 0}
+            and outgoing == {1: 1, 2: 0, 3: 0}
+            and neuron_ids == neuron_ids_before
+            and edges == edges_before
+        )
 
     return [
         evaluate_group(labels[0][0], directed_in, labels[0][1]),
