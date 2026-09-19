@@ -15,7 +15,7 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -32,28 +32,27 @@ jobs:
           uv pip install "nbconvert[webpdf]" pypdf
           uv run playwright install --with-deps chromium
 
-      - name: Install Chinese fonts
+      - name: Install HDL tools and Chinese fonts
         run: |
           sudo apt-get update
-          sudo apt-get install -y fonts-noto-cjk
+          sudo apt-get install -y yosys fonts-noto-cjk
+          yosys -V
 
       - name: Execute notebooks and export PDFs
         run: |
+          set -euo pipefail
           mkdir -p dist/course-pdfs
-          for notebook in \
-            lessons/zh/01_membrane_to_lif.ipynb \
-            lessons/zh/02_float_to_fixed.ipynb \
-            lessons/zh/03_freeze_neuron_semantics.ipynb \
-            lessons/zh/04_state_and_clock.ipynb \
-            lessons/zh/05_logic_building_blocks.ipynb \
-            lessons/zh/06_what_is_rtl.ipynb \
-            lessons/zh/07_first_rtl_neuron.ipynb \
-            lessons/zh/08_testbench_waveform_simulation.ipynb \
-            lessons/zh/09_time_multiplex_many_neurons.ipynb \
-            lessons/zh/10_spike_fifo_backpressure.ipynb \
-            lessons/zh/11_sparse_synapse_lookup.ipynb \
-            lessons/zh/12_one_spike_journey.ipynb
-          do
+          shopt -s nullglob
+          notebooks=(lessons/zh/[0-9][0-9]_*.ipynb)
+          if [ "${#notebooks[@]}" -eq 0 ]; then
+            echo "No lesson notebooks found" >&2
+            exit 1
+          fi
+
+          printf 'Exporting %d lesson notebooks:\n' "${#notebooks[@]}"
+          printf '  %s\n' "${notebooks[@]}"
+
+          for notebook in "${notebooks[@]}"; do
             uv run jupyter nbconvert \
               --to webpdf \
               --execute "$notebook" \
@@ -62,91 +61,64 @@ jobs:
               --WebPDFExporter.allow_chromium_download=True
           done
 
-      - name: Merge lessons 01-04
+      - name: Merge course PDF groups
         run: |
           uv run python - <<'PY'
           from pathlib import Path
           from pypdf import PdfReader, PdfWriter
 
           out = Path("dist/course-pdfs")
-          names = [
-              "01_membrane_to_lif.pdf",
-              "02_float_to_fixed.pdf",
-              "03_freeze_neuron_semantics.pdf",
-              "04_state_and_clock.pdf",
-          ]
-          writer = PdfWriter()
-          for name in names:
-              path = out / name
-              reader = PdfReader(str(path))
-              for page in reader.pages:
-                  writer.add_page(page)
-          combined = out / "FPGA-FlyBrain-lessons-01-04-zh.pdf"
-          with combined.open("wb") as f:
-              writer.write(f)
-          print(f"Wrote {combined}")
+          lesson_pdfs = sorted(
+              path
+              for path in out.glob("[0-9][0-9]_*.pdf")
+              if path.stem[:2].isdigit()
+          )
+          if not lesson_pdfs:
+              raise SystemExit("No lesson PDFs were generated")
+
+          by_number = {int(path.stem[:2]): path for path in lesson_pdfs}
+
+          def merge(start: int, end: int, filename: str) -> None:
+              selected = [by_number[number] for number in range(start, end + 1) if number in by_number]
+              expected = end - start + 1
+              if len(selected) != expected:
+                  missing = [number for number in range(start, end + 1) if number not in by_number]
+                  raise SystemExit(f"Missing lesson PDFs for {filename}: {missing}")
+
+              writer = PdfWriter()
+              for path in selected:
+                  reader = PdfReader(str(path))
+                  for page in reader.pages:
+                      writer.add_page(page)
+
+              combined = out / filename
+              with combined.open("wb") as handle:
+                  writer.write(handle)
+              print(f"Wrote {combined} from {len(selected)} lessons")
+
+          merge(1, 4, "FPGA-FlyBrain-lessons-01-04-zh.pdf")
+          merge(5, 12, "FPGA-FlyBrain-lessons-05-12-zh.pdf")
+          merge(13, 18, "FPGA-FlyBrain-lessons-13-18-zh.pdf")
+          merge(1, 18, "FPGA-FlyBrain-lessons-01-18-zh.pdf")
           PY
 
-      - name: Merge lessons 05-12
+      - name: Verify Lesson 13 synthesis output is present
         run: |
           uv run python - <<'PY'
           from pathlib import Path
-          from pypdf import PdfReader, PdfWriter
+          from pypdf import PdfReader
 
-          out = Path("dist/course-pdfs")
-          names = [
-              "05_logic_building_blocks.pdf",
-              "06_what_is_rtl.pdf",
-              "07_first_rtl_neuron.pdf",
-              "08_testbench_waveform_simulation.pdf",
-              "09_time_multiplex_many_neurons.pdf",
-              "10_spike_fifo_backpressure.pdf",
-              "11_sparse_synapse_lookup.pdf",
-              "12_one_spike_journey.pdf",
-          ]
-          writer = PdfWriter()
-          for name in names:
-              path = out / name
-              reader = PdfReader(str(path))
-              for page in reader.pages:
-                  writer.add_page(page)
-          combined = out / "FPGA-FlyBrain-lessons-05-12-zh.pdf"
-          with combined.open("wb") as f:
-              writer.write(f)
-          print(f"Wrote {combined}")
-          PY
-
-      - name: Merge lessons 01-12
-        run: |
-          uv run python - <<'PY'
-          from pathlib import Path
-          from pypdf import PdfReader, PdfWriter
-
-          out = Path("dist/course-pdfs")
-          names = [
-              "01_membrane_to_lif.pdf",
-              "02_float_to_fixed.pdf",
-              "03_freeze_neuron_semantics.pdf",
-              "04_state_and_clock.pdf",
-              "05_logic_building_blocks.pdf",
-              "06_what_is_rtl.pdf",
-              "07_first_rtl_neuron.pdf",
-              "08_testbench_waveform_simulation.pdf",
-              "09_time_multiplex_many_neurons.pdf",
-              "10_spike_fifo_backpressure.pdf",
-              "11_sparse_synapse_lookup.pdf",
-              "12_one_spike_journey.pdf",
-          ]
-          writer = PdfWriter()
-          for name in names:
-              path = out / name
-              reader = PdfReader(str(path))
-              for page in reader.pages:
-                  writer.add_page(page)
-          combined = out / "FPGA-FlyBrain-lessons-01-12-zh.pdf"
-          with combined.open("wb") as f:
-              writer.write(f)
-          print(f"Wrote {combined}")
+          path = Path("dist/course-pdfs/13_simulation_is_not_chip.pdf")
+          text = "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
+          required = (
+              "Yosys synthesis succeeded.",
+              "clocked_accumulator",
+              "Structural check problems: 0",
+          )
+          missing = [item for item in required if item not in text]
+          if missing:
+              raise SystemExit(f"Lesson 13 PDF is missing synthesis evidence: {missing}")
+          print("Lesson 13 PDF contains real synthesis evidence.")
           PY
 
       - name: List generated files
