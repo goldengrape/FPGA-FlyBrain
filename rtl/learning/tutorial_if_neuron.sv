@@ -1,3 +1,8 @@
+// Teaching artifact: fixed 8-bit signed demo.
+// Reset is synchronous and active-low.
+// candidate uses finite-width two's-complement wraparound if addition overflows.
+// Overflow is deliberately outside this lesson's approved neuron contract; this
+// module is not formal MOD-003. Formal numeric semantics are frozen later.
 module tutorial_if_neuron (
     input  logic              clk,
     input  logic              rst_n,
