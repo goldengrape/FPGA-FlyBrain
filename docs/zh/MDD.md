@@ -3,6 +3,8 @@
 ## 0. 目的
 定义当前系统的模块边界、接口、数据和契约。模块划分服务于实现和验证，不追求过度细分。
 
+本文件受 [文档优先与规范治理](DOCUMENT_AUTHORITY.md) 约束：正式 module/interface/semantic contract 先在文档中明确，再由 TDD 固化 oracle，最后进入实现；现有 RTL/Python 行为不能自动反向定义本文件。
+
 ## 1. 系统拓扑
 ```text
 Host / Python
