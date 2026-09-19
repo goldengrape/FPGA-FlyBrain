@@ -182,3 +182,30 @@ def test_lesson13_student_flow_keeps_run_observe_try_exercise_order():
         sections = dict(_numbered_sections(_read(language, "13_simulation_is_not_chip.ipynb")))
         for number, marker in expected[language].items():
             assert marker.lower() in sections[number].lower()
+
+
+
+def test_beginner_vocabulary_is_not_pulled_forward_again():
+    for language in ("zh", "en"):
+        lesson14 = _markdown(_read(language, "14_what_is_fpga_board.ipynb"))
+        assert "SoC" not in lesson14
+
+        lesson15 = _markdown(_read(language, "15_host_talks_to_fpga.ipynb"))
+        assert "AXI" not in lesson15
+        assert "transaction" not in lesson15.lower()
+
+        lesson17 = _markdown(_read(language, "17_external_memory_ddr.ipynb"))
+        assert "PHY" not in lesson17
+        assert "controller / IP" not in lesson17
+        assert "controller/IP" not in lesson17
+
+
+def test_lesson18_keeps_engineering_ids_in_the_handoff_tail():
+    for language in ("zh", "en"):
+        notebook = _read(language, "18_axi_subset.ipynb")
+        before_handoff = "\n".join(
+            "".join(cell.get("source", []))
+            for cell in notebook["cells"][:14]
+        )
+        assert "IF-SYNAPSE-STREAM" not in before_handoff
+        assert "RMD-" not in before_handoff
