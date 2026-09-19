@@ -65,6 +65,7 @@
 | connectome | 连接组（connectome） | 描述神经元之间结构连接关系的数据集；可带 neuron/edge metadata，但不等于运行中的 membrane state 或 spike queue。 |
 | manifest | 清单 / manifest | 随 artifact 一起记录 schema version、byte count、checksum、provenance 等信息的小型描述。 |
 | checksum | 校验摘要（checksum） | 对精确 bytes 计算的确定性摘要，用来检查数据是否一致；相同 checksum 证明 integrity，不自动证明科学/模型正确性。 |
+| SHA-256 | 256 位安全散列算法（Secure Hash Algorithm 256-bit） | 一种常用 cryptographic hash function；本课程用它对精确 network-image bytes 生成固定长度 checksum。 |
 | utilization | 利用率（utilization） | 当前 demand 相对于某个 stage capacity 的比例，例如 demand/capacity。 |
 | bottleneck | 瓶颈（bottleneck） | 在当前 workload 下最限制系统的 stage；它取决于 demand 与 capacity，可能随 scale 或 traffic pattern 改变。 |
 | hotspot | 热点（hotspot） | 工作/流量高度集中在少数 neuron、bank、queue 或资源上的情况，可能造成局部拥塞。 |
