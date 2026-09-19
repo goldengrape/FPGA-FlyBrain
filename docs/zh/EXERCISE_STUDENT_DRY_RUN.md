@@ -37,7 +37,7 @@ from exercises.grader.lesson01 import check
 ModuleNotFoundError: No module named 'exercises'
 ```
 
-这是本轮唯一的 blocker，应优先修复。修复目标是：学生按 README 正常 `uv sync` + `uv run jupyter lab` 后，从任意 lesson/exercise 子目录打开 Notebook 都能稳定 import grader，不要求学生理解或手工修改 `sys.path`。
+这是本轮唯一的 blocker。本轮 dry run 已在同一变更周期内修复：每个 grader check cell 会先从当前工作目录向上定位仓库根目录，再把根目录加入 `sys.path`，因此从 `exercises/zh`、`exercises/en` 或仓库根目录执行都能稳定 import grader，不要求学生手工修改路径。维护者测试也新增了从 Notebook 工作目录启动子进程的回归检查。
 
 ## 3. 逐课 Dry Run
 
@@ -107,11 +107,11 @@ def clock_edge(state: int, value_to_store: int) -> int:
 
 > `state` 参数用于让函数调用显式保留“edge 前 state”这个角色；本函数不再根据旧 state 重新计算新值，因为组合逻辑已经产生 `value_to_store`。
 
-## 8. 环境层建议
+## 8. 环境层结果
 
-优先修复 grader import，然后增加一个维护者级“真实 kernel cwd”测试：从 `exercises/zh` 或 `exercises/en` 目录启动 Python/kernel，确认 grader import 可用。
+grader import blocker 已修复，并新增维护者级“真实 kernel cwd”测试：从 `exercises/zh` 与 `exercises/en` 目录启动独立 Python 子进程，执行与 Notebook 相同的 repo-root bootstrap，再 import grader。
 
-这比目前只从 pytest 项目根目录测试更接近学生真实路径。
+该测试已经进入 Python exercise infrastructure CI，当前通过。
 
 ## 9. Dry Run 结论
 
@@ -119,9 +119,9 @@ def clock_edge(state: int, value_to_store: int) -> int:
 
 下一步优先级应是：
 
-1. 修复真实 Jupyter 下的 grader import blocker；
-2. 解释 LSN-004 的 unused state 参数；
-3. 明确哪些作业是 consolidation，哪些要承担 transfer/design；
-4. 再决定是否减少 LSN-002/003/011/012 从 lesson 直接复制答案的路径。
+1. 已修复真实 Jupyter 下的 grader import blocker；
+2. 已解释 LSN-004 的 unused state 参数；
+3. 已要求 LSN-003 自选 probe 数字，减少直接复用教材示例；
+4. 后续再明确哪些作业是 consolidation、哪些承担 transfer/design，并决定是否进一步减少 LSN-002/011/012 从 lesson 直接复制答案的路径。
 
 不建议现在为了“更难”而普遍增加代码量。
