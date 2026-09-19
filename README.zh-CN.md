@@ -146,6 +146,11 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 16. [为什么搬数据比加法更难？](lessons/zh/16_data_movement_cost.ipynb)
 17. [外部内存是什么？](lessons/zh/17_external_memory_ddr.ipynb)
 18. [AXI 只学我们需要的部分](lessons/zh/18_axi_subset.ipynb)
+19. [什么是 connectome？](lessons/zh/19_what_is_connectome.ipynb)
+20. [第一次装入 MaleCNS 子图：先验证 image](lessons/zh/20_load_malecns_subset.ipynb)
+21. [规模变大以后，瓶颈会跑到哪里？](lessons/zh/21_scaling_bottlenecks.ipynb)
+22. [给果蝇一个世界：把 loop 闭合起来](lessons/zh/22_closed_loop_world.ipynb)
+23. [三种机器做同一个实验](lessons/zh/23_cpu_gpu_fpga_benchmark.ipynb)
 
 对应的独立作业册位于 [`exercises/`](exercises/README.zh-CN.md)。Python 作业使用 Jupyter Notebook，自动检查由外部 grader 执行；作业页面不直接展示判题 `assert` 或具体测试向量。
 

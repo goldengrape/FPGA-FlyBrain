@@ -37,9 +37,9 @@ Every lesson should obey these rules / 每课遵守以下规则：
 8. **Do not teach by technical inaccuracy / 不用技术错误换取“好懂”**  
    Simplification is encouraged, but a simplified explanation must remain technically defensible.
 
-9. **Declarative diagrams over ASCII / 用字符描述流程图而非 ASCII 字符画**  
-   All conceptual diagrams, state machines, timing flows, and hardware block diagrams must be written using declarative diagram code (primarily Mermaid fenced code blocks: ```` ```mermaid ````). Do not draw diagrams with spaces, hyphens, and ASCII art. Mermaid renders natively as clean vector graphics in JupyterLab and GitHub, is accessible, and keeps structural revisions clear in Git diffs.  
-   所有概念流程、状态机流转、时序因果与硬件模块图，一律使用字符声明式语法（以 Mermaid 代码块 ```` ```mermaid ```` 为主）进行结构化描述，禁止使用空格、连字符和文本折线拼凑 ASCII 字符画。字符描述图在 JupyterLab 与 GitHub 中可原生渲染为矢量图，支持精准的版本差异追踪，且便于长期维护。
+9. **Declarative vector diagrams over ASCII / 用声明式矢量图而非 ASCII 字符画**  
+   Use Mermaid fenced blocks by default for conceptual flows, state machines, timing relationships, and hardware block diagrams. If actual Jupyter/webpdf testing proves a critical Mermaid diagram unreliable, inline SVG in Markdown is an allowed fallback. Do not replace diagrams with hand-aligned ASCII art or opaque screenshots merely to avoid export issues.  
+   概念流程、状态机、时序因果与硬件模块图默认使用 Mermaid；如果实际 Jupyter/webpdf 测试证明某张关键 Mermaid 图导出不可靠，可以在 Markdown 中使用 inline SVG。不要为了绕过导出问题退回 ASCII 字符画或不可审查的截图。
 
 10. **Exercise Notebooks + external graders / 作业 Notebook + 外部 grader**  
     Suitable programming exercises live in a separate Exercise Notebook with a fixed function signature, a small TODO region, an external grader call, and a Human Check. Student-facing notebooks do not directly display grading asserts or concrete grader vectors.  
@@ -104,6 +104,21 @@ These lessons use small Python models to teach architecture semantics before for
 The formal workbooks for Lessons 13–18 remain runnable without a physical board. Board-specific labs are engineering extensions, so hardware purchase does not block the learning path.
 
 第 13–18 课的正式作业保持无板可完成；板卡专用实验属于对应 RMD 的工程延伸，避免硬件购买阻断课程学习。
+
+
+## Fifth learning block / 第五组课程
+
+| ID | 中文 | English | Practice / 作业 | Primary concept / 主要概念 | Engineering mapping |
+|---|---|---|---|---|---|
+| LSN-019 | [什么是 connectome？](zh/19_what_is_connectome.ipynb) | [What is a connectome?](en/19_what_is_connectome.ipynb) | [中文](../exercises/zh/19_what_is_connectome.ipynb) / [English](../exercises/en/19_what_is_connectome.ipynb) | connectome structure vs dynamic state | RMD-017 |
+| LSN-020 | [第一次装入 MaleCNS 子图：先验证 image](zh/20_load_malecns_subset.ipynb) | [First MaleCNS subset load: verify the image first](en/20_load_malecns_subset.ipynb) | [中文](../exercises/zh/20_load_malecns_subset.ipynb) / [English](../exercises/en/20_load_malecns_subset.ipynb) | manifest + checksum integrity contract | RMD-017/018 |
+| LSN-021 | [规模变大以后，瓶颈会跑到哪里？](zh/21_scaling_bottlenecks.ipynb) | [What changes when the network becomes larger?](en/21_scaling_bottlenecks.ipynb) | [中文](../exercises/zh/21_scaling_bottlenecks.ipynb) / [English](../exercises/en/21_scaling_bottlenecks.ipynb) | utilization + moving bottleneck | RMD-019~022 |
+| LSN-022 | [给果蝇一个世界：把 loop 闭合起来](zh/22_closed_loop_world.ipynb) | [Give the fly a world: close the loop](en/22_closed_loop_world.ipynb) | [中文](../exercises/zh/22_closed_loop_world.ipynb) / [English](../exercises/en/22_closed_loop_world.ipynb) | closed-loop feedback | RMD-023~025 |
+| LSN-023 | [三种机器做同一个实验](zh/23_cpu_gpu_fpga_benchmark.ipynb) | [Three machines, one experiment](en/23_cpu_gpu_fpga_benchmark.ipynb) | [中文](../exercises/zh/23_cpu_gpu_fpga_benchmark.ipynb) / [English](../exercises/en/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark comparability | RMD-028 |
+
+Platform 5 remains deliberately reproducible without downloading the full MaleCNS dataset or owning a physical board. Lesson 20 uses an explicit teaching fixture until RMD-017/018 produces a formal versioned MaleCNS-derived artifact; Lessons 21/23 use synthetic teaching measurements rather than performance claims.
+
+Platform 5 仍然允许在不下载完整 MaleCNS、没有实体板卡的情况下学习。第 20 课明确使用 teaching fixture，直到 RMD-017/018 产出正式、版本化的 MaleCNS-derived artifact；第 21/23 课使用 synthetic teaching measurement，不冒充真实性能结论。
 
 ## RTL learning checks / RTL 教学检查
 

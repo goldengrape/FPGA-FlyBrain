@@ -62,6 +62,18 @@ This is a reference sheet, not a substitute for first-use explanations in the le
 | time multiplexing | time multiplexing | Reusing one physical compute unit for several virtual objects at different times, trading time for hardware resources. |
 | address | address | A number selecting a memory location; it says where to access, not what data is stored there. |
 | memory | memory | Storage for many values or pieces of state; different organizations can implement RAM, register files, and related structures. |
+| connectome | connectome | A dataset describing structural connections among neurons; it may include neuron/edge metadata but is not the same as runtime membrane state or spike queues. |
+| manifest | manifest | A small description shipped with an artifact, recording fields such as schema version, byte count, checksum, and provenance. |
+| checksum | checksum | A deterministic digest of exact bytes used to verify data integrity; matching checksums do not by themselves prove scientific/model correctness. |
+| SHA-256 | Secure Hash Algorithm 256-bit | A common cryptographic hash function; this course uses it to compute a fixed-length checksum over exact network-image bytes. |
+| utilization | utilization | Demand relative to a stage's capacity, such as demand/capacity. |
+| bottleneck | bottleneck | The stage currently limiting a workload; it depends on demand and capacity and can move with scale or traffic pattern. |
+| hotspot | hotspot | Work or traffic concentrated on a small set of neurons, banks, queues, or resources, potentially causing local congestion. |
+| closed loop | closed loop | A system whose output changes the environment and therefore changes later input; future input depends on prior system behavior. |
+| sensory encoder | sensory encoder | A boundary that maps environment observations to selected neural stimulation; manual mappings must be documented explicitly. |
+| output decoder | output decoder | A boundary that maps selected neural activity to behavior/control signals; manual mappings must be documented explicitly. |
+| benchmark | benchmark | A reproducible comparison experiment that freezes model, data, input, and measurement rules before comparing latency, throughput, energy, or related metrics. |
+| energy per event | energy per event | Total measured energy over an interval divided by completed events/work units; the power and time measurement boundary must be explicit. |
 
 ## Usage rules
 

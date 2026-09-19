@@ -28,6 +28,11 @@ NOTEBOOKS = [
     "16_data_movement_cost.ipynb",
     "17_external_memory_ddr.ipynb",
     "18_axi_subset.ipynb",
+    "19_what_is_connectome.ipynb",
+    "20_load_malecns_subset.ipynb",
+    "21_scaling_bottlenecks.ipynb",
+    "22_closed_loop_world.ipynb",
+    "23_cpu_gpu_fpga_benchmark.ipynb",
 ]
 
 PLATFORM4_NOTEBOOKS = [
@@ -37,6 +42,14 @@ PLATFORM4_NOTEBOOKS = [
     "16_data_movement_cost.ipynb",
     "17_external_memory_ddr.ipynb",
     "18_axi_subset.ipynb",
+]
+
+PLATFORM5_NOTEBOOKS = [
+    "19_what_is_connectome.ipynb",
+    "20_load_malecns_subset.ipynb",
+    "21_scaling_bottlenecks.ipynb",
+    "22_closed_loop_world.ipynb",
+    "23_cpu_gpu_fpga_benchmark.ipynb",
 ]
 
 
@@ -195,7 +208,7 @@ def test_exercise_registry_matches_structural_test_inventory():
     assert set(NOTEBOOKS) == set(EXERCISE_FILES.values())
 
 
-def test_platform4_todos_have_explicit_inputs_outputs_and_return_order():
+def test_platform4_and5_todos_have_explicit_inputs_outputs_and_return_order():
     input_markers = {
         "zh": "### 输入",
         "en": "### Inputs",
@@ -210,7 +223,7 @@ def test_platform4_todos_have_explicit_inputs_outputs_and_return_order():
     }
 
     for language in ("zh", "en"):
-        for name in PLATFORM4_NOTEBOOKS:
+        for name in PLATFORM4_NOTEBOOKS + PLATFORM5_NOTEBOOKS:
             notebook = _read(ROOT / "exercises" / language / name)
             cells = notebook["cells"]
 
