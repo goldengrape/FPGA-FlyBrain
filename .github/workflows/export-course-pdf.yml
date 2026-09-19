@@ -175,6 +175,23 @@ jobs:
                       f"{filename} contains a Mermaid render error: {mermaid_errors}"
                   )
 
+              if filename == "18_axi_subset.pdf":
+                  expected_labels = (
+                      "sender: VALID + payload",
+                      "receiver: READY",
+                      "handshake check",
+                      "accepted when VALID and READY",
+                      "read/write transaction",
+                      "burst of one or more beats",
+                  )
+                  missing_labels = [
+                      label for label in expected_labels if label not in text
+                  ]
+                  if missing_labels:
+                      raise SystemExit(
+                          f"{filename} is missing rendered Mermaid labels: {missing_labels}"
+                      )
+
               lavender_pixels = 0
               for page in document:
                   pixmap = page.get_pixmap(alpha=False)
