@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from scripts.start_exercise import create_work_copy
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -69,13 +71,16 @@ def benchmark_metrics(events, seconds, watts):
 }
 
 
-def _notebook(language: str, name: str):
-    path = ROOT / "exercises" / language / name
+def _notebook(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _code_cells(language: str, name: str) -> list[str]:
-    notebook = _notebook(language, name)
+def _template(language: str, name: str) -> Path:
+    return ROOT / "exercises" / language / name
+
+
+def _code_cells(path: Path) -> list[str]:
+    notebook = _notebook(path)
     return [
         "".join(cell.get("source", []))
         for cell in notebook["cells"]
@@ -86,19 +91,32 @@ def _code_cells(language: str, name: str) -> list[str]:
 @pytest.mark.parametrize("language", ["zh", "en"])
 @pytest.mark.parametrize("name", EXERCISES)
 def test_platform5_student_visible_code_cells_compile(language, name):
-    for index, code in enumerate(_code_cells(language, name)):
+    for index, code in enumerate(_code_cells(_template(language, name))):
         compile(code, f"<student-code/{language}/{name}/{index}>", "exec")
 
 
 @pytest.mark.parametrize("language", ["zh", "en"])
 @pytest.mark.parametrize("name", EXERCISES)
-def test_platform5_student_workbook_runs_with_reference_solution(
-    language, name, monkeypatch, capsys
+def test_platform5_student_workbook_runs_from_personal_work_copy(
+    language, name, tmp_path, monkeypatch, capsys
 ):
+    lesson = name[:2]
+    fake_repo = tmp_path / "repo"
+    template = fake_repo / "exercises" / language / name
+    template.parent.mkdir(parents=True, exist_ok=True)
+    template.write_text(_template(language, name).read_text(encoding="utf-8"), encoding="utf-8")
+
+    work_copy, created = create_work_copy(fake_repo, lesson, language)
+    assert created
+    assert work_copy == fake_repo / "exercises" / "work" / language / name
+
+    # The grader bootstrap in the workbook searches upward for exercises/grader.
+    # Point execution at the real repository so the same import path a learner
+    # sees is exercised, while the personal workbook itself remains a temp copy.
     monkeypatch.chdir(ROOT)
     namespace: dict[str, object] = {}
 
-    for index, code in enumerate(_code_cells(language, name)):
+    for index, code in enumerate(_code_cells(work_copy)):
         if "YOUR CODE STARTS HERE" in code:
             code = REFERENCE_IMPLEMENTATIONS[name]
         exec(
