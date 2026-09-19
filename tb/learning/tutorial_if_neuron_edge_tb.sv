@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 module tutorial_if_neuron_edge_tb;
     logic clk = 1'b0;
     logic rst_n = 1'b0;
