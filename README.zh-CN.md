@@ -192,6 +192,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 ### 工程事实文档
 | 中文 | English |
 |---|---|
+| [文档优先与规范治理](docs/zh/DOCUMENT_AUTHORITY.md) | [Documentation-First Governance](docs/en/DOCUMENT_AUTHORITY.md) |
 | [项目需求 / URD](docs/zh/URD.md) | [Idea Brief / URD](docs/en/URD.md) |
 | [公理设计 / ADD](docs/zh/ADD.md) | [Axiomatic Design / ADD](docs/en/ADD.md) |
 | [模块设计 / MDD](docs/zh/MDD.md) | [Building Blocks / MDD](docs/en/MDD.md) |
@@ -199,7 +200,9 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 | [实施路线 / RMD](docs/zh/RMD.md) | [Build Path / RMD](docs/en/RMD.md) |
 | [追踪矩阵 / TRACE](docs/zh/TRACE.md) | [Project Map / TRACE](docs/en/TRACE.md) |
 
-`URD/ADD/MDD/TDD/RMD/TRACE` 是工程事实来源；创作圣经、高层路线、教学路径、术语表和 Notebook 负责帮助人理解和学习项目，但不替代这些规范。
+`docs/` 是项目事实与设计决策的优先来源。完整规则见 [文档优先与规范治理](docs/zh/DOCUMENT_AUTHORITY.md)：规范变更先更新文档，再更新 test oracle / TRACE，最后修改代码或 RTL；现有实现不能因为“已经这样运行”就自动升级成 specification。
+
+`URD/ADD/MDD/TDD/RMD/TRACE` 是工程事实来源；创作圣经、高层路线、教学路径、术语表和 Notebook 负责帮助人理解和学习项目，但不静默替代正式工程 contract。
 
 ## 当前状态
 
@@ -214,3 +217,8 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 `RMD-003A` — Digital Hardware Bridge 是**下一批的第一项**，不是当前第一批的一部分。
 
 在早期仿真与概念验证通过之前，暂不购买 FPGA 硬件。
+
+
+## 许可证
+
+除非文件或第三方依赖另有明确声明，本仓库的原创文档、Notebook、Python、SystemVerilog、testbench、脚本和其他内容采用 [MIT License](LICENSE)。
