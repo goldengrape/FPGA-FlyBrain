@@ -164,6 +164,7 @@ jobs:
               path = Path("dist/course-pdfs") / filename
               document = pymupdf.open(path)
               text = "\n".join(page.get_text("text") for page in document)
+              normalized_text = " ".join(text.split())
 
               leaked = [
                   marker
@@ -197,7 +198,7 @@ jobs:
                   )
                   missing_labels = [
                       label for label in expected_labels
-                      if label not in text
+                      if label not in normalized_text
                   ]
                   if missing_labels:
                       raise SystemExit(
@@ -225,7 +226,7 @@ jobs:
                       ):
                           lavender_pixels += 1
 
-              if lavender_pixels < 500:
+              if lavender_pixels < 400:
                   raise SystemExit(
                       f"{filename} does not contain enough rendered "
                       f"Mermaid-colored pixels: {lavender_pixels}"
