@@ -125,3 +125,55 @@ grader import blocker 已修复，并新增维护者级“真实 kernel cwd”�
 4. 后续再明确哪些作业是 consolidation、哪些承担 transfer/design，并决定是否进一步减少 LSN-002/011/012 从 lesson 直接复制答案的路径。
 
 不建议现在为了“更难”而普遍增加代码量。
+
+
+## 10. Platform 4（LSN-013~018）学生路径复测
+
+### 10.1 范围与方法
+
+在 LSN-013~018 建立后，再按普通学生路径做一轮独立复测：
+
+1. 用 `scripts/start_exercise.py 13~18` 创建 `exercises/work/zh/` 作业副本；
+2. 只依据 lesson 与题面完成 TODO，不读取 grader 隐藏向量；
+3. 从头执行 Notebook，并确认 grader 输出；
+4. 额外执行 Lesson 13 的 Yosys synthesis dry run；
+5. 对课程代码单元格同时做中文与英文自动执行，防止本地化版本漂移。
+
+结果：六份作业均得到 **3 / 3 groups passed**，即 **6 / 6 作业端到端通过**。
+
+### 10.2 逐课结果
+
+| Lesson | 学生路径结果 | 重点观察 |
+|---|---|---|
+| 13 | 通过 | 能区分 simulation / synthesis / timing；Yosys 摘要可读；无 Yosys 时给出可操作安装提示 |
+| 14 | 通过 | 50,000,000 cycles/tick 与 26-bit counter 可由题面独立推出；grader 反馈已按概念正交化 |
+| 15 | 通过 | host/PL state persistence 与 readback 顺序清楚；作业不提前使用 AXI/transaction 术语 |
+| 16 | 通过 | compute 与 transfer 是分项成本比较，不冒充完整 elapsed-time 模型 |
+| 17 | 通过 | burst grouping、断档与空请求边界清楚；不要求学生先懂 DDR PHY |
+| 18 | 通过 | VALID/READY、stall、accepted beat 与 payload 稳定性规则一致 |
+
+### 10.3 自动化 Student Dry Run
+
+`lessons/checks/test_platform4_student_dryrun.py` 现在会同时执行中英文 LSN-013~018 的教学代码单元格：
+
+- 中文与英文 Lesson 13：无 Yosys 时的提示；
+- 中文与英文 Lesson 13：timing 输出格式；
+- 中文与英文 Lesson 13：在安装 Yosys 的 RTL CI 中执行真实 synthesis；
+- 中文与英文 Lesson 14~18：示例代码按学生看到的顺序执行并核对输出。
+
+因此 Platform 4 的 student dry run 已从一次性人工检查变成持续 CI 保护。
+
+### 10.4 Yosys 版本结果
+
+Lesson 13 的 synthesis 摘要已分别在项目支持的两类环境中验证：
+
+- Ubuntu CI：Yosys 0.33；
+- OSS CAD Suite：Yosys 0.69。
+
+两代 `stat` cell 输出格式不同，Notebook 解析器已兼容两者。学生默认只看到教学摘要，完整输出保存在 `yosys_log` 中。
+
+### 10.5 Platform 4 Dry Run 结论
+
+LSN-013~018 已满足当前作业册的核心要求：题意可独立理解、有效输入域明确、TODO 范围小、grader 不泄漏向量、Human Check 紧贴实现，并且真实学生路径 6/6 通过。
+
+后续 Platform 5 新增作业时，应继续复用这一流程：**先人工 student dry run，再把可自动化的学生路径转成 CI。**
