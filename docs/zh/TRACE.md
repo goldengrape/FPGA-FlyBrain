@@ -2,8 +2,8 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r4
-- 日期：2026-09-18
+- 修订：v0.3-r5
+- 日期：2026-09-19
 - 目的：同步 ADD 的产品/过程 FR 分层、RMD bridge slices，以及新的 Learning Architecture / Notebook 教学层。
 
 ## 1. 目的
@@ -42,6 +42,11 @@
 | LSN-016 | 区分 latency、throughput、bandwidth，并比较 compute/data-movement 成本 | FR5/FR6 + PFR1 | `exercises/zh/16_data_movement_cost.ipynb`（grader: `exercises/grader/lesson16.py`）+ Human Check | RMD-013A | `lessons/zh/16_data_movement_cost.ipynb` |
 | LSN-017 | 理解外部 DDR、burst 与访问模式成本 | FR6/DP6 + PFR1 | `exercises/zh/17_external_memory_ddr.ipynb`（grader: `exercises/grader/lesson17.py`）+ Human Check | RMD-014 | `lessons/zh/17_external_memory_ddr.ipynb` |
 | LSN-018 | 掌握 AXI transaction/beat 与 VALID/READY handshake 的最小子集 | FR6/DP6 + PFR4 | `exercises/zh/18_axi_subset.ipynb`（grader: `exercises/grader/lesson18.py`）+ Human Check | RMD-014A/015/016 | `lessons/zh/18_axi_subset.ipynb` |
+| LSN-019 | 把 connectome 区分为 neuron ID、directed edge、metadata 与 dynamic state | FR7/DP7 + PFR1 | `exercises/zh/19_what_is_connectome.ipynb`（grader: `exercises/grader/lesson19.py`）+ Human Check | RMD-017 | `lessons/zh/19_what_is_connectome.ipynb` |
+| LSN-020 | 用 manifest/checksum 建立 network image integrity contract，并明确 teaching fixture ≠ 正式 MaleCNS artifact | FR7/DP7 + PFR4 | `exercises/zh/20_load_malecns_subset.ipynb`（grader: `exercises/grader/lesson20.py`）；T-014/015 教学前置 | RMD-017/018 | `lessons/zh/20_load_malecns_subset.ipynb` |
+| LSN-021 | 用 demand/capacity utilization 识别会随 scale 移动的 bottleneck | FR7 + PFR4 | `exercises/zh/21_scaling_bottlenecks.ipynb`（grader: `exercises/grader/lesson21.py`）+ synthetic scale dry run | RMD-019~022 | `lessons/zh/21_scaling_bottlenecks.ipynb` |
+| LSN-022 | 建立 closed-loop feedback，并把 sensory/output mapping 的人工假设显式化 | FR8/DP8 + PFR4 | `exercises/zh/22_closed_loop_world.ipynb`（grader: `exercises/grader/lesson22.py`）；T-016 教学前置 | RMD-023~025 | `lessons/zh/22_closed_loop_world.ipynb` |
+| LSN-023 | 冻结 CPU/GPU/FPGA benchmark comparability contract，再计算 throughput/energy metric | FR2~FR8 + PFR4 | `exercises/zh/23_cpu_gpu_fpga_benchmark.ipynb`（grader: `exercises/grader/lesson23.py`）；P-001~008 教学前置 | RMD-028 | `lessons/zh/23_cpu_gpu_fpga_benchmark.ipynb` |
 
 原则：Notebook 可以 prototype/展示，但正式算法、RTL、接口与 oracle 的事实来源仍在 `python/`、`rtl/`、MDD、TDD 等正式工程位置。
 
@@ -157,7 +162,8 @@ DP：PDP1
 - LSN-005~008：第二组双语课程已建立；`rtl/learning/` 与 `tb/learning/` 不代表 MOD-003 已完成
 - LSN-009~012：第三组双语课程已建立；Python teaching models 不代表 MOD-004~009 已完成
 - LSN-013~018：第四组双语课程已建立；synthesis/board/host/DDR/AXI 教学实验不代表对应正式 MOD 或实体平台实现已完成
-- TRACE：已同步工程路径与教学路径至 LSN-018
+- LSN-019~023：第五组双语课程已建立；connectome teaching fixture、synthetic scale/benchmark 与 toy closed loop 不代表 RMD-017~028 的正式数据 artifact、全系统实现或真实性能结论已完成
+- TRACE：已同步工程路径与教学路径至 LSN-023
 - First formal implementation slice：not started
 
 ## 8. 下一次必须同步 TRACE 的触发条件
