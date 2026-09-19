@@ -131,3 +131,43 @@ assert callable(check)
             check=False,
         )
         assert completed.returncode == 0, completed.stderr
+
+
+
+def test_each_todo_has_a_student_readable_semantic_contract():
+    role_markers = {
+        "zh": ("### 这个函数做什么？", "### 这些函数做什么？"),
+        "en": ("### What does this function do?", "### What do these functions do?"),
+    }
+    output_markers = {
+        "zh": ("输出",),
+        "en": ("output",),
+    }
+
+    for language in ("zh", "en"):
+        for name in NOTEBOOKS:
+            notebook = _read(ROOT / "exercises" / language / name)
+            cells = notebook["cells"]
+
+            for index, cell in enumerate(cells):
+                if cell.get("cell_type") != "code":
+                    continue
+
+                code = "".join(cell.get("source", []))
+                if "YOUR CODE STARTS HERE" not in code:
+                    continue
+
+                assert index > 0, f"{language}/{name} TODO has no preceding explanation"
+                previous = cells[index - 1]
+                assert previous.get("cell_type") == "markdown", (
+                    f"{language}/{name} TODO must be preceded by a Markdown semantic contract"
+                )
+
+                prose = "".join(previous.get("source", []))
+                assert any(marker in prose for marker in role_markers[language]), (
+                    f"{language}/{name} TODO is missing a natural-language role explanation"
+                )
+                assert any(
+                    marker.lower() in prose.lower()
+                    for marker in output_markers[language]
+                ), f"{language}/{name} TODO is missing an output explanation"
