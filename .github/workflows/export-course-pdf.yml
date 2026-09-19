@@ -161,6 +161,41 @@ jobs:
                       f"{filename} contains Mermaid source instead of a rendered diagram: {leaked}"
                   )
 
+              mermaid_errors = [
+                  marker
+                  for marker in ("Syntax error in text", "mermaid version")
+                  if marker in text
+              ]
+              if mermaid_errors:
+                  raise SystemExit(
+                      f"{filename} contains a Mermaid render error: {mermaid_errors}"
+                  )
+
+              if filename == "13_simulation_is_not_chip.pdf":
+                  expected_labels = (
+                      "RTL / SystemVerilog",
+                      "simulation",
+                      "synthesis",
+                      "implementation",
+                      "timing analysis",
+                      "bitstream",
+                  )
+              else:
+                  expected_labels = (
+                      "sender: VALID + payload",
+                      "receiver: READY",
+                      "VALID AND READY",
+                      "accepted transfer on active clock edge",
+                      "read/write transaction",
+                      "burst of one or more beats",
+                  )
+
+              missing_labels = [label for label in expected_labels if label not in text]
+              if missing_labels:
+                  raise SystemExit(
+                      f"{filename} is missing expected Mermaid labels: {missing_labels}"
+                  )
+
               lavender_pixels = 0
               for page in document:
                   pixmap = page.get_pixmap(alpha=False)
