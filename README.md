@@ -102,6 +102,8 @@ Once registered, select **FPGA FlyBrain** as the notebook kernel in JupyterLab.
 
 ### 6. HDL Toolchain for Lessons 6–8 and Lesson 13
 
+For first-time setup, follow [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md). In particular, after activating OSS CAD Suite, launch JupyterLab from the **same terminal**.
+
 Lessons 6–8 use **SystemVerilog-2012** for RTL and simulation, and Lesson 13 directly invokes Yosys for a real synthesis dry run. Python dependencies are managed by `uv`; HDL simulators and synthesis tools are separate system tools.
 
 The project CI installs Icarus Verilog, Verilator, and Yosys from the GitHub Actions Ubuntu runner and prints their exact versions on every run. The baseline that has been verified end-to-end is:
@@ -194,6 +196,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 | [Learning Architecture](docs/en/LEARNING_PATH.md) | [教学路径](docs/zh/LEARNING_PATH.md) |
 | [Beginner Glossary](docs/en/GLOSSARY.md) | [初学者术语表](docs/zh/GLOSSARY.md) |
 | [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) | [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) |
+| [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md) | [HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md) |
 
 ### Engineering source documents
 | English | 中文 |
