@@ -189,10 +189,6 @@ jobs:
 
               if filename == "18_axi_subset.pdf":
                   expected_labels = (
-                      "sender VALID payload",
-                      "receiver READY",
-                      "handshake check",
-                      "accepted transfer",
                       "read/write transaction",
                       "burst of one or more beats",
                   )
@@ -206,11 +202,11 @@ jobs:
                           f"{missing_labels}"
                       )
 
-              lavender_pixels = 0
-              for page in document:
+              def count_lavender(page):
                   pixmap = page.get_pixmap(alpha=False)
                   samples = pixmap.samples
                   channels = pixmap.n
+                  count = 0
                   for index in range(0, len(samples), channels):
                       red, green, blue = (
                           samples[index],
@@ -224,16 +220,39 @@ jobs:
                           and blue - red >= 8
                           and blue - green >= 8
                       ):
-                          lavender_pixels += 1
+                          count += 1
+                  return count
+
+              page_lavender = [count_lavender(page) for page in document]
+              lavender_pixels = sum(page_lavender)
 
               if lavender_pixels < 400:
                   raise SystemExit(
                       f"{filename} does not contain enough rendered "
-                      f"Mermaid-colored pixels: {lavender_pixels}"
+                      f"diagram-colored pixels: {lavender_pixels}"
                   )
 
+              if filename == "18_axi_subset.pdf":
+                  handshake_candidates = [
+                      (page, count)
+                      for page, count in zip(document, page_lavender)
+                      if "VALID=1" in page.get_text("text")
+                  ]
+                  if not handshake_candidates:
+                      raise SystemExit(
+                          "Lesson 18 PDF has no page containing the handshake explanation"
+                      )
+                  handshake_pixels = max(
+                      count for _, count in handshake_candidates
+                  )
+                  if handshake_pixels < 1000:
+                      raise SystemExit(
+                          "Lesson 18 handshake page does not contain enough "
+                          f"rendered SVG pixels: {handshake_pixels}"
+                      )
+
               print(
-                  f"{filename}: Mermaid source/error text is absent and "
+                  f"{filename}: diagram source/error text is absent and "
                   f"{lavender_pixels} rendered diagram pixels were detected."
               )
           PY
