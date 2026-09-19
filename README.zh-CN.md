@@ -102,6 +102,8 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 
 ### 6. 第六到八课与第十三课的 HDL 工具链
 
+第一次配置请先看：[HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md)。特别注意：激活 OSS CAD Suite 后，要从**同一个终端**启动 JupyterLab。
+
 第 6–8 课使用 **SystemVerilog-2012** 做 RTL/仿真，第 13 课会直接调用 Yosys 做一次真实 synthesis dry run。Python 依赖继续由 `uv` 管理；HDL simulator 与 synthesis tool 是独立的系统工具，不属于 Python 包。
 
 GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys，并在每次 CI 中打印实际版本。目前已经完整验证通过的一组基线是：
@@ -194,6 +196,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 | [教学路径](docs/zh/LEARNING_PATH.md) | [Learning Architecture](docs/en/LEARNING_PATH.md) |
 | [初学者术语表](docs/zh/GLOSSARY.md) | [Beginner Glossary](docs/en/GLOSSARY.md) |
 | [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) | [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) |
+| [HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md) | [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md) |
 
 ### 工程事实文档
 | 中文 | English |
