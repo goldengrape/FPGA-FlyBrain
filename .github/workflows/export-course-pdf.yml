@@ -40,7 +40,7 @@ jobs:
 
       - name: Install PDF exporter and browser
         run: |
-          uv pip install "nbconvert[webpdf]" pypdf
+          uv pip install "nbconvert[webpdf]" pypdf pymupdf
           uv run playwright install --with-deps chromium
 
       - name: Install HDL tools and Chinese fonts
@@ -136,7 +136,7 @@ jobs:
         run: |
           uv run python - <<'PY'
           from pathlib import Path
-          from pypdf import PdfReader
+          import fitz
 
           checks = {
               "13_simulation_is_not_chip.pdf": ("configured FPGA",),
@@ -150,7 +150,8 @@ jobs:
 
           for filename, expected_labels in checks.items():
               path = Path("dist/course-pdfs") / filename
-              text = "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
+              document = fitz.open(path)
+              text = "\n".join(page.get_text("text") for page in document)
               leaked = [
                   marker
                   for marker in ("flowchart LR", "flowchart TD")
@@ -165,7 +166,13 @@ jobs:
                   raise SystemExit(
                       f"{filename} is missing expected rendered Mermaid labels: {missing}"
                   )
-              print(f"{filename}: Mermaid diagrams expose rendered labels, not source.")
+              drawing_count = sum(len(page.get_drawings()) for page in document)
+              if drawing_count == 0:
+                  raise SystemExit(f"{filename} contains no vector drawings")
+              print(
+                  f"{filename}: Mermaid labels are present, source is absent, "
+                  f"and the PDF contains {drawing_count} vector drawings."
+              )
           PY
 
       - name: List generated files
