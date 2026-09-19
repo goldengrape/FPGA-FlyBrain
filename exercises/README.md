@@ -166,7 +166,8 @@ uv run pytest \
   exercises/checks/test_graders.py \
   exercises/checks/test_notebook_structure.py \
   exercises/checks/test_start_exercise.py \
-  lessons/checks/test_platform4_notebook_structure.py -q
+  lessons/checks/test_platform4_notebook_structure.py \
+  lessons/checks/test_platform4_student_dryrun.py -q
 ```
 
 `test_start_exercise.py` verifies lesson selection, work-copy paths, and the guarantee that existing student answers are never overwritten.
