@@ -151,16 +151,15 @@ jobs:
           from pathlib import Path
           import pymupdf
 
-          checks = (
+          mermaid_checks = (
               "13_simulation_is_not_chip.pdf",
               "14_what_is_fpga_board.pdf",
               "15_host_talks_to_fpga.pdf",
               "16_data_movement_cost.pdf",
               "17_external_memory_ddr.pdf",
-              "18_axi_subset.pdf",
           )
 
-          for filename in checks:
+          for filename in mermaid_checks:
               path = Path("dist/course-pdfs") / filename
               document = pymupdf.open(path)
               text = "\n".join(page.get_text("text") for page in document)
@@ -186,21 +185,6 @@ jobs:
                   raise SystemExit(
                       f"{filename} contains a Mermaid render error: {mermaid_errors}"
                   )
-
-              if filename == "18_axi_subset.pdf":
-                  expected_labels = (
-                      "read/write transaction",
-                      "burst of one or more beats",
-                  )
-                  missing_labels = [
-                      label for label in expected_labels
-                      if label not in normalized_text
-                  ]
-                  if missing_labels:
-                      raise SystemExit(
-                          f"{filename} is missing rendered Mermaid labels: "
-                          f"{missing_labels}"
-                      )
 
               def count_lavender(page):
                   pixmap = page.get_pixmap(alpha=False)
@@ -232,28 +216,60 @@ jobs:
                       f"diagram-colored pixels: {lavender_pixels}"
                   )
 
-              if filename == "18_axi_subset.pdf":
-                  handshake_candidates = [
-                      (page, count)
-                      for page, count in zip(document, page_lavender)
-                      if "VALID=1" in page.get_text("text")
-                  ]
-                  if not handshake_candidates:
-                      raise SystemExit(
-                          "Lesson 18 PDF has no page containing the handshake explanation"
-                      )
-                  handshake_pixels = max(
-                      count for _, count in handshake_candidates
-                  )
-                  if handshake_pixels < 1000:
-                      raise SystemExit(
-                          "Lesson 18 handshake page does not contain enough "
-                          f"rendered SVG pixels: {handshake_pixels}"
-                      )
-
               print(
                   f"{filename}: diagram source/error text is absent and "
                   f"{lavender_pixels} rendered diagram pixels were detected."
+              )
+
+
+          # Lesson 18 deliberately uses embedded SVG for the two protocol
+          # diagrams because this path is more reliable in webpdf than Mermaid.
+          lesson18 = pymupdf.open(Path("dist/course-pdfs/18_axi_subset.pdf"))
+
+          def count_lavender(page):
+              pixmap = page.get_pixmap(alpha=False)
+              samples = pixmap.samples
+              channels = pixmap.n
+              count = 0
+              for index in range(0, len(samples), channels):
+                  red, green, blue = (
+                      samples[index],
+                      samples[index + 1],
+                      samples[index + 2],
+                  )
+                  if (
+                      red >= 180
+                      and green >= 180
+                      and blue >= 230
+                      and blue - red >= 8
+                      and blue - green >= 8
+                  ):
+                      count += 1
+              return count
+
+          checks = (
+              ("VALID=1", "handshake SVG"),
+              ("burst transaction", "transaction/burst/beat SVG"),
+          )
+
+          for marker, label in checks:
+              candidates = [
+                  (page, count_lavender(page))
+                  for page in lesson18
+                  if marker in page.get_text("text")
+              ]
+              if not candidates:
+                  raise SystemExit(
+                      f"Lesson 18 PDF has no page for {label}: marker={marker!r}"
+                  )
+              rendered_pixels = max(count for _, count in candidates)
+              if rendered_pixels < 1000:
+                  raise SystemExit(
+                      f"Lesson 18 {label} is not visibly rendered: "
+                      f"{rendered_pixels} diagram-colored pixels"
+                  )
+              print(
+                  f"Lesson 18 {label}: {rendered_pixels} rendered diagram pixels."
               )
           PY
 
