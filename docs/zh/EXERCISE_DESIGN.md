@@ -213,6 +213,7 @@ exercises/
 一次 Python 作业重构只有在以下条件同时满足时才完成：
 
 - Notebook 单独打开可理解；
+- 每个需要学生实现的函数，在代码前都有自然语言 semantic contract，明确作用、输入、输出、返回顺序以及必要的时间/状态含义；
 - TODO 保留且没有答案泄露；
 - Notebook 中没有直接显示 assert 或完整测试向量；
 - grader 可以检查当前 kernel 中的实现；
