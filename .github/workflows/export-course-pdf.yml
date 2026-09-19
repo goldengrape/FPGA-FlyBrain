@@ -31,6 +31,13 @@ jobs:
       - name: Install project dependencies
         run: uv sync --group dev
 
+      - name: Register course Jupyter kernel
+        run: |
+          uv run python -m ipykernel install --user \
+            --name fpga-flybrain \
+            --display-name "FPGA FlyBrain"
+          uv run jupyter kernelspec list
+
       - name: Install PDF exporter and browser
         run: |
           uv pip install "nbconvert[webpdf]" pypdf
@@ -123,6 +130,30 @@ jobs:
           if missing:
               raise SystemExit(f"Lesson 13 PDF is missing synthesis evidence: {missing}")
           print("Lesson 13 PDF contains real synthesis evidence.")
+          PY
+
+      - name: Verify Mermaid diagrams are rendered
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader
+
+          for filename in (
+              "13_simulation_is_not_chip.pdf",
+              "18_axi_subset.pdf",
+          ):
+              path = Path("dist/course-pdfs") / filename
+              text = "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
+              leaked = [
+                  marker
+                  for marker in ("flowchart LR", "flowchart TD")
+                  if marker in text
+              ]
+              if leaked:
+                  raise SystemExit(
+                      f"{filename} contains Mermaid source instead of a rendered diagram: {leaked}"
+                  )
+              print(f"{filename}: Mermaid source is not exposed in PDF text.")
           PY
 
       - name: List generated files
