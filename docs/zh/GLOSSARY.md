@@ -62,6 +62,17 @@
 | time multiplexing | 时间复用（time multiplexing） | 让同一物理计算单元在不同时间片轮流服务多个虚拟对象，以时间换取硬件资源。 |
 | address | 地址（address） | 选择 memory 中某个位置的编号；address 决定“访问哪里”，不是被保存的数据本身。 |
 | memory | 存储器（memory） | 保存许多数据或 state 的硬件/抽象；通过不同组织方式可实现 register file、RAM 等。 |
+| connectome | 连接组（connectome） | 描述神经元之间结构连接关系的数据集；可带 neuron/edge metadata，但不等于运行中的 membrane state 或 spike queue。 |
+| manifest | 清单 / manifest | 随 artifact 一起记录 schema version、byte count、checksum、provenance 等信息的小型描述。 |
+| checksum | 校验摘要（checksum） | 对精确 bytes 计算的确定性摘要，用来检查数据是否一致；相同 checksum 证明 integrity，不自动证明科学/模型正确性。 |
+| utilization | 利用率（utilization） | 当前 demand 相对于某个 stage capacity 的比例，例如 demand/capacity。 |
+| bottleneck | 瓶颈（bottleneck） | 在当前 workload 下最限制系统的 stage；它取决于 demand 与 capacity，可能随 scale 或 traffic pattern 改变。 |
+| hotspot | 热点（hotspot） | 工作/流量高度集中在少数 neuron、bank、queue 或资源上的情况，可能造成局部拥塞。 |
+| closed loop | 闭环（closed loop） | 系统 output 会改变 environment，environment 又改变后续 input；未来输入因此依赖之前的系统行为。 |
+| sensory encoder | 感觉编码器（sensory encoder） | 把 environment observation 映射成指定 neural stimulation 的边界；人工 mapping 必须显式记录。 |
+| output decoder | 输出解码器（output decoder） | 把选定 neural activity 映射成行为/控制 signal 的边界；人工 mapping 必须显式记录。 |
+| benchmark | 基准测试（benchmark） | 在冻结 model、data、input 与 measurement rule 后，对 latency、throughput、energy 等指标进行可重复比较的实验。 |
+| energy per event | 单事件能耗（energy per event） | measurement interval 中的总能量除以完成的 event/work-unit 数；必须明确 power 与时间的 measurement boundary。 |
 
 ## 使用规则
 
