@@ -3,6 +3,8 @@
 ## 0. Purpose
 Define the current module boundaries, interfaces, data structures, and contracts. Module boundaries exist to support implementation and verification; avoid over-decomposition.
 
+This document follows [Documentation-First Specification Governance](DOCUMENT_AUTHORITY.md): formal module/interface/semantic contracts are documented first, translated into TDD oracles second, and implemented last. Existing RTL/Python behavior does not automatically redefine this document.
+
 ## 1. System topology
 ```text
 Host / Python
