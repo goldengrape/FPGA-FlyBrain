@@ -250,3 +250,19 @@ def test_lesson15_exercise_does_not_preteach_axi_transaction_vocabulary():
         text = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
         assert "AXI" not in text
         assert "transaction" not in text.lower()
+
+
+
+def test_platform4_cells_have_stable_bilingual_ids():
+    for name in LESSONS:
+        zh = _read("zh", name)
+        en = _read("en", name)
+
+        zh_ids = [cell.get("id") for cell in zh["cells"]]
+        en_ids = [cell.get("id") for cell in en["cells"]]
+
+        assert all(zh_ids), f"zh/{name} has cells without nbformat ids"
+        assert all(en_ids), f"en/{name} has cells without nbformat ids"
+        assert len(set(zh_ids)) == len(zh_ids), f"zh/{name} has duplicate cell ids"
+        assert len(set(en_ids)) == len(en_ids), f"en/{name} has duplicate cell ids"
+        assert zh_ids == en_ids, f"{name} has drifted zh/en cell ids"
