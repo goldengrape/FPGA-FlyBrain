@@ -176,12 +176,20 @@ exercises/
     ├── 09_time_multiplex_many_neurons.ipynb
     ├── 10_spike_fifo_backpressure.ipynb
     ├── 11_sparse_synapse_lookup.ipynb
-    └── 12_one_spike_journey.ipynb
+    ├── 12_one_spike_journey.ipynb
+    ├── 13_simulation_is_not_chip.ipynb
+    ├── 14_what_is_fpga_board.ipynb
+    ├── 15_host_talks_to_fpga.ipynb
+    ├── 16_data_movement_cost.ipynb
+    ├── 17_external_memory_ddr.ipynb
+    └── 18_axi_subset.ipynb
 ~~~
 
 Exercise Notebook names should match their lesson counterparts whenever practical.
 
 Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms, so they are not forced into Python exercise Notebooks. Their HDL exercises will follow the same workbook principles later.
+
+Lessons 13–18 enter physical-hardware and external-memory topics, but their formal workbooks deliberately remain board-independent semantic/performance models. Physical-board steps, DDR controllers, and platform-specific procedures belong to the matching RMD engineering labs rather than becoming coursework prerequisites.
 
 ## 8. Definition of done
 

@@ -140,6 +140,14 @@ The links below point to official starters for reading and version tracking. Whe
 | 10 | [Bounded FIFO and backpressure](en/10_spike_fifo_backpressure.ipynb) | FIFO ordering, full/empty, retry |
 | 11 | [Sequential sparse lookup representation](en/11_sparse_synapse_lookup.ipynb) | source index, contiguous records, zero fanout |
 | 12 | [The journey of one source spike](en/12_one_spike_journey.ipynb) | source range, weighted event, target accumulator |
+| 13 | [Read a timing budget](en/13_simulation_is_not_chip.ipynb) | critical path, slack, timing pass/fail |
+| 14 | [Turn a board clock into an observable tick](en/14_what_is_fpga_board.ipynb) | board clock, counter width, observable tick |
+| 15 | [Model a host ↔ programmable-logic roundtrip](en/15_host_talks_to_fpga.ipynb) | persistent PL state, readback ordering |
+| 16 | [Identify compute / data-movement bottleneck](en/16_data_movement_cost.ipynb) | latency, bandwidth, simple cost model |
+| 17 | [Estimate sequential/random burst cost](en/17_external_memory_ddr.ipynb) | burst grouping, setup cost, access pattern |
+| 18 | [Identify VALID/READY accepted beats](en/18_axi_subset.ipynb) | handshake, stall, accepted beat |
+
+Lessons 13–18 enter FPGA-board, host, DDR, and AXI topics, but their formal workbooks remain **board-independent** Python/reasoning exercises. Physical-board labs are engineering extensions of the matching RMD slices, so hardware purchase does not block course progress.
 
 Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms and continue to use the RTL learning check:
 

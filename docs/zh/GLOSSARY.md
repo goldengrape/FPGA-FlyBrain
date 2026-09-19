@@ -26,6 +26,13 @@
 | SystemVerilog | SystemVerilog | 本项目计划使用的硬件描述与验证语言。 |
 | testbench | 测试平台 | 在仿真中给硬件模块输入刺激、检查输出是否正确的测试代码。 |
 | waveform | 波形 | 把数字信号随时间的 0/1 或数值变化画出来，帮助理解硬件时序。 |
+| synthesis | 综合 | 把 RTL 描述转换成可由 FPGA 逻辑资源实现的网络。 |
+| implementation | 实现 / 布局布线阶段 | 把综合后的逻辑映射、放置并连接到具体 FPGA 资源。 |
+| timing analysis | 时序分析 | 检查信号传播是否满足 clock period 等时间约束。 |
+| bitstream | 配置比特流 | 用于配置 FPGA 可编程资源的数据。 |
+| latency | 延迟 | 一次操作从发起到结果可用经历的时间。 |
+| throughput | 吞吐 | 单位时间持续完成的工作量。 |
+| bandwidth | 带宽 | 单位时间可持续搬运的数据量。 |
 | DDR | 双倍数据速率同步动态随机存储器（Double Data Rate SDRAM） | FPGA 板上常见的大容量外部内存；容量大，但访问方式和片上存储不同。 |
 | AXI | 高级可扩展接口（Advanced eXtensible Interface） | ARM/FPGA 系统里常见的一组片上通信协议，本项目只学习实际需要的部分。 |
 | CPU | 中央处理器（Central Processing Unit） | 通用处理器，擅长灵活执行指令和控制复杂程序流程。 |

@@ -26,6 +26,13 @@ This is a reference sheet, not a substitute for first-use explanations in the le
 | SystemVerilog | SystemVerilog | The hardware design and verification language planned for this project. |
 | testbench | testbench | Simulation code that drives inputs into a hardware module and checks its outputs. |
 | waveform | waveform | A time plot of digital signals, used to understand hardware timing and state changes. |
+| synthesis | synthesis | Transformation of RTL into a network implementable with FPGA logic resources. |
+| implementation | implementation / place-and-route stage | Mapping, placing, and routing synthesized logic onto specific FPGA resources. |
+| timing analysis | timing analysis | Checking whether signal propagation satisfies clock-period constraints. |
+| bitstream | bitstream | Configuration data used to program FPGA resources. |
+| latency | latency | Time from starting one operation until its result becomes available. |
+| throughput | throughput | Sustained work completed per unit time. |
+| bandwidth | bandwidth | Sustained data moved per unit time. |
 | DDR | Double Data Rate SDRAM | Large external memory commonly found on FPGA boards; it offers much more capacity than on-chip memory but has different access costs and behavior. |
 | AXI | Advanced eXtensible Interface | A family of on-chip communication protocols common in ARM/FPGA systems; this project will teach only the subset it actually needs. |
 | CPU | Central Processing Unit | A general-purpose processor optimized for flexible instruction execution and complex control flow. |

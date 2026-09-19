@@ -18,6 +18,12 @@ EXERCISE_FILES = {
     "10": "10_spike_fifo_backpressure.ipynb",
     "11": "11_sparse_synapse_lookup.ipynb",
     "12": "12_one_spike_journey.ipynb",
+    "13": "13_simulation_is_not_chip.ipynb",
+    "14": "14_what_is_fpga_board.ipynb",
+    "15": "15_host_talks_to_fpga.ipynb",
+    "16": "16_data_movement_cost.ipynb",
+    "17": "17_external_memory_ddr.ipynb",
+    "18": "18_axi_subset.ipynb",
 }
 
 

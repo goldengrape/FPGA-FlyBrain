@@ -20,6 +20,12 @@ NOTEBOOKS = [
     "10_spike_fifo_backpressure.ipynb",
     "11_sparse_synapse_lookup.ipynb",
     "12_one_spike_journey.ipynb",
+    "13_simulation_is_not_chip.ipynb",
+    "14_what_is_fpga_board.ipynb",
+    "15_host_talks_to_fpga.ipynb",
+    "16_data_movement_cost.ipynb",
+    "17_external_memory_ddr.ipynb",
+    "18_axi_subset.ipynb",
 ]
 
 

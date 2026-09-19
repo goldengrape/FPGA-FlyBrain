@@ -15,6 +15,7 @@ def test_normalize_lesson_accepts_common_forms():
     assert normalize_lesson("1") == "01"
     assert normalize_lesson("01") == "01"
     assert normalize_lesson("lesson11") == "11"
+    assert normalize_lesson("18") == "18"
     assert normalize_lesson("all") == "all"
 
 
