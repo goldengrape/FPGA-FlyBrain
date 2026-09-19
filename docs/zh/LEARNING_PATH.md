@@ -122,18 +122,18 @@ Notebook 应明确写出：
 
 这样避免预告词被误认为考试范围。
 
-### LP-8 使用声明式矢量图，Mermaid 为默认；禁用 ASCII 字符画
+### LP-8 课程图统一使用 inline SVG；禁用 Mermaid 与 ASCII 字符画
 
-概念流程、数据流图、状态转移图、时序因果及硬件模块架构必须使用**声明式、可版本控制的图形表示**。默认优先使用 Mermaid fenced block（```mermaid`）；如果经过实际 Jupyter/webpdf 验证，某张关键图在 Mermaid 导出链路中不稳定，可以改用 Notebook Markdown 中的 **inline SVG**。禁止用空格、连字符和文本折线拼凑 ASCII 字符画，也不要为了绕过渲染问题退化成难以审查的截图。
+从 Platform 5 开始，概念流程、数据流图、状态转移图、时序因果及硬件模块架构统一使用 **Markdown 中的 inline SVG**。不再为新课或本轮修订内容引入 Mermaid。也禁止用空格、连字符拼 ASCII 字符画，或用不可审查截图替代结构图。
 
 **工程理由：**
 
-1. **可维护**：Mermaid 与 inline SVG 都是文本，可进入 Git diff；ASCII 排版和截图都不适合作为长期结构事实；
-2. **优先简单**：普通概念图继续用 Mermaid；只有实际导出测试证明 Mermaid 不可靠时才使用 inline SVG；
-3. **导出要验证**：PDF/打印属于正式交付链路，不能因为 JupyterLab 里“看起来正常”就假设 webpdf 也正常；
-4. **人机协作稳定**：图的节点、连线和标签应保持显式、可审查，AI 生成后仍由人检查语义。
+1. **PDF 可验证**：本项目已经实际观察到 Jupyter/webpdf 对 Mermaid 的空图与假阳性问题；inline SVG 直接进入浏览器 DOM，打印链路更可控；
+2. **可版本控制**：SVG 仍是文本，节点、标签、连线与颜色都可进入 Git diff；
+3. **可以做视觉 CI**：课程 SVG 使用专用填充色，PDF CI 可检查这些像素是否真正出现在最终页面；
+4. **语义显式**：图仍然是可审查的声明式结构，不退化成截图或手工 ASCII。
 
-Lesson 18 的 AXI 协议图就是该例外的回归样本：Mermaid 与 attachment-SVG 在 webpdf 中曾出现空图/破图，最终采用 inline SVG，并由 PDF CI 验证实际渲染。
+Platform 5 的 LSN-019~023 已全部改为 inline SVG。较早 lesson 中尚存的 legacy Mermaid 不在本 PR 中批量重写；后续只要这些 lesson 被修改，就应同步迁移为 inline SVG。
 ---
 
 ## 4. 每个 Notebook 的推荐结构
