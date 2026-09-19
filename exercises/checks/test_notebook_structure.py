@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -55,6 +58,7 @@ def test_student_notebooks_use_external_graders_and_keep_todos():
                 if cell.get("cell_type") == "code"
             )
             assert "from exercises.grader." in code
+            assert "_repo_root = next(" in code
             assert "YOUR CODE STARTS HERE" in code
             assert "NotImplementedError" in code
 
@@ -96,3 +100,34 @@ def test_bilingual_exercises_keep_matching_structure_and_code():
             if cell.get("cell_type") == "code"
         ]
         assert zh_code == en_code, f"{name} has drifted code between zh/en versions"
+
+
+
+def test_grader_bootstrap_works_from_notebook_directory():
+    snippet = r"""
+from pathlib import Path
+import sys
+
+_repo_root = next(
+    path for path in (Path.cwd(), *Path.cwd().parents)
+    if (path / "exercises" / "grader").is_dir()
+)
+if str(_repo_root) not in sys.path:
+    sys.path.insert(0, str(_repo_root))
+
+from exercises.grader.lesson01 import check
+assert callable(check)
+"""
+    env = os.environ.copy()
+    env.pop("PYTHONPATH", None)
+
+    for language in ("zh", "en"):
+        completed = subprocess.run(
+            [sys.executable, "-c", snippet],
+            cwd=ROOT / "exercises" / language,
+            env=env,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert completed.returncode == 0, completed.stderr
