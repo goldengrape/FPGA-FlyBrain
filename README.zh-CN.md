@@ -205,11 +205,12 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 
 项目规划、系统架构和第一次课程审计已经完成；第一段正式工程实现尚未声明完成。
 
-当前工程顺序：
+当前第一批工程任务：
 
 1. `RMD-001` — Python LIF 浮点参考模型
 2. `RMD-002` — fixed-point 探索
 3. `RMD-003` — 冻结 v0 神经元语义
-4. `RMD-003A` — Digital Hardware Bridge
+
+`RMD-003A` — Digital Hardware Bridge 是**下一批的第一项**，不是当前第一批的一部分。
 
 在早期仿真与概念验证通过之前，暂不购买 FPGA 硬件。
