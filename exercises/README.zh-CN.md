@@ -163,7 +163,7 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 | 17 | [估算 sequential/random burst 成本](zh/17_external_memory_ddr.ipynb) | burst grouping、setup cost、access pattern |
 | 18 | [识别 VALID/READY 接受的 data beat](zh/18_axi_subset.ipynb) | handshake、stall、accepted beat |
 | 19 | [计算 connectome 的 in/out degree](zh/19_what_is_connectome.ipynb) | directed graph structure、zero-degree neuron |
-| 20 | [建立最小 image manifest](zh/20_load_malecns_subset.ipynb) | schema version、byte count、SHA-256 integrity |
+| 20 | [建立带 provenance 的 image manifest](zh/20_load_malecns_subset.ipynb) | schema/source/converter version、byte count、SHA-256 integrity |
 | 21 | [找出 utilization 最高的 stage](zh/21_scaling_bottlenecks.ipynb) | utilization、scale-dependent bottleneck |
 | 22 | [生成 closed-loop position trace](zh/22_closed_loop_world.ipynb) | feedback、target-reaching trace |
 | 23 | [计算 throughput 与 energy per event](zh/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark metric、duration-aware energy |
