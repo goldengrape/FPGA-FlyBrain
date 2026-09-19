@@ -105,6 +105,21 @@ The formal workbooks for Lessons 13–18 remain runnable without a physical boar
 
 第 13–18 课的正式作业保持无板可完成；板卡专用实验属于对应 RMD 的工程延伸，避免硬件购买阻断课程学习。
 
+
+## Fifth learning block / 第五组课程
+
+| ID | 中文 | English | Practice / 作业 | Primary concept / 主要概念 | Engineering mapping |
+|---|---|---|---|---|---|
+| LSN-019 | [什么是 connectome？](zh/19_what_is_connectome.ipynb) | [What is a connectome?](en/19_what_is_connectome.ipynb) | [中文](../exercises/zh/19_what_is_connectome.ipynb) / [English](../exercises/en/19_what_is_connectome.ipynb) | connectome structure vs dynamic state | RMD-017 |
+| LSN-020 | [第一次装入 MaleCNS 子图：先验证 image](zh/20_load_malecns_subset.ipynb) | [First MaleCNS subset load: verify the image first](en/20_load_malecns_subset.ipynb) | [中文](../exercises/zh/20_load_malecns_subset.ipynb) / [English](../exercises/en/20_load_malecns_subset.ipynb) | manifest + checksum integrity contract | RMD-017/018 |
+| LSN-021 | [规模变大以后，瓶颈会跑到哪里？](zh/21_scaling_bottlenecks.ipynb) | [What changes when the network becomes larger?](en/21_scaling_bottlenecks.ipynb) | [中文](../exercises/zh/21_scaling_bottlenecks.ipynb) / [English](../exercises/en/21_scaling_bottlenecks.ipynb) | utilization + moving bottleneck | RMD-019~022 |
+| LSN-022 | [给果蝇一个世界：把 loop 闭合起来](zh/22_closed_loop_world.ipynb) | [Give the fly a world: close the loop](en/22_closed_loop_world.ipynb) | [中文](../exercises/zh/22_closed_loop_world.ipynb) / [English](../exercises/en/22_closed_loop_world.ipynb) | closed-loop feedback | RMD-023~025 |
+| LSN-023 | [三种机器做同一个实验](zh/23_cpu_gpu_fpga_benchmark.ipynb) | [Three machines, one experiment](en/23_cpu_gpu_fpga_benchmark.ipynb) | [中文](../exercises/zh/23_cpu_gpu_fpga_benchmark.ipynb) / [English](../exercises/en/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark comparability | RMD-028 |
+
+Platform 5 remains deliberately reproducible without downloading the full MaleCNS dataset or owning a physical board. Lesson 20 uses an explicit teaching fixture until RMD-017/018 produces a formal versioned MaleCNS-derived artifact; Lessons 21/23 use synthetic teaching measurements rather than performance claims.
+
+Platform 5 仍然允许在不下载完整 MaleCNS、没有实体板卡的情况下学习。第 20 课明确使用 teaching fixture，直到 RMD-017/018 产出正式、版本化的 MaleCNS-derived artifact；第 21/23 课使用 synthetic teaching measurement，不冒充真实性能结论。
+
 ## RTL learning checks / RTL 教学检查
 
 After installing an HDL toolchain that provides Icarus Verilog, Verilator, and Yosys, run the complete teaching-RTL check with:
