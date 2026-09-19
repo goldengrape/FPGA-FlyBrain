@@ -145,7 +145,7 @@ jobs:
           print("Lesson 13 PDF contains real synthesis evidence.")
           PY
 
-      - name: Verify Mermaid diagrams are rendered
+      - name: Verify course diagrams are rendered
         run: |
           uv run python - <<'PY'
           from pathlib import Path
@@ -163,8 +163,6 @@ jobs:
               path = Path("dist/course-pdfs") / filename
               document = pymupdf.open(path)
               text = "\n".join(page.get_text("text") for page in document)
-              normalized_text = " ".join(text.split())
-
               leaked = [
                   marker
                   for marker in ("flowchart LR", "flowchart TD", "graph TD")
@@ -222,11 +220,22 @@ jobs:
               )
 
 
-          # Lesson 18 deliberately uses embedded SVG for the two protocol
-          # diagrams because this path is more reliable in webpdf than Mermaid.
+          # Lesson 18 uses inline SVG for its two protocol diagrams.
+          # Attachment URLs were experimentally shown to break under webpdf,
+          # so verify that the inline SVG fill is actually visible on each
+          # corresponding PDF page.
           lesson18 = pymupdf.open(Path("dist/course-pdfs/18_axi_subset.pdf"))
+          lesson18_text = "\n".join(page.get_text("text") for page in lesson18)
+          leaked_svg = [
+              marker for marker in ("<svg", "<rect", "<path")
+              if marker in lesson18_text
+          ]
+          if leaked_svg:
+              raise SystemExit(
+                  f"Lesson 18 PDF contains escaped SVG source: {leaked_svg}"
+              )
 
-          def count_lavender(page):
+          def count_inline_svg_fill(page):
               pixmap = page.get_pixmap(alpha=False)
               samples = pixmap.samples
               channels = pixmap.n
@@ -237,24 +246,27 @@ jobs:
                       samples[index + 1],
                       samples[index + 2],
                   )
+                  # The inline SVG boxes use #eef0ff. Allow a small range for
+                  # browser/PDF color conversion while staying much stricter
+                  # than generic syntax-highlighting colors.
                   if (
-                      red >= 180
-                      and green >= 180
-                      and blue >= 230
-                      and blue - red >= 8
-                      and blue - green >= 8
+                      232 <= red <= 245
+                      and 234 <= green <= 247
+                      and blue >= 248
+                      and blue - red >= 6
+                      and blue - green >= 4
                   ):
                       count += 1
               return count
 
           checks = (
-              ("VALID=1", "handshake SVG"),
-              ("burst transaction", "transaction/burst/beat SVG"),
+              ("VALID=1", "handshake inline SVG"),
+              ("burst transaction", "transaction/burst/beat inline SVG"),
           )
 
           for marker, label in checks:
               candidates = [
-                  (page, count_lavender(page))
+                  (page, count_inline_svg_fill(page))
                   for page in lesson18
                   if marker in page.get_text("text")
               ]
@@ -266,10 +278,10 @@ jobs:
               if rendered_pixels < 1000:
                   raise SystemExit(
                       f"Lesson 18 {label} is not visibly rendered: "
-                      f"{rendered_pixels} diagram-colored pixels"
+                      f"{rendered_pixels} SVG-fill pixels"
                   )
               print(
-                  f"Lesson 18 {label}: {rendered_pixels} rendered diagram pixels."
+                  f"Lesson 18 {label}: {rendered_pixels} SVG-fill pixels."
               )
           PY
 
