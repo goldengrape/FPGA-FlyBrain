@@ -37,9 +37,9 @@ Every lesson should obey these rules / 每课遵守以下规则：
 8. **Do not teach by technical inaccuracy / 不用技术错误换取“好懂”**  
    Simplification is encouraged, but a simplified explanation must remain technically defensible.
 
-9. **Declarative diagrams over ASCII / 用字符描述流程图而非 ASCII 字符画**  
-   All conceptual diagrams, state machines, timing flows, and hardware block diagrams must be written using declarative diagram code (primarily Mermaid fenced code blocks: ```` ```mermaid ````). Do not draw diagrams with spaces, hyphens, and ASCII art. Mermaid renders natively as clean vector graphics in JupyterLab and GitHub, is accessible, and keeps structural revisions clear in Git diffs.  
-   所有概念流程、状态机流转、时序因果与硬件模块图，一律使用字符声明式语法（以 Mermaid 代码块 ```` ```mermaid ```` 为主）进行结构化描述，禁止使用空格、连字符和文本折线拼凑 ASCII 字符画。字符描述图在 JupyterLab 与 GitHub 中可原生渲染为矢量图，支持精准的版本差异追踪，且便于长期维护。
+9. **Declarative vector diagrams over ASCII / 用声明式矢量图而非 ASCII 字符画**  
+   Use Mermaid fenced blocks by default for conceptual flows, state machines, timing relationships, and hardware block diagrams. If actual Jupyter/webpdf testing proves a critical Mermaid diagram unreliable, inline SVG in Markdown is an allowed fallback. Do not replace diagrams with hand-aligned ASCII art or opaque screenshots merely to avoid export issues.  
+   概念流程、状态机、时序因果与硬件模块图默认使用 Mermaid；如果实际 Jupyter/webpdf 测试证明某张关键 Mermaid 图导出不可靠，可以在 Markdown 中使用 inline SVG。不要为了绕过导出问题退回 ASCII 字符画或不可审查的截图。
 
 10. **Exercise Notebooks + external graders / 作业 Notebook + 外部 grader**  
     Suitable programming exercises live in a separate Exercise Notebook with a fixed function signature, a small TODO region, an external grader call, and a Human Check. Student-facing notebooks do not directly display grading asserts or concrete grader vectors.  
