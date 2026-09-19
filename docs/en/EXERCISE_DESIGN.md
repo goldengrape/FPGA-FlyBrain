@@ -36,7 +36,35 @@ Python exercises follow this general order:
 
 Not every task must mechanically use all nine headings, but the information must be present and preserve the sequence: explain → implement → check → explain again.
 
-### 3.1 Student code cells
+### 3.1 State the semantic contract before showing code
+
+**A function signature is not a substitute for assignment prose.** Before the learner sees the code, the workbook must explain in natural language what the function means in the current model.
+
+For every function the learner must implement, state at least:
+
+- **Role**: what step of the model or data flow the function performs;
+- **Inputs**: what each argument means in the course context, not only its Python type;
+- **Outputs**: how many results are produced and what each result represents;
+- **Return order**: for tuples / multiple values, explain item 1, item 2, item 3, and so on;
+- **Time/state meaning**: when state, next state, candidate, or events belong to different stages or time steps, say so explicitly;
+- **Side effects**: whether inputs such as lists or state objects may be modified.
+
+For example, do not rely only on:
+
+~~~python
+def lif_step(...) -> tuple[float, bool]:
+    ...
+~~~
+
+Explain first:
+
+> Return `(next_v, spike)`.  
+> `next_v` is the membrane voltage stored for the next time step after this update.  
+> `spike` is a Boolean indicating whether this update emits a spike.
+
+The learner should understand the assignment even if they are not yet comfortable reading Python type annotations such as `tuple[float, bool]`.
+
+### 3.2 Student code cells
 
 TODO regions should stay small and contain only what the lesson actually asks the learner to implement. Boilerplate, I/O, testing infrastructure, and unrelated course machinery should stay outside the TODO.
 
@@ -49,7 +77,7 @@ def threshold_reached(value: int, threshold: int) -> bool:
     # YOUR CODE ENDS HERE
 ~~~
 
-### 3.2 Check cells
+### 3.3 Check cells
 
 The Notebook does not contain pytest test functions. It imports an external grader and passes the learner's current in-kernel functions to it.
 
