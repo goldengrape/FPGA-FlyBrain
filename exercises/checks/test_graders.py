@@ -356,8 +356,15 @@ def test_lesson19_grader_rejects_reversed_edge_meaning():
             outgoing[target] += 1
         return incoming, outgoing
 
+    def mutates_inputs(neuron_ids, edges):
+        incoming, outgoing = good(neuron_ids, edges)
+        neuron_ids.clear()
+        edges.clear()
+        return incoming, outgoing
+
     assert _all_pass(lesson19.evaluate(good))
     assert _some_fail(lesson19.evaluate(bad))
+    assert _some_fail(lesson19.evaluate(mutates_inputs))
 
 
 def test_lesson20_grader_rejects_bad_integrity_or_provenance():
@@ -406,8 +413,15 @@ def test_lesson21_grader_rejects_raw_demand_as_bottleneck():
         }
         return utilization, max(stage_demand, key=stage_demand.get)
 
+    def mutates_inputs(stage_demand, stage_capacity):
+        utilization, stage = good(stage_demand, stage_capacity)
+        stage_demand.clear()
+        stage_capacity.clear()
+        return utilization, stage
+
     assert _all_pass(lesson21.evaluate(good))
     assert _some_fail(lesson21.evaluate(bad))
+    assert _some_fail(lesson21.evaluate(mutates_inputs))
 
 
 def test_lesson22_grader_rejects_open_loop_or_one_direction_logic():
