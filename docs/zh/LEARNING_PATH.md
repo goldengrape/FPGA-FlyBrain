@@ -221,7 +221,7 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 | 计划 Lesson | 第一次重点解释 | 工程映射 |
 |---|---|---|
 | LSN-019 什么是 connectome | connectome、neuron ID、edge、metadata | RMD-017 |
-| LSN-020 第一次装入 MaleCNS 子图：先验证 image | manifest、checksum、differential test；teaching fixture 不冒充正式 artifact | RMD-017/018 |
+| LSN-020 装入真实 MaleCNS 子图之前：先验证 network image | manifest、checksum、provenance、differential test；teaching fixture 不冒充正式 artifact | RMD-017/018 |
 | LSN-021 规模变大以后发生什么 | bottleneck、utilization、hotspot | RMD-019~022 |
 | LSN-022 给果蝇一个世界 | sensory encoder、decoder、closed loop | RMD-023~025 |
 | LSN-023 三种机器做同一个实验 | CPU、GPU、FPGA、latency/throughput/power | RMD-028 |
