@@ -188,6 +188,7 @@ Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms, so they are no
 A Python exercise migration is complete only when:
 
 - the Notebook is understandable on its own;
+- every learner-implemented function has a natural-language semantic contract before its code, stating role, inputs, outputs, return order, and any necessary time/state meaning;
 - TODOs remain unsolved and do not leak answers;
 - the Notebook does not directly show assert statements or full grader vectors;
 - the grader can check the current in-kernel implementation;
