@@ -90,3 +90,55 @@ Priorities after this dry run:
 4. the remaining design question is how strongly Lessons 2, 11, and 12 should shift from reproduction toward transfer/design.
 
 Do not increase code volume simply to make the assignments feel harder.
+
+
+## 10. Platform 4 (LSN-013~018) student-path rerun
+
+### 10.1 Scope and method
+
+After LSN-013~018 were established, a second student-path pass was performed:
+
+1. create personal work copies with `scripts/start_exercise.py 13~18`;
+2. solve TODOs from the lesson and exercise text without reading hidden grader vectors;
+3. execute each Notebook end to end and inspect grader output;
+4. run the real Yosys synthesis dry run in Lesson 13;
+5. execute both Chinese and English lesson code cells automatically to protect localized variants.
+
+Result: all six exercises reported **3 / 3 groups passed**, so the end-to-end exercise path passed **6 / 6**.
+
+### 10.2 Lesson-by-lesson result
+
+| Lesson | Student-path result | Main observation |
+|---|---|---|
+| 13 | Pass | Simulation/synthesis/timing separation is clear; Yosys summary is readable; missing-Yosys path gives actionable setup guidance |
+| 14 | Pass | 50,000,000 cycles/tick and a 26-bit counter follow directly from the text; grader feedback is concept-orthogonal |
+| 15 | Pass | Host/PL persistent state and readback ordering are clear; the exercise no longer pulls AXI/transaction vocabulary forward |
+| 16 | Pass | Compute and transfer are component-cost comparisons, not a fake total elapsed-time model |
+| 17 | Pass | Burst grouping, gaps, and empty input are clear without requiring DDR-PHY knowledge |
+| 18 | Pass | VALID/READY, stall, accepted-beat, and payload-stability semantics are consistent |
+
+### 10.3 Automated student dry run
+
+`lessons/checks/test_platform4_student_dryrun.py` now executes the teaching code cells for both Chinese and English LSN-013~018:
+
+- Lesson 13 missing-Yosys guidance in both languages;
+- Lesson 13 beginner-readable timing output in both languages;
+- real Lesson 13 synthesis in the RTL CI when Yosys is installed;
+- Lesson 14~18 example code and expected outputs in both languages.
+
+The Platform 4 dry run is therefore continuous CI protection rather than a one-off review.
+
+### 10.4 Yosys version coverage
+
+The Lesson 13 synthesis summary has been exercised against both supported environment families:
+
+- Ubuntu CI: Yosys 0.33;
+- OSS CAD Suite: Yosys 0.69.
+
+Their `stat` cell formats differ, and the Notebook parser supports both. Learners see a concise teaching summary while the full log remains available in `yosys_log`.
+
+### 10.5 Platform 4 conclusion
+
+LSN-013~018 meet the current workbook bar: standalone task meaning, explicit valid-input domains, small TODO scope, non-leaking graders, implementation-focused Human Checks, and a 6/6 end-to-end student path.
+
+Future Platform 5 exercises should reuse the same pattern: **manual student dry run first, then move automatable student-path checks into CI.**
