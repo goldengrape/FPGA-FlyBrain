@@ -131,4 +131,6 @@ The script checks / 脚本会执行：
 
 Build artifacts are written under `build/rtl-learning/` and are ignored by Git.
 
+Before Lesson 13, first-time learners should follow [中文 HDL 工具链安装说明](../docs/zh/HDL_TOOLCHAIN_SETUP.md) or [English HDL toolchain setup](../docs/en/HDL_TOOLCHAIN_SETUP.md). The Jupyter server must be launched from the same terminal where the HDL toolchain is activated.
+
 Lesson 13 additionally invokes Yosys directly from the Notebook to synthesize the existing teaching accumulator. That dry run demonstrates real synthesis output without pretending that Yosys has completed target-device placement, routing, timing sign-off, or bitstream generation.
