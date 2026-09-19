@@ -84,12 +84,16 @@ Oracle：Python fixed-point vectors 或直接构造 expected values。
 - AI 修改模型语义前，先更新 URD/ADD/TDD，不得直接改 RTL“修好”。
 - AI 声称测试、时序或性能结果时，必须附对应命令、波形、报告或 benchmark 证据。
 
-## 6. 最小 CI（未来）
-- Python tests
-- lint/format
-- RTL compile
-- fast RTL unit tests
-- trace consistency check
-- bilingual ID consistency check
+## 6. 最小 CI（部分已实现）
+
+当前状态：
+- Python tests：**已实现**（Python exercise infrastructure）
+- RTL compile：**已实现**
+- fast RTL unit tests：**已实现**，含教学边界 characterization
+- Verilator RTL lint：**已实现**
+- Yosys synthesis sanity：**已实现**
+- lint/format：**部分实现**，尚无统一 Python format/lint gate
+- trace consistency check：**未实现自动化**
+- bilingual ID consistency check：**未实现完整自动化**；作业 Notebook 已有双语结构/code-cell 一致性检查
 
 FPGA full build 不要求每次 CI 都跑，可按 checkpoint/nightly 处理。
