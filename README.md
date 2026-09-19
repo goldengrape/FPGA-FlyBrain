@@ -47,13 +47,45 @@ uv sync
 
 This command automatically provisions `.venv` with all runtime libraries (`numpy`, `matplotlib`) and development/lab tooling (`jupyterlab`, `ipykernel`, `pytest`) according to `uv.lock`.
 
-### 2. Launch JupyterLab
+### 2. Create a personal exercise copy
+
+Do not write answers directly into the Git-tracked official templates under `exercises/en/`. Create a personal copy first:
+
+```bash
+uv run python scripts/start_exercise.py 01 --lang en
+```
+
+This creates:
+
+```text
+exercises/work/en/01_membrane_to_lif.ipynb
+```
+
+`exercises/work/` is ignored by Git, so student answers do not appear in normal `git status` / commits and do not conflict with later template updates. Existing work copies are never overwritten.
+
+For Chinese exercises:
+
+```bash
+uv run python scripts/start_exercise.py 01
+```
+
+To create all currently available exercises:
+
+```bash
+uv run python scripts/start_exercise.py all --lang en
+```
+
+See the [exercise README](exercises/README.md) for the complete workflow.
+
+### 3. Launch JupyterLab
 
 ```bash
 uv run jupyter lab
 ```
 
-### 3. Register the Dedicated Kernel (Recommended)
+When doing exercises, open your personal copy under `exercises/work/en/`; `exercises/en/` contains the official course starters.
+
+### 4. Register the Dedicated Kernel (Recommended)
 
 To avoid kernel confusion inside Jupyter, install a named kernel spec:
 
@@ -63,12 +95,12 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 
 Once registered, select **FPGA FlyBrain** as the notebook kernel in JupyterLab.
 
-### 4. Dependency Hygiene
+### 5. Dependency Hygiene
 
 - **No in-notebook installations**: Do not run `%pip install` or `!pip install` inside Notebook cells.
 - **Declarative changes**: Add runtime packages via `uv add <package>` and dev tools via `uv add --dev <package>`. All changes are pinned in `pyproject.toml` and `uv.lock`.
 
-### 5. RTL Toolchain for Lessons 6–8
+### 6. RTL Toolchain for Lessons 6–8
 
 The RTL lessons use **SystemVerilog-2012**, including constructs such as `logic`, `always_ff`, and `always_comb`. Python dependencies are managed by `uv`; HDL simulators and synthesis tools are separate system tools.
 
