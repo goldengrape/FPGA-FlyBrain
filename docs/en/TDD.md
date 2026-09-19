@@ -84,12 +84,16 @@ At the end of each chapter, the learner should be able to answer:
 - Before AI changes model semantics, update URD/ADD/TDD; do not silently change RTL to make a test pass.
 - Any AI claim about passing tests, timing closure, or performance must be backed by the corresponding command, waveform, report, or benchmark evidence.
 
-## 6. Minimal CI (future)
-- Python tests
-- lint/format
-- RTL compile
-- fast RTL unit tests
-- trace-consistency check
-- bilingual-ID consistency check
+## 6. Minimal CI (partially implemented)
+
+Current status:
+- Python tests: **implemented** (Python exercise infrastructure)
+- RTL compile: **implemented**
+- fast RTL unit tests: **implemented**, including teaching-boundary characterization
+- Verilator RTL lint: **implemented**
+- Yosys synthesis sanity: **implemented**
+- lint/format: **partially implemented**; there is no unified Python format/lint gate yet
+- trace-consistency check: **not yet automated**
+- bilingual-ID consistency check: **not yet fully automated**; Exercise Notebooks already enforce bilingual structure/code-cell consistency
 
 A full FPGA build does not need to run on every CI invocation; it can be reserved for checkpoints or nightly builds.
