@@ -147,7 +147,7 @@ The links below point to official starters for reading and version tracking. Whe
 | 17 | [Estimate sequential/random burst cost](en/17_external_memory_ddr.ipynb) | burst grouping, setup cost, access pattern |
 | 18 | [Identify VALID/READY accepted beats](en/18_axi_subset.ipynb) | handshake, stall, accepted beat |
 | 19 | [Compute connectome in/out degree](en/19_what_is_connectome.ipynb) | directed graph structure, zero-degree neurons |
-| 20 | [Build a minimal image manifest](en/20_load_malecns_subset.ipynb) | schema version, byte count, SHA-256 integrity |
+| 20 | [Build an image manifest with provenance](en/20_load_malecns_subset.ipynb) | schema/source/converter version, byte count, SHA-256 integrity |
 | 21 | [Identify the highest-utilization stage](en/21_scaling_bottlenecks.ipynb) | utilization, scale-dependent bottleneck |
 | 22 | [Generate a closed-loop position trace](en/22_closed_loop_world.ipynb) | feedback, target-reaching trace |
 | 23 | [Calculate throughput and energy per event](en/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark metrics, duration-aware energy |
