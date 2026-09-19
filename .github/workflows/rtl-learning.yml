@@ -10,11 +10,8 @@ on:
       - "scripts/check_rtl_learning.sh"
       - ".github/workflows/rtl-learning.yml"
   pull_request:
-    paths:
-      - "rtl/**"
-      - "tb/**"
-      - "scripts/check_rtl_learning.sh"
-      - ".github/workflows/rtl-learning.yml"
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
