@@ -138,10 +138,17 @@ jobs:
           from pathlib import Path
           from pypdf import PdfReader
 
-          for filename in (
-              "13_simulation_is_not_chip.pdf",
-              "18_axi_subset.pdf",
-          ):
+          checks = {
+              "13_simulation_is_not_chip.pdf": ("configured FPGA",),
+              "18_axi_subset.pdf": (
+                  "sender: VALID + payload",
+                  "receiver: READY",
+                  "accepted transfer",
+                  "read/write transaction",
+              ),
+          }
+
+          for filename, expected_labels in checks.items():
               path = Path("dist/course-pdfs") / filename
               text = "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
               leaked = [
@@ -153,7 +160,12 @@ jobs:
                   raise SystemExit(
                       f"{filename} contains Mermaid source instead of a rendered diagram: {leaked}"
                   )
-              print(f"{filename}: Mermaid source is not exposed in PDF text.")
+              missing = [label for label in expected_labels if label not in text]
+              if missing:
+                  raise SystemExit(
+                      f"{filename} is missing expected rendered Mermaid labels: {missing}"
+                  )
+              print(f"{filename}: Mermaid diagrams expose rendered labels, not source.")
           PY
 
       - name: List generated files
