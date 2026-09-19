@@ -94,11 +94,13 @@ def test_lesson20_does_not_claim_teaching_fixture_is_real_malecns():
         text = _markdown(_read(language, LESSONS[1]))
         assert "teaching fixture" in text
         assert "RMD-017" in text and "RMD-018" in text
-    assert "不声称这份 fixture 就是真实 MaleCNS 数据" in _markdown(_read("zh", LESSONS[1]))
+    zh = _markdown(_read("zh", LESSONS[1]))
+    assert "不声称已经装入真实 MaleCNS 子图" in zh
+    assert "source_release" in zh and "converter_version" in zh
     en = _markdown(_read("en", LESSONS[1]))
     assert "teaching fixture" in en
-    assert "real MaleCNS data" in en
-    assert "not" in en
+    assert "does not" in en and "real MaleCNS subset" in en
+    assert "source_release" in en and "converter_version" in en
 
 
 def test_lesson21_marks_scale_numbers_as_teaching_not_measurements():
@@ -198,3 +200,21 @@ def test_platform5_bilingual_code_cells_are_identical():
             if cell.get("cell_type") == "code"
         ]
         assert zh_code == en_code, f"{name} has drifted zh/en teaching code"
+
+
+
+def test_platform5_diagrams_use_inline_svg_not_mermaid():
+    expected_labels = {
+        "19_what_is_connectome.ipynb": "connectome directed graph",
+        "20_load_malecns_subset.ipynb": "versioned network image integrity flow",
+        "21_scaling_bottlenecks.ipynb": "event pipeline stages",
+        "22_closed_loop_world.ipynb": "closed loop environment neural system action",
+        "23_cpu_gpu_fpga_benchmark.ipynb": "fair benchmark contract",
+    }
+    for language in ("zh", "en"):
+        for name, aria_label in expected_labels.items():
+            text = _markdown(_read(language, name))
+            assert "```mermaid" not in text
+            assert "<svg " in text and "</svg>" in text
+            assert aria_label in text
+            assert 'fill="#e6f4ea"' in text
