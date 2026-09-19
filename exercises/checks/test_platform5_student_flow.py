@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -104,16 +105,22 @@ def test_platform5_student_workbook_runs_from_personal_work_copy(
     fake_repo = tmp_path / "repo"
     template = fake_repo / "exercises" / language / name
     template.parent.mkdir(parents=True, exist_ok=True)
-    template.write_text(_template(language, name).read_text(encoding="utf-8"), encoding="utf-8")
+    template.write_text(
+        _template(language, name).read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    shutil.copytree(
+        ROOT / "exercises" / "grader",
+        fake_repo / "exercises" / "grader",
+    )
 
     work_copy, created = create_work_copy(fake_repo, lesson, language)
     assert created
     assert work_copy == fake_repo / "exercises" / "work" / language / name
 
-    # The grader bootstrap in the workbook searches upward for exercises/grader.
-    # Point execution at the real repository so the same import path a learner
-    # sees is exercised, while the personal workbook itself remains a temp copy.
-    monkeypatch.chdir(ROOT)
+    # Run exactly from the personal-work directory. The notebook bootstrap must
+    # walk upward, discover fake_repo/exercises/grader, and import from there.
+    monkeypatch.chdir(work_copy.parent)
     namespace: dict[str, object] = {}
 
     for index, code in enumerate(_code_cells(work_copy)):
