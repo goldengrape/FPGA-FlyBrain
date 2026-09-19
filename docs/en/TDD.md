@@ -1,9 +1,10 @@
 # TDD — Check Plan / Test and Verification Document
 
 ## 0. Principles
+- Follow [Documentation-First Specification Governance](DOCUMENT_AUTHORITY.md): start from an approved requirement/semantic/interface contract, translate it into an oracle, and only then write implementation.
 - Define the oracle before writing the implementation.
 - Never claim a test passed unless the exact command actually ran successfully.
-- The Python float reference is the conceptual oracle; the Python fixed-point reference is the direct RTL oracle.
+- Once the corresponding model semantics are frozen, the Python float reference is the conceptual oracle and the Python fixed-point reference is the direct RTL oracle. Reference models themselves must conform to the approved documented contract.
 - Keep unit, integration, and performance testing separate.
 
 ## 1. Verification layers
