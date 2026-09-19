@@ -147,7 +147,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 17. [外部内存是什么？](lessons/zh/17_external_memory_ddr.ipynb)
 18. [AXI 只学我们需要的部分](lessons/zh/18_axi_subset.ipynb)
 19. [什么是 connectome？](lessons/zh/19_what_is_connectome.ipynb)
-20. [第一次装入 MaleCNS 子图：先验证 image](lessons/zh/20_load_malecns_subset.ipynb)
+20. [装入真实 MaleCNS 子图之前：先验证 network image](lessons/zh/20_load_malecns_subset.ipynb)
 21. [规模变大以后，瓶颈会跑到哪里？](lessons/zh/21_scaling_bottlenecks.ipynb)
 22. [给果蝇一个世界：把 loop 闭合起来](lessons/zh/22_closed_loop_world.ipynb)
 23. [三种机器做同一个实验](lessons/zh/23_cpu_gpu_fpga_benchmark.ipynb)
