@@ -177,3 +177,74 @@ Lesson 13 的 synthesis 摘要已分别在项目支持的两类环境中验证�
 LSN-013~018 已满足当前作业册的核心要求：题意可独立理解、有效输入域明确、TODO 范围小、grader 不泄漏向量、Human Check 紧贴实现，并且真实学生路径 6/6 通过。
 
 后续 Platform 5 新增作业时，应继续复用这一流程：**先人工 student dry run，再把可自动化的学生路径转成 CI。**
+
+
+## 11. Platform 5（LSN-019~023）学生模拟阅读与 Dry Run
+
+### 11.1 方法
+
+本轮按“学生真正会走的路径”复测 LSN-019~023，而不是只调用 grader 函数：
+
+1. 先按学生视角阅读 lesson 与 exercise prose，确认函数目标、输入、输出、有效域与 return order 可以从题面独立推出；
+2. 检查 Before coding 示例与 grader 隐藏向量是否过度重合；发现 L19/L21/L23 有重合后已更换为独立数值；
+3. 使用与 `scripts/start_exercise.py` 相同的 `create_work_copy()` 路径，在临时 repo 中创建 `exercises/work/<lang>/` personal copy；
+4. 从 personal-work 目录执行 Notebook bootstrap，验证它能向上定位 `exercises/grader`；
+5. 原始学生可见 code cell 全部先做 `compile()`，避免“grader cell 能跑但 TODO cell 本身语法已坏”的假通过；
+6. 将只根据题面独立推导出的 reference implementation 放入 TODO 位置，然后按 Notebook code-cell 顺序执行，要求最终输出 `3 / 3 groups passed`；
+7. 同时执行中英文 Lesson 19~23 的教学代码单元格，核对公开输出；
+8. PDF 另做真实 render 视觉检查，不能只依赖自动像素判断。
+
+维护者能看到 grader，因此这不是“盲测”。为避免这种权限污染学生视角，本轮额外把 pre-code 数值与 grader vectors 做了独立性检查，并修掉了发现的重合。
+
+### 11.2 模拟阅读：只看题面能否解题
+
+| Lesson | 从题面独立推导的核心步骤 | 学生摩擦判断 |
+|---|---|---|
+| 19 | 为所有 neuron 初始化 in/out degree；每条 `source→target` 分别递增 outgoing/incoming；保留 zero-degree entry | 低；主要风险是把 source/target 写反 |
+| 20 | 原样复制 schema/source/converter version；`byte_count=len(payload)`；对 exact bytes 计算 SHA-256；返回 exact 5-key dict | 中低；需要理解 integrity 与 provenance 是不同维度 |
+| 21 | 对每个 stage 算 `demand/capacity`；从 utilization dict 中找唯一最大值；不修改输入 dict | 中；Python 的 `max(..., key=...)` 可能需要语言层帮助，但工程语义清楚 |
+| 22 | trace 先放 initial；每一步重新观察当前位置；小于 target 则 +1，大于则 -1，相等则 0；不能 overshoot | 低；reverse direction 已由 grader 单独保护 |
+| 23 | `throughput=events/seconds`；`energy=watts*seconds`；`energy/event=energy/events` | 低；重点不是公式难度，而是不要把 metric calculation 误当成 benchmark comparability 结论 |
+
+手算样例也能独立得到：
+
+- L19：`[11,22,44]` 与 `11→22, 22→44, 11→44` 得到 in-degree `{11:0,22:1,44:2}`、out-degree `{11:2,22:1,44:0}`；
+- L21：A=`9/12=0.75`，B=`5/5=1.0`，所以 A raw demand 更大，但 B utilization 更高；
+- L22：initial=0、target=2、steps=4 得到 `[0,1,2,2,2]`；
+- L23：1200 events / 0.4 s = 3000 events/s；15 W × 0.4 s = 6 J；6/1200 = 0.005 J/event。
+
+### 11.3 Dry Run 结果
+
+自动化学生路径覆盖：
+
+- 5 课 × 2 语言的学生可见 code cell 全部可编译；
+- 5 课 × 2 语言的 personal-work copy 路径全部从 `exercises/work/<lang>/` 目录执行；
+- 10 / 10 workbooks 使用独立 reference implementation 后均得到 **3 / 3 groups passed**；
+- 5 课 × 2 语言的 lesson example code 均按学生看到的顺序执行并匹配预期输出；
+- Python exercise infrastructure 总结果：**107 passed, 2 skipped**。两个 skip 仍是没有 Yosys 的 Python job 中 Lesson 13 中英文真实 synthesis；RTL workflow 已实际覆盖该路径。
+
+### 11.4 本轮 Dry Run 实际发现并修掉的问题
+
+1. L19/L21/L23 的 pre-code 示例曾与隐藏 grader 数值重合，已全部换成独立数值；
+2. L20 原标题暗示已经装入真实 MaleCNS subset，但实际只是 byte fixture，已改成“装入真实 subset 之前先验证 image”；
+3. L20 prose 要求 provenance，但旧 exercise/manifest 没有 provenance，现已统一为 `schema_version/source_release/converter_version/byte_count/sha256`；
+4. L20 grader 现在要求 exact key set，不再接受悄悄增加字段；
+5. L19/L21 grader 现在执行“不修改输入”的书面 contract；
+6. L22 grader 原本没有实际测试向左移动，现加入 `initial > target` reverse-direction oracle；
+7. 原 student-flow 测试只注入函数后运行 grader cell，现已升级为 personal-work copy + compile all student code cells + 顺序执行整条 workbook code path。
+
+### 11.5 图表交付验证
+
+Platform 5 五张课程图已全部由 Mermaid 改为 inline SVG。最终 GitHub Actions webpdf 中检测到的专用 SVG-fill pixel 数分别为：
+
+- L19：10,194
+- L20：14,163
+- L21：10,284
+- L22：10,408
+- L23：15,444
+
+此外对最终 artifact 做了真实 PDF render 视觉检查：五张 SVG 均有完整节点、箭头与文字，没有空白 Mermaid 容器、破图图标、SVG 源码泄漏或裁切。
+
+### 11.6 Platform 5 Dry Run 结论
+
+修订后的 LSN-019~023 已满足当前学生作业路径标准：**题意可独立理解、pre-code 例子不泄漏 grader 数值、TODO contract 明确、grader 覆盖书面语义、personal work-copy 可运行、中英文路径一致、课程图在最终 PDF 中真实可见。**
