@@ -9,13 +9,13 @@ def evaluate(closed_loop_trace, language: str = "zh"):
         (
             ("Move toward target", "检查每一步都根据当前 position 朝 target 移动。"),
             ("Stop at target", "检查到达 target 后不会越过。"),
-            ("Trace length", "检查包含 initial state 且长度为 steps + 1。"),
+            ("Reverse direction", "检查 initial > target 时每一步会向左移动。"),
         )
         if zh
         else (
             ("Move toward target", "Check each step moves from the current position toward target."),
             ("Stop at target", "Check the trace does not overshoot after reaching target."),
-            ("Trace length", "Check the initial state is included and length is steps + 1."),
+            ("Reverse direction", "Check movement toward the target when initial > target."),
         )
     )
 
@@ -25,13 +25,13 @@ def evaluate(closed_loop_trace, language: str = "zh"):
     def stop_at_target():
         return closed_loop_trace(1, 2, 4) == [1, 2, 2, 2, 2]
 
-    def trace_length():
-        return closed_loop_trace(5, 1, 0) == [5] and len(closed_loop_trace(5, 1, 3)) == 4
+    def reverse_direction():
+        return closed_loop_trace(3, 0, 4) == [3, 2, 1, 0, 0]
 
     return [
         evaluate_group(labels[0][0], move_toward, labels[0][1]),
         evaluate_group(labels[1][0], stop_at_target, labels[1][1]),
-        evaluate_group(labels[2][0], trace_length, labels[2][1]),
+        evaluate_group(labels[2][0], reverse_direction, labels[2][1]),
     ]
 
 
