@@ -8,6 +8,7 @@ on:
       - "rtl/**"
       - "tb/**"
       - "scripts/check_rtl_learning.sh"
+      - "lessons/**"
       - ".github/workflows/rtl-learning.yml"
   pull_request:
     branches:
