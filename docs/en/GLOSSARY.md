@@ -65,6 +65,7 @@ This is a reference sheet, not a substitute for first-use explanations in the le
 | connectome | connectome | A dataset describing structural connections among neurons; it may include neuron/edge metadata but is not the same as runtime membrane state or spike queues. |
 | manifest | manifest | A small description shipped with an artifact, recording fields such as schema version, byte count, checksum, and provenance. |
 | checksum | checksum | A deterministic digest of exact bytes used to verify data integrity; matching checksums do not by themselves prove scientific/model correctness. |
+| SHA-256 | Secure Hash Algorithm 256-bit | A common cryptographic hash function; this course uses it to compute a fixed-length checksum over exact network-image bytes. |
 | utilization | utilization | Demand relative to a stage's capacity, such as demand/capacity. |
 | bottleneck | bottleneck | The stage currently limiting a workload; it depends on demand and capacity and can move with scale or traffic pattern. |
 | hotspot | hotspot | Work or traffic concentrated on a small set of neurons, banks, queues, or resources, potentially causing local congestion. |
