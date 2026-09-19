@@ -28,3 +28,6 @@ Thumbs.db
 build/
 *.vcd
 *.vvp
+
+# Student exercise working copies (personal answers; never tracked)
+/exercises/work/
