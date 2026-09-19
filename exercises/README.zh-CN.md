@@ -183,7 +183,8 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 uv run pytest \
   exercises/checks/test_graders.py \
   exercises/checks/test_notebook_structure.py \
-  exercises/checks/test_start_exercise.py -q
+  exercises/checks/test_start_exercise.py \
+  lessons/checks/test_platform4_notebook_structure.py -q
 ```
 
 `test_start_exercise.py` 会验证 lesson 选择、工作副本路径以及“已有学生答案绝不覆盖”的行为。
