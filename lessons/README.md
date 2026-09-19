@@ -94,7 +94,7 @@ These lessons use small Python models to teach architecture semantics before for
 
 | ID | 中文 | English | Practice / 作业 | Primary concept / 主要概念 | Engineering mapping |
 |---|---|---|---|---|---|
-| LSN-013 | [仿真不是芯片](zh/13_simulation_is_not_chip.ipynb) | [Simulation is not a chip](en/13_simulation_is_not_chip.ipynb) | [中文](../exercises/zh/13_simulation_is_not_chip.ipynb) / [English](../exercises/en/13_simulation_is_not_chip.ipynb) | synthesis / implementation / timing / bitstream | RMD-011A |
+| LSN-013 | [仿真不是芯片](zh/13_simulation_is_not_chip.ipynb) | [Simulation is not a chip](en/13_simulation_is_not_chip.ipynb) | real Yosys synthesis dry run + [中文作业](../exercises/zh/13_simulation_is_not_chip.ipynb) / [English exercise](../exercises/en/13_simulation_is_not_chip.ipynb) | simulation vs synthesis / implementation / timing | RMD-011A |
 | LSN-014 | [什么是 FPGA 板？](zh/14_what_is_fpga_board.ipynb) | [What is an FPGA board?](en/14_what_is_fpga_board.ipynb) | [中文](../exercises/zh/14_what_is_fpga_board.ipynb) / [English](../exercises/en/14_what_is_fpga_board.ipynb) | development board / I/O / physical proof | RMD-012/012A |
 | LSN-015 | [电脑怎样和 FPGA 说话？](zh/15_host_talks_to_fpga.ipynb) | [How does the computer talk to the FPGA?](en/15_host_talks_to_fpga.ipynb) | [中文](../exercises/zh/15_host_talks_to_fpga.ipynb) / [English](../exercises/en/15_host_talks_to_fpga.ipynb) | host and programmable-logic execution domains | RMD-012B/013 |
 | LSN-016 | [为什么搬数据比加法更难？](zh/16_data_movement_cost.ipynb) | [Why can moving data be harder than adding?](en/16_data_movement_cost.ipynb) | [中文](../exercises/zh/16_data_movement_cost.ipynb) / [English](../exercises/en/16_data_movement_cost.ipynb) | memory hierarchy / latency / bandwidth | RMD-013A |
@@ -130,3 +130,5 @@ The script checks / 脚本会执行：
 7. Lesson 8 Yosys synthesis sanity check。
 
 Build artifacts are written under `build/rtl-learning/` and are ignored by Git.
+
+Lesson 13 additionally invokes Yosys directly from the Notebook to synthesize the existing teaching accumulator. That dry run demonstrates real synthesis output without pretending that Yosys has completed target-device placement, routing, timing sign-off, or bitstream generation.
