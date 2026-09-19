@@ -209,3 +209,44 @@ def test_lesson18_keeps_engineering_ids_in_the_handoff_tail():
         )
         assert "IF-SYNAPSE-STREAM" not in before_handoff
         assert "RMD-" not in before_handoff
+
+
+
+def test_trace_register_contains_platform4_lessons():
+    expected = {
+        "zh": {
+            "13_simulation_is_not_chip.ipynb",
+            "14_what_is_fpga_board.ipynb",
+            "15_host_talks_to_fpga.ipynb",
+            "16_data_movement_cost.ipynb",
+            "17_external_memory_ddr.ipynb",
+            "18_axi_subset.ipynb",
+        },
+        "en": {
+            "13_simulation_is_not_chip.ipynb",
+            "14_what_is_fpga_board.ipynb",
+            "15_host_talks_to_fpga.ipynb",
+            "16_data_movement_cost.ipynb",
+            "17_external_memory_ddr.ipynb",
+            "18_axi_subset.ipynb",
+        },
+    }
+
+    for language in ("zh", "en"):
+        trace_path = ROOT / "docs" / language / "TRACE.md"
+        trace = trace_path.read_text(encoding="utf-8")
+        for lesson_number in range(13, 19):
+            assert f"LSN-{lesson_number:03d}" in trace
+        for notebook_name in expected[language]:
+            assert notebook_name in trace
+        assert ".vibe/" not in trace
+        assert "okf/" not in trace
+
+
+def test_lesson15_exercise_does_not_preteach_axi_transaction_vocabulary():
+    for language in ("zh", "en"):
+        path = ROOT / "exercises" / language / "15_host_talks_to_fpga.ipynb"
+        notebook = json.loads(path.read_text(encoding="utf-8"))
+        text = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
+        assert "AXI" not in text
+        assert "transaction" not in text.lower()
