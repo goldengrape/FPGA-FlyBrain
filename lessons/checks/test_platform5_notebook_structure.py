@@ -180,3 +180,21 @@ def test_platform5_first_use_terms_are_expanded_near_start():
                 assert marker in opening, (
                     f"{language}/{name} does not refresh {marker} near lesson start"
                 )
+
+
+
+def test_platform5_bilingual_code_cells_are_identical():
+    for name in LESSONS:
+        zh = _read("zh", name)
+        en = _read("en", name)
+        zh_code = [
+            "".join(cell.get("source", []))
+            for cell in zh["cells"]
+            if cell.get("cell_type") == "code"
+        ]
+        en_code = [
+            "".join(cell.get("source", []))
+            for cell in en["cells"]
+            if cell.get("cell_type") == "code"
+        ]
+        assert zh_code == en_code, f"{name} has drifted zh/en teaching code"
