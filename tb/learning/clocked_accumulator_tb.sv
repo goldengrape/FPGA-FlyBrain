@@ -41,4 +41,8 @@ module clocked_accumulator_tb;
         $display("PASS lesson06 clocked_accumulator");
         $finish;
     end
+    initial begin
+        #1000;
+        $fatal(1, "watchdog timeout");
+    end
 endmodule
