@@ -147,7 +147,7 @@ The current executable lessons are in [`lessons/`](lessons/README.md):
 17. [What is external memory?](lessons/en/17_external_memory_ddr.ipynb)
 18. [Learn only the AXI we need](lessons/en/18_axi_subset.ipynb)
 19. [What is a connectome?](lessons/en/19_what_is_connectome.ipynb)
-20. [First MaleCNS subset load: verify the image first](lessons/en/20_load_malecns_subset.ipynb)
+20. [Before loading a real MaleCNS subset: verify the network image](lessons/en/20_load_malecns_subset.ipynb)
 21. [What changes when the network becomes larger?](lessons/en/21_scaling_bottlenecks.ipynb)
 22. [Give the fly a world: close the loop](lessons/en/22_closed_loop_world.ipynb)
 23. [Three machines, one experiment](lessons/en/23_cpu_gpu_fpga_benchmark.ipynb)
