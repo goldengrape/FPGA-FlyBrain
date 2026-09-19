@@ -14,7 +14,8 @@ Every slice must:
 4. end with a Git or specification checkpoint;
 5. avoid complexity not required by the current slice;
 6. introduce at most one major unfamiliar concept, or one inseparable concept cluster;
-7. allow AI-generated implementation while requiring the learner to explain inputs, state, outputs, timing, and acceptance criteria.
+7. allow AI-generated implementation while requiring the learner to explain inputs, state, outputs, timing, and acceptance criteria;
+8. follow [Documentation-First Specification Governance](DOCUMENT_AUTHORITY.md): slices that change a contract update bilingual documentation and oracle / TRACE before implementation; RMD must not substitute “the current code already does this” for a specification decision.
 
 ## 2. Five learning platforms
 ```text
