@@ -28,8 +28,7 @@ echo "== Lesson 6: Icarus compile + self-checking simulation =="
 iverilog -g2012 \
     -o "${BUILD_DIR}/lesson06/clocked_accumulator.vvp" \
     "${ROOT_DIR}/rtl/learning/clocked_accumulator.sv" \
-    "${ROOT_DIR}/tb/learning/clocked_accumulator_tb.sv" \
-    "${ROOT_DIR}/tb/learning/clocked_accumulator_edge_tb.sv"
+    "${ROOT_DIR}/tb/learning/clocked_accumulator_tb.sv"
 vvp "${BUILD_DIR}/lesson06/clocked_accumulator.vvp"
 
 echo
@@ -47,6 +46,12 @@ verilator --lint-only --timing -Wall -Wno-TIMESCALEMOD \
     "${ROOT_DIR}/tb/learning/clocked_accumulator_tb.sv"
 
 echo
+echo "== Lesson 6: boundary testbench lint =="
+verilator --lint-only --timing -Wall -Wno-TIMESCALEMOD \
+    "${ROOT_DIR}/rtl/learning/clocked_accumulator.sv" \
+    "${ROOT_DIR}/tb/learning/clocked_accumulator_edge_tb.sv"
+
+echo
 echo "== Lesson 6: Yosys synthesis sanity =="
 yosys -q -p "read_verilog -sv ${ROOT_DIR}/rtl/learning/clocked_accumulator.sv; hierarchy -check -top clocked_accumulator; proc; opt; check"
 
@@ -55,8 +60,7 @@ echo "== Lesson 8: Icarus compile + self-checking simulation =="
 iverilog -g2012 \
     -o "${BUILD_DIR}/lesson08/tutorial_if_neuron.vvp" \
     "${ROOT_DIR}/rtl/learning/tutorial_if_neuron.sv" \
-    "${ROOT_DIR}/tb/learning/tutorial_if_neuron_tb.sv" \
-    "${ROOT_DIR}/tb/learning/tutorial_if_neuron_edge_tb.sv"
+    "${ROOT_DIR}/tb/learning/tutorial_if_neuron_tb.sv"
 (
     cd "${BUILD_DIR}/lesson08"
     vvp ./tutorial_if_neuron.vvp
@@ -82,6 +86,12 @@ echo "== Lesson 8: Verilator lint =="
 verilator --lint-only --timing -Wall -Wno-TIMESCALEMOD \
     "${ROOT_DIR}/rtl/learning/tutorial_if_neuron.sv" \
     "${ROOT_DIR}/tb/learning/tutorial_if_neuron_tb.sv"
+
+echo
+echo "== Lesson 8: boundary testbench lint =="
+verilator --lint-only --timing -Wall -Wno-TIMESCALEMOD \
+    "${ROOT_DIR}/rtl/learning/tutorial_if_neuron.sv" \
+    "${ROOT_DIR}/tb/learning/tutorial_if_neuron_edge_tb.sv"
 
 echo
 echo "== Lesson 8: Yosys synthesis sanity =="
