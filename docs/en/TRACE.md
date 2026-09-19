@@ -19,7 +19,7 @@ Link user needs → functional requirements → design parameters → teaching a
 | U5 Import real MaleCNS data | FR7 | DP7 | MOD-011 | T-014/015 | 017~021 |
 | U6 Build a layered verification chain | PFR4 | PDP4 | LSN-002/003 + float/fixed/RTL/FPGA oracle chain | L0~L7 | all relevant |
 | U7 Learn Axiomatic Design and traceability | PFR2/PFR3 | PDP2/PDP3 | docs/ + lessons/ + .vibe/ + okf/ | trace checks + checkpoints | all |
-| U8 Become able to enter AI-hardware work | FR2~FR8 + PFR1~4 | DP2~DP8 + PDP1~4 | full learning + engineering system | performance + explanation | 003A~028 |
+| U8 Become able to enter AI-hardware work | FR2~FR8 + PFR1~4 | DP2~DP8 + PDP1~4 | full learning + engineering system | T-016 + P-001~008 + explanation | 003A~028 |
 
 ## 3. Teaching-artifact traceability
 | Lesson | Primary objective | FR / PFR | Test / Check | RMD | Notebook |
@@ -80,6 +80,31 @@ DP: DP7
 Module: MOD-011  
 Tests: T-014/T-015 + manifest/checksum  
 Tasks: RMD-017~020
+
+
+### TRACE-IO-001 — Sensory-input and behavioral-output closed loop
+Requirement: external-environment inputs can map to sensory neurons and neural outputs can decode into behavior/control while the host/FPGA boundary remains observable.  
+FR: FR8  
+DP: DP8  
+Modules: MOD-010, MOD-012, MOD-013, MOD-014  
+Tests: interface/closed-loop replay + telemetry consistency; full-system determinism is covered by T-016  
+Tasks: RMD-023~025
+
+### TRACE-F-001 — Full-system reproducible replay
+Requirement: the same versioned model, network image, initial state, and input events produce repeatable results; if the model includes noise, fix the PRNG seed.  
+FR: FR2~FR8 + PFR4  
+DP: DP2~DP8 + PDP4  
+Modules: the complete formal system module set  
+Test: T-016  
+Tasks: RMD-021, RMD-025, RMD-027
+
+### TRACE-P-001 — Performance metrics and benchmarks
+Requirement: after correctness is frozen, measure throughput, latency, bandwidth, resources, and power reproducibly.  
+FR: FR2~FR8  
+DP: corresponding implementation DPs  
+Modules: whichever formal MOD-003~014 components are involved in the current benchmark  
+Tests/metrics: P-001~P-008  
+Tasks: RMD-016, RMD-019, RMD-021, RMD-028
 
 ### TRACE-L-001 — Learning independence
 Requirement: a learning task should not require multiple still-unmastered concepts at the same time.  
