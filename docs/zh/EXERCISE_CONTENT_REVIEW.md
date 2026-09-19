@@ -109,3 +109,36 @@ LSN-011 可以提供“实现规划”，例如提醒学生最终需要完成：
 - 把 Human Check 从知识复述改成实现诊断；
 - 为 11 增加有限脚手架；
 - 不修改 grader 语义和测试向量。
+
+
+## 9. Platform 4 作业内容审稿：LSN-013~018
+
+### 9.1 总体结论
+
+第三轮内容审稿覆盖 LSN-013~018 六份 Python Exercise Notebook。与早期作业相比，这一组已经稳定采用：
+
+> 先不用代码 → 函数语义契约 → 有效输入域 → 小范围 TODO → 外部 grader → Human Check
+
+六份作业均经真实学生路径复测并通过，grader 参考实现与典型错误实现也有维护者测试保护。本轮不修改 grader 语义或隐藏测试向量。
+
+### 9.2 逐课判断
+
+| Lesson | 作业定位 | 审稿结论 |
+|---|---|---|
+| 13 | timing budget consolidation | 合适；把 critical path、slack、pass/fail 从工具输出还原成可手算语义 |
+| 14 | board-clock planning | 合适；counter width 的 2 的幂边界由 grader 独立检查 |
+| 15 | host/PL state ordering | 合适；重点是 persistent state/readback，不提前学习总线协议 |
+| 16 | data-movement cost comparison | 合适；已明确只是分项成本模型，不把较大项当系统总时间 |
+| 17 | burst/access-pattern planning | 合适；只训练连续地址分组与启动成本，不模拟 DDR controller |
+| 18 | VALID/READY acceptance | 合适；只抽取协议合规 trace 中真正 accepted beat，不让学生实现完整 AXI |
+
+### 9.3 本轮修订原则
+
+- 作业首次出现的术语不能抢跑后续 lesson；因此 LSN-015 作业使用“读写往返 / read-write roundtrip”，不再提前使用 `transaction` 或 AXI。
+- grader feedback group 应尽量对应一个概念；LSN-014 已把 cycles-per-tick、counter width、minimum width 解耦。
+- lesson 与 exercise 可以使用简化性能模型，但必须明确模型边界；LSN-016 已把 compute/transfer 定义为 component-cost comparison。
+- 学生可见 grader 继续只报告概念组，不显示隐藏输入和期望答案。
+
+### 9.4 完成状态
+
+LSN-013~018 六份作业均完成内容审稿与学生 dry run。对应执行记录见 `EXERCISE_STUDENT_DRY_RUN.md` 第 10 节。

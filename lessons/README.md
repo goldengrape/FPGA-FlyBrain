@@ -90,6 +90,21 @@ These lessons use small Python models to teach architecture semantics before for
 
 这四课先用小规模 Python 模型讲清架构语义，再进入 `MOD-004~009` 的正式 RTL。课程会对齐 MDD/TDD 中的数据流与测试意图，但不宣称这些正式模块已经完成。
 
+## Fourth learning block / 第四组课程
+
+| ID | 中文 | English | Practice / 作业 | Primary concept / 主要概念 | Engineering mapping |
+|---|---|---|---|---|---|
+| LSN-013 | [仿真不是芯片](zh/13_simulation_is_not_chip.ipynb) | [Simulation is not a chip](en/13_simulation_is_not_chip.ipynb) | real Yosys synthesis dry run + [中文作业](../exercises/zh/13_simulation_is_not_chip.ipynb) / [English exercise](../exercises/en/13_simulation_is_not_chip.ipynb) | simulation vs synthesis / implementation / timing | RMD-011A |
+| LSN-014 | [什么是 FPGA 板？](zh/14_what_is_fpga_board.ipynb) | [What is an FPGA board?](en/14_what_is_fpga_board.ipynb) | [中文](../exercises/zh/14_what_is_fpga_board.ipynb) / [English](../exercises/en/14_what_is_fpga_board.ipynb) | development board / I/O / physical proof | RMD-012/012A |
+| LSN-015 | [电脑怎样和 FPGA 说话？](zh/15_host_talks_to_fpga.ipynb) | [How does the computer talk to the FPGA?](en/15_host_talks_to_fpga.ipynb) | [中文](../exercises/zh/15_host_talks_to_fpga.ipynb) / [English](../exercises/en/15_host_talks_to_fpga.ipynb) | host and programmable-logic execution domains | RMD-012B/013 |
+| LSN-016 | [为什么搬数据比加法更难？](zh/16_data_movement_cost.ipynb) | [Why can moving data be harder than adding?](en/16_data_movement_cost.ipynb) | [中文](../exercises/zh/16_data_movement_cost.ipynb) / [English](../exercises/en/16_data_movement_cost.ipynb) | memory hierarchy / latency / bandwidth | RMD-013A |
+| LSN-017 | [外部内存是什么？](zh/17_external_memory_ddr.ipynb) | [What is external memory?](en/17_external_memory_ddr.ipynb) | [中文](../exercises/zh/17_external_memory_ddr.ipynb) / [English](../exercises/en/17_external_memory_ddr.ipynb) | DDR / burst / sequential vs random | RMD-014 |
+| LSN-018 | [AXI 只学我们需要的部分](zh/18_axi_subset.ipynb) | [Learn only the AXI we need](en/18_axi_subset.ipynb) | [中文](../exercises/zh/18_axi_subset.ipynb) / [English](../exercises/en/18_axi_subset.ipynb) | AXI transaction / beat / VALID-READY | RMD-014A/015/016 |
+
+The formal workbooks for Lessons 13–18 remain runnable without a physical board. Board-specific labs are engineering extensions, so hardware purchase does not block the learning path.
+
+第 13–18 课的正式作业保持无板可完成；板卡专用实验属于对应 RMD 的工程延伸，避免硬件购买阻断课程学习。
+
 ## RTL learning checks / RTL 教学检查
 
 After installing an HDL toolchain that provides Icarus Verilog, Verilator, and Yosys, run the complete teaching-RTL check with:
@@ -115,3 +130,7 @@ The script checks / 脚本会执行：
 7. Lesson 8 Yosys synthesis sanity check。
 
 Build artifacts are written under `build/rtl-learning/` and are ignored by Git.
+
+Before Lesson 13, first-time learners should follow [中文 HDL 工具链安装说明](../docs/zh/HDL_TOOLCHAIN_SETUP.md) or [English HDL toolchain setup](../docs/en/HDL_TOOLCHAIN_SETUP.md). The Jupyter server must be launched from the same terminal where the HDL toolchain is activated.
+
+Lesson 13 additionally invokes Yosys directly from the Notebook to synthesize the existing teaching accumulator. That dry run demonstrates real synthesis output without pretending that Yosys has completed target-device placement, routing, timing sign-off, or bitstream generation.

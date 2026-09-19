@@ -26,7 +26,24 @@
 | SystemVerilog | SystemVerilog | 本项目计划使用的硬件描述与验证语言。 |
 | testbench | 测试平台 | 在仿真中给硬件模块输入刺激、检查输出是否正确的测试代码。 |
 | waveform | 波形 | 把数字信号随时间的 0/1 或数值变化画出来，帮助理解硬件时序。 |
-| DDR | 双倍数据速率同步动态随机存储器（Double Data Rate SDRAM） | FPGA 板上常见的大容量外部内存；容量大，但访问方式和片上存储不同。 |
+| synthesis | 综合 | 把 RTL 描述转换成可由 FPGA 逻辑资源实现的网络。 |
+| implementation | 实现 / 布局布线阶段 | 把综合后的逻辑映射、放置并连接到具体 FPGA 资源。 |
+| timing analysis | 时序分析 | 检查信号传播是否满足 clock period 等时间约束。 |
+| bitstream | 配置比特流 | 用于配置 FPGA 可编程资源的数据。 |
+| latency | 延迟 | 一次操作从发起到结果可用经历的时间。 |
+| throughput | 吞吐 | 单位时间持续完成的工作量。 |
+| bandwidth | 带宽 | 单位时间可持续搬运的数据量。 |
+| critical path | 关键路径（critical path） | 在当前时序分析范围内延迟最长、最容易限制最高时钟频率的组合逻辑路径。 |
+| slack | 时序裕量（slack） | 所需时间预算减去实际路径延迟后的余量；本课程简化模型中负值表示目标周期过短。 |
+| memory hierarchy | 内存层次（memory hierarchy） | 把寄存器、片上 RAM、外部内存等不同容量、距离和访问成本的存储层次组织起来看待。 |
+| development board | 开发板（development board） | 围绕 FPGA 芯片提供供电、clock、reset、I/O、配置路径和常用外设的实验平台。 |
+| host | 主机（host） | 运行实验控制、文件、网络或管理软件的一侧，与 FPGA/PL 通过平台通信路径交换数据。 |
+| PL | 可编程逻辑（programmable logic） | 由 bitstream 配置成具体硬件数据路径和控制逻辑的可编程区域。 |
+| DDR | 双倍数据速率同步动态随机存储器（Double Data Rate Synchronous Dynamic Random-Access Memory, DDR SDRAM） | FPGA 板上常见的大容量外部内存；容量大，但访问方式和片上存储不同。 |
+| burst | 突发传输（burst） | 把多个相邻数据组织成一段连续批量传输，以减少固定启动成本被重复支付的次数。 |
+| transaction | 事务（transaction） | 一次较完整的读或写操作；在 AXI 中可以包含一个或多个 beat。 |
+| beat | 传输拍（beat） | 一次 transaction 中的一个数据传输单位。 |
+| VALID/READY handshake | VALID/READY 握手 | sender 用 VALID 表示当前 payload 有效，receiver 用 READY 表示可接收；两者在有效 clock edge 同时为 1 时才完成 transfer。 |
 | AXI | 高级可扩展接口（Advanced eXtensible Interface） | ARM/FPGA 系统里常见的一组片上通信协议，本项目只学习实际需要的部分。 |
 | CPU | 中央处理器（Central Processing Unit） | 通用处理器，擅长灵活执行指令和控制复杂程序流程。 |
 | GPU | 图形处理器（Graphics Processing Unit） | 高度并行的处理器，尤其擅长大量规则的数值运算。 |

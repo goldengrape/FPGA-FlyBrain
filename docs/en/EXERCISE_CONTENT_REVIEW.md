@@ -103,3 +103,36 @@ This reduces an unnecessary algorithmic cliff without exposing grader vectors or
 - shift Human Checks from recall to implementation diagnosis;
 - add bounded scaffolding to Lesson 11;
 - preserve grader semantics and test vectors.
+
+
+## 9. Platform 4 exercise-content review: LSN-013~018
+
+### 9.1 Overall conclusion
+
+The third content-review pass covers the six Python Exercise Notebooks for LSN-013~018. Compared with the early workbook set, this block consistently uses:
+
+> work without code first → semantic contract → valid-input domain → small TODO → external grader → Human Check
+
+All six exercises passed an end-to-end student-path rerun. Maintainer tests also protect the reference implementations and representative conceptual mistakes. This review does not change hidden grader vectors or grader semantics.
+
+### 9.2 Lesson-by-lesson assessment
+
+| Lesson | Exercise role | Review conclusion |
+|---|---|---|
+| 13 | timing-budget consolidation | Appropriate; turns tool output into hand-checkable critical-path/slack/pass-fail semantics |
+| 14 | board-clock planning | Appropriate; the power-of-two counter-width boundary is checked independently |
+| 15 | host/PL state ordering | Appropriate; focuses on persistent state/readback without pre-teaching bus protocols |
+| 16 | data-movement cost comparison | Appropriate; explicitly a component-cost model rather than total system elapsed time |
+| 17 | burst/access-pattern planning | Appropriate; trains contiguous grouping and startup cost without pretending to model a DDR controller |
+| 18 | VALID/READY acceptance | Appropriate; extracts accepted beats from protocol-compliant traces without implementing full AXI |
+
+### 9.3 Revision rules from this pass
+
+- Exercise vocabulary must not pull later lessons forward; LSN-015 now uses “read/write roundtrip” rather than early `transaction` or AXI terminology.
+- Grader feedback groups should map to one concept where practical; LSN-014 separates cycles-per-tick, counter width, and minimum width.
+- Simplified performance models must state their boundary; LSN-016 now frames compute/transfer as component-cost comparison.
+- Student-facing graders continue to report conceptual groups without exposing hidden inputs or expected outputs.
+
+### 9.4 Completion status
+
+All six LSN-013~018 exercises now have recorded content review and student dry-run evidence. See Section 10 of `EXERCISE_STUDENT_DRY_RUN.md` for execution details.

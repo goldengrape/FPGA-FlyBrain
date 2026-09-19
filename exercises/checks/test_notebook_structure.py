@@ -8,6 +8,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from scripts.start_exercise import EXERCISE_FILES
+
 
 ROOT = Path(__file__).resolve().parents[2]
 NOTEBOOKS = [
@@ -20,6 +22,21 @@ NOTEBOOKS = [
     "10_spike_fifo_backpressure.ipynb",
     "11_sparse_synapse_lookup.ipynb",
     "12_one_spike_journey.ipynb",
+    "13_simulation_is_not_chip.ipynb",
+    "14_what_is_fpga_board.ipynb",
+    "15_host_talks_to_fpga.ipynb",
+    "16_data_movement_cost.ipynb",
+    "17_external_memory_ddr.ipynb",
+    "18_axi_subset.ipynb",
+]
+
+PLATFORM4_NOTEBOOKS = [
+    "13_simulation_is_not_chip.ipynb",
+    "14_what_is_fpga_board.ipynb",
+    "15_host_talks_to_fpga.ipynb",
+    "16_data_movement_cost.ipynb",
+    "17_external_memory_ddr.ipynb",
+    "18_axi_subset.ipynb",
 ]
 
 
@@ -171,3 +188,47 @@ def test_each_todo_has_a_student_readable_semantic_contract():
                     marker.lower() in prose.lower()
                     for marker in output_markers[language]
                 ), f"{language}/{name} TODO is missing an output explanation"
+
+
+
+def test_exercise_registry_matches_structural_test_inventory():
+    assert set(NOTEBOOKS) == set(EXERCISE_FILES.values())
+
+
+def test_platform4_todos_have_explicit_inputs_outputs_and_return_order():
+    input_markers = {
+        "zh": "### 输入",
+        "en": "### Inputs",
+    }
+    output_markers = {
+        "zh": "### 输出",
+        "en": "### Output",
+    }
+    return_markers = {
+        "zh": "返回",
+        "en": "Return",
+    }
+
+    for language in ("zh", "en"):
+        for name in PLATFORM4_NOTEBOOKS:
+            notebook = _read(ROOT / "exercises" / language / name)
+            cells = notebook["cells"]
+
+            for index, cell in enumerate(cells):
+                if cell.get("cell_type") != "code":
+                    continue
+                code = "".join(cell.get("source", []))
+                if "YOUR CODE STARTS HERE" not in code:
+                    continue
+
+                prose = "".join(cells[index - 1].get("source", []))
+                assert input_markers[language] in prose, (
+                    f"{language}/{name} TODO is missing an explicit input section"
+                )
+                assert output_markers[language] in prose, (
+                    f"{language}/{name} TODO is missing an explicit output section"
+                )
+                if "tuple[" in code:
+                    assert return_markers[language] in prose and "(" in prose and ")" in prose, (
+                        f"{language}/{name} tuple TODO must explain return order in prose"
+                    )

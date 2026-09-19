@@ -100,9 +100,11 @@ Once registered, select **FPGA FlyBrain** as the notebook kernel in JupyterLab.
 - **No in-notebook installations**: Do not run `%pip install` or `!pip install` inside Notebook cells.
 - **Declarative changes**: Add runtime packages via `uv add <package>` and dev tools via `uv add --dev <package>`. All changes are pinned in `pyproject.toml` and `uv.lock`.
 
-### 6. RTL Toolchain for Lessons 6–8
+### 6. HDL Toolchain for Lessons 6–8 and Lesson 13
 
-The RTL lessons use **SystemVerilog-2012**, including constructs such as `logic`, `always_ff`, and `always_comb`. Python dependencies are managed by `uv`; HDL simulators and synthesis tools are separate system tools.
+For first-time setup, follow [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md). In particular, after activating OSS CAD Suite, launch JupyterLab from the **same terminal**.
+
+Lessons 6–8 use **SystemVerilog-2012** for RTL and simulation, and Lesson 13 directly invokes Yosys for a real synthesis dry run. Python dependencies are managed by `uv`; HDL simulators and synthesis tools are separate system tools.
 
 The project CI installs Icarus Verilog, Verilator, and Yosys from the GitHub Actions Ubuntu runner and prints their exact versions on every run. The baseline that has been verified end-to-end is:
 
@@ -120,11 +122,11 @@ To run the complete teaching RTL checks locally:
 ./scripts/check_rtl_learning.sh
 ```
 
-This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanity checks, and verifies that the Lesson 8 VCD waveform was actually generated.
+This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanity checks, and verifies that the Lesson 8 VCD waveform was actually generated. The Lesson 13 Notebook also calls Yosys directly on `rtl/learning/clocked_accumulator.sv` so learners can inspect a real synthesis report.
 
 ## Start learning
 
-The first executable lessons are in [`lessons/`](lessons/README.md):
+The current executable lessons are in [`lessons/`](lessons/README.md):
 
 1. [From membrane potential to a minimal computational neuron](lessons/en/01_membrane_to_lif.ipynb)
 2. [How does digital hardware store 0.22?](lessons/en/02_float_to_fixed.ipynb)
@@ -138,6 +140,12 @@ The first executable lessons are in [`lessons/`](lessons/README.md):
 10. [Why do spikes need a queue?](lessons/en/10_spike_fifo_backpressure.ipynb)
 11. [Why not scan every synapse after every spike?](lessons/en/11_sparse_synapse_lookup.ipynb)
 12. [The complete journey of one spike](lessons/en/12_one_spike_journey.ipynb)
+13. [Simulation is not a chip](lessons/en/13_simulation_is_not_chip.ipynb)
+14. [What is an FPGA board?](lessons/en/14_what_is_fpga_board.ipynb)
+15. [How does the computer talk to the FPGA?](lessons/en/15_host_talks_to_fpga.ipynb)
+16. [Why can moving data be harder than adding?](lessons/en/16_data_movement_cost.ipynb)
+17. [What is external memory?](lessons/en/17_external_memory_ddr.ipynb)
+18. [Learn only the AXI we need](lessons/en/18_axi_subset.ipynb)
 
 The corresponding standalone exercise workbooks are under [`exercises/`](exercises/README.md). Python exercises use Jupyter Notebooks with external graders; grading asserts and concrete test vectors are not displayed directly in the workbook.
 
@@ -188,6 +196,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 | [Learning Architecture](docs/en/LEARNING_PATH.md) | [教学路径](docs/zh/LEARNING_PATH.md) |
 | [Beginner Glossary](docs/en/GLOSSARY.md) | [初学者术语表](docs/zh/GLOSSARY.md) |
 | [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) | [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) |
+| [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md) | [HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md) |
 
 ### Engineering source documents
 | English | 中文 |

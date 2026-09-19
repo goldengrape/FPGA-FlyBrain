@@ -100,9 +100,11 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 - **禁止在 Notebook 中临时安装**：不要在 Notebook 单元格中使用 `%pip install` 或 `!pip install`，以免破坏环境的可复现性。
 - **声明式增补依赖**：如果后续需要新增科学计算库，请在命令行执行 `uv add <package>`；若需要开发或测试工具，执行 `uv add --dev <package>`。版本变动会记录在 `pyproject.toml` 与 `uv.lock` 中。
 
-### 6. 第六到八课的 RTL 工具链
+### 6. 第六到八课与第十三课的 HDL 工具链
 
-RTL 课程使用 **SystemVerilog-2012**，包括 `logic`、`always_ff`、`always_comb` 等语法。Python 依赖继续由 `uv` 管理；HDL simulator 与 synthesis tool 是独立的系统工具，不属于 Python 包。
+第一次配置请先看：[HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md)。特别注意：激活 OSS CAD Suite 后，要从**同一个终端**启动 JupyterLab。
+
+第 6–8 课使用 **SystemVerilog-2012** 做 RTL/仿真，第 13 课会直接调用 Yosys 做一次真实 synthesis dry run。Python 依赖继续由 `uv` 管理；HDL simulator 与 synthesis tool 是独立的系统工具，不属于 Python 包。
 
 GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys，并在每次 CI 中打印实际版本。目前已经完整验证通过的一组基线是：
 
@@ -120,11 +122,11 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 ./scripts/check_rtl_learning.sh
 ```
 
-它会运行 Icarus self-checking simulation、Verilator lint、Yosys synthesis sanity check，并确认 Lesson 8 的 VCD 波形确实生成。
+它会运行 Icarus self-checking simulation、Verilator lint、Yosys synthesis sanity check，并确认 Lesson 8 的 VCD 波形确实生成。第 13 课 Notebook 还会单独调用 Yosys 综合 `rtl/learning/clocked_accumulator.sv`，让学生直接阅读一次真实 synthesis 输出。
 
 ## 从这里开始学
 
-第一组可执行课程位于 [`lessons/`](lessons/README.md)：
+当前可执行课程位于 [`lessons/`](lessons/README.md)：
 
 1. [从膜电位到一个最小计算神经元](lessons/zh/01_membrane_to_lif.ipynb)
 2. [数字硬件怎样保存 0.22？](lessons/zh/02_float_to_fixed.ipynb)
@@ -138,6 +140,12 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 10. [spike 为什么需要排队？](lessons/zh/10_spike_fifo_backpressure.ipynb)
 11. [为什么不能每次 spike 都扫描所有突触？](lessons/zh/11_sparse_synapse_lookup.ipynb)
 12. [一个 spike 的完整旅程](lessons/zh/12_one_spike_journey.ipynb)
+13. [仿真不是芯片](lessons/zh/13_simulation_is_not_chip.ipynb)
+14. [什么是 FPGA 板？](lessons/zh/14_what_is_fpga_board.ipynb)
+15. [电脑怎样和 FPGA 说话？](lessons/zh/15_host_talks_to_fpga.ipynb)
+16. [为什么搬数据比加法更难？](lessons/zh/16_data_movement_cost.ipynb)
+17. [外部内存是什么？](lessons/zh/17_external_memory_ddr.ipynb)
+18. [AXI 只学我们需要的部分](lessons/zh/18_axi_subset.ipynb)
 
 对应的独立作业册位于 [`exercises/`](exercises/README.zh-CN.md)。Python 作业使用 Jupyter Notebook，自动检查由外部 grader 执行；作业页面不直接展示判题 `assert` 或具体测试向量。
 
@@ -188,6 +196,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 | [教学路径](docs/zh/LEARNING_PATH.md) | [Learning Architecture](docs/en/LEARNING_PATH.md) |
 | [初学者术语表](docs/zh/GLOSSARY.md) | [Beginner Glossary](docs/en/GLOSSARY.md) |
 | [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) | [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) |
+| [HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md) | [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md) |
 
 ### 工程事实文档
 | 中文 | English |

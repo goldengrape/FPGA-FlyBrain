@@ -156,6 +156,14 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 | 10 | [有界 FIFO 与 backpressure](zh/10_spike_fifo_backpressure.ipynb) | FIFO ordering、full/empty、retry |
 | 11 | [稀疏连接的顺序读取表示](zh/11_sparse_synapse_lookup.ipynb) | source index、contiguous records、zero fanout |
 | 12 | [一个 source spike 的完整旅程](zh/12_one_spike_journey.ipynb) | source range、weighted event、target accumulator |
+| 13 | [读懂一个 timing budget](zh/13_simulation_is_not_chip.ipynb) | critical path、slack、timing pass/fail |
+| 14 | [把板上时钟变成可观察 tick](zh/14_what_is_fpga_board.ipynb) | board clock、counter width、observable tick |
+| 15 | [模拟 host ↔ programmable logic 往返](zh/15_host_talks_to_fpga.ipynb) | persistent PL state、readback ordering |
+| 16 | [判断 compute / data movement bottleneck](zh/16_data_movement_cost.ipynb) | latency、bandwidth、simple cost model |
+| 17 | [估算 sequential/random burst 成本](zh/17_external_memory_ddr.ipynb) | burst grouping、setup cost、access pattern |
+| 18 | [识别 VALID/READY 接受的 data beat](zh/18_axi_subset.ipynb) | handshake、stall、accepted beat |
+
+第 13–18 课进入 FPGA 板、host、DDR 与 AXI 主题，但正式作业仍提供**无板可完成**的 Python/推理版本；实体板实验作为对应 RMD slice 的工程延伸，不把购买硬件变成继续学习的门槛。
 
 第 6–8 课主要练习 SystemVerilog、testbench 和 waveform，继续使用 RTL 教学检查：
 
@@ -175,7 +183,9 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 uv run pytest \
   exercises/checks/test_graders.py \
   exercises/checks/test_notebook_structure.py \
-  exercises/checks/test_start_exercise.py -q
+  exercises/checks/test_start_exercise.py \
+  lessons/checks/test_platform4_notebook_structure.py \
+  lessons/checks/test_platform4_student_dryrun.py -q
 ```
 
 `test_start_exercise.py` 会验证 lesson 选择、工作副本路径以及“已有学生答案绝不覆盖”的行为。

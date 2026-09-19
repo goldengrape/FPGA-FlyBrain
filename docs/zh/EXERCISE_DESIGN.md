@@ -187,7 +187,13 @@ exercises/
 │   ├── lesson09.py
 │   ├── lesson10.py
 │   ├── lesson11.py
-│   └── lesson12.py
+│   ├── lesson12.py
+│   ├── lesson13.py
+│   ├── lesson14.py
+│   ├── lesson15.py
+│   ├── lesson16.py
+│   ├── lesson17.py
+│   └── lesson18.py
 ├── checks/
 │   └── ...
 ├── en/
@@ -201,12 +207,20 @@ exercises/
     ├── 09_time_multiplex_many_neurons.ipynb
     ├── 10_spike_fifo_backpressure.ipynb
     ├── 11_sparse_synapse_lookup.ipynb
-    └── 12_one_spike_journey.ipynb
+    ├── 12_one_spike_journey.ipynb
+    ├── 13_simulation_is_not_chip.ipynb
+    ├── 14_what_is_fpga_board.ipynb
+    ├── 15_host_talks_to_fpga.ipynb
+    ├── 16_data_movement_cost.ipynb
+    ├── 17_external_memory_ddr.ipynb
+    └── 18_axi_subset.ipynb
 ~~~
 
 作业文件名尽量与课程 Notebook 对应，使学习者可以自然地在 lessons/zh/ 与 exercises/zh/ 之间切换。
 
 第 6–8 课主要练习 SystemVerilog、testbench 和 waveform，暂不强行为 Python 作业 Notebook；后续按同样的作业册原则设计对应 HDL 实验。
+
+第 13–18 课进入真实硬件与外部内存主题，但正式作业刻意保留无板可完成的语义/性能模型；实体板、DDR controller 与平台专用步骤属于对应 RMD 的工程实验，不把硬件购买设成作业前置条件。
 
 ## 8. 完成标准
 

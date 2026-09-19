@@ -8,13 +8,11 @@ on:
       - "rtl/**"
       - "tb/**"
       - "scripts/check_rtl_learning.sh"
+      - "lessons/**"
       - ".github/workflows/rtl-learning.yml"
   pull_request:
-    paths:
-      - "rtl/**"
-      - "tb/**"
-      - "scripts/check_rtl_learning.sh"
-      - ".github/workflows/rtl-learning.yml"
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -33,10 +31,13 @@ jobs:
       - name: Install open-source HDL tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y iverilog verilator yosys
+          sudo apt-get install -y iverilog verilator yosys python3-pytest
 
       - name: Run RTL learning checks
         run: ./scripts/check_rtl_learning.sh
+
+      - name: Run Lesson 13 student synthesis dry run
+        run: python3 -m pytest lessons/checks/test_platform4_student_dryrun.py -k real_yosys -q
 
       - name: Upload Lesson 8 waveform
         if: success()

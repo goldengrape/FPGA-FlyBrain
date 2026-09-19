@@ -14,6 +14,12 @@ from exercises.grader import (
     lesson10,
     lesson11,
     lesson12,
+    lesson13,
+    lesson14,
+    lesson15,
+    lesson16,
+    lesson17,
+    lesson18,
 )
 
 
@@ -218,3 +224,110 @@ def test_lesson12_grader_detects_scanning_all_records():
 
     assert _all_pass(lesson12.evaluate(good))
     assert _some_fail(lesson12.evaluate(bad))
+
+
+def test_lesson13_grader_rejects_wrong_critical_path():
+    def good(delays, period):
+        critical=max(delays); slack=period-critical
+        return critical, slack, slack >= 0
+    def bad(delays, period):
+        critical=min(delays); slack=period-critical
+        return critical, slack, slack >= 0
+    assert _all_pass(lesson13.evaluate(good))
+    assert _some_fail(lesson13.evaluate(bad))
+
+
+def test_lesson14_grader_rejects_wrong_counter_width():
+    def good(input_hz, target_hz):
+        cycles=input_hz//target_hz
+        return cycles, max(1,(cycles-1).bit_length())
+    def bad(input_hz, target_hz):
+        cycles=input_hz//target_hz
+        return cycles, cycles.bit_length()
+    assert _all_pass(lesson14.evaluate(good))
+    assert _some_fail(lesson14.evaluate(bad))
+
+
+def test_lesson15_grader_rejects_nonpersistent_state():
+    def good(commands, initial_register=0):
+        register=initial_register; reads=[]
+        for op,value in commands:
+            if op=="write": register=value
+            elif op=="add": register+=value
+            elif op=="read": reads.append(register)
+        return reads, register
+    def bad(commands, initial_register=0):
+        register=initial_register; reads=[]
+        for op,value in commands:
+            if op=="write": register=value
+            elif op=="add": register=value
+            elif op=="read": reads.append(initial_register)
+        return reads, register
+    assert _all_pass(lesson15.evaluate(good))
+    assert _some_fail(lesson15.evaluate(bad))
+
+
+def test_lesson16_grader_rejects_missing_data_volume():
+    def good(n, bpi, cpi, bw, startup=0.0):
+        c=n*cpi; t=startup+n*bpi/bw
+        return c,t,"memory" if t>c else "compute" if c>t else "balanced"
+    def bad(n, bpi, cpi, bw, startup=0.0):
+        c=n*cpi; t=startup+bpi/bw
+        return c,t,"memory" if t>c else "compute" if c>t else "balanced"
+    assert _all_pass(lesson16.evaluate(good))
+    assert _some_fail(lesson16.evaluate(bad))
+
+
+def test_lesson17_grader_rejects_one_burst_for_everything():
+    def good(addresses, max_burst_words, setup_cycles, word_cycles=1):
+        if not addresses: return 0,0
+        bursts=1; run=1
+        for prev,cur in zip(addresses,addresses[1:]):
+            if cur==prev+1 and run<max_burst_words: run+=1
+            else: bursts+=1; run=1
+        return bursts,bursts*setup_cycles+len(addresses)*word_cycles
+    def bad(addresses, max_burst_words, setup_cycles, word_cycles=1):
+        if not addresses: return 0,0
+        return 1,setup_cycles+len(addresses)*word_cycles
+    assert _all_pass(lesson17.evaluate(good))
+    assert _some_fail(lesson17.evaluate(bad))
+
+
+def test_lesson18_grader_rejects_valid_without_ready():
+    def good(valid, ready, data):
+        accepted=[]; cycles=[]
+        for i,(v,r,d) in enumerate(zip(valid,ready,data)):
+            if v and r: accepted.append(d); cycles.append(i)
+        return accepted,cycles
+    def bad(valid, ready, data):
+        accepted=[]; cycles=[]
+        for i,(v,r,d) in enumerate(zip(valid,ready,data)):
+            if v: accepted.append(d); cycles.append(i)
+        return accepted,cycles
+    assert _all_pass(lesson18.evaluate(good))
+    assert _some_fail(lesson18.evaluate(bad))
+
+
+
+def test_lesson14_wrong_width_feedback_points_to_counter_width():
+    def bad(input_hz, target_hz):
+        cycles = input_hz // target_hz
+        return cycles, cycles.bit_length()
+
+    groups = {group.name: group.passed for group in lesson14.evaluate(bad)}
+    assert groups["Cycles per tick"] is True
+    assert groups["Counter width"] is False
+    assert groups["Minimum width"] is True
+
+
+def test_lesson13_wrong_critical_path_does_not_hide_other_feedback_groups():
+    def bad(delays, period):
+        true_critical = max(delays)
+        wrong_critical = min(delays)
+        slack = period - true_critical
+        return wrong_critical, slack, slack >= 0
+
+    groups = {group.name: group.passed for group in lesson13.evaluate(bad)}
+    assert groups["Critical path"] is False
+    assert groups["Slack boundary"] is True
+    assert groups["Timing failure"] is True
