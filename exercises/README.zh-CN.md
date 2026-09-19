@@ -8,18 +8,76 @@ Python 作业使用 Jupyter Notebook。每份作业都应当能独立阅读：�
 
 ## 学生怎么做
 
-从仓库根目录启动：
+### 1. 不要直接修改官方 starter
 
-~~~bash
+`exercises/zh/` 和 `exercises/en/` 保存 Git 跟踪的**官方作业模板**。这些文件会随着课程更新，因此不建议直接在里面长期保存个人答案。
+
+学生自己的作业统一放在：
+
+```text
+exercises/work/
+├── zh/
+└── en/
+```
+
+整个 `exercises/work/` 已加入 `.gitignore`，普通 `git status`、commit 和 `git pull` 不会把你的答案当成课程源码。
+
+### 2. 用一个命令开始作业
+
+从仓库根目录运行：
+
+```bash
 uv sync --group dev
-uv run jupyter lab
-~~~
+uv run python scripts/start_exercise.py 01
+```
 
-然后打开 exercises/zh/ 下对应课程的 Notebook。
+第一个命令会创建：
+
+```text
+exercises/work/zh/01_membrane_to_lif.ipynb
+```
+
+然后启动：
+
+```bash
+uv run jupyter lab
+```
+
+在 JupyterLab 中打开 **`exercises/work/zh/` 下的副本**，而不是 `exercises/zh/` 下的官方 starter。
+
+其他用法：
+
+```bash
+# 第 11 课中文作业
+uv run python scripts/start_exercise.py 11
+
+# 第 1 课英文作业
+uv run python scripts/start_exercise.py 01 --lang en
+
+# 一次建立全部当前中文 Python 作业
+uv run python scripts/start_exercise.py all
+
+# 一次建立全部当前英文 Python 作业
+uv run python scripts/start_exercise.py all --lang en
+```
+
+脚本**绝不会覆盖已经存在的学生副本**。再次运行同一命令时会提示：
+
+```text
+Already exists, kept unchanged: exercises/work/zh/01_membrane_to_lif.ipynb
+```
+
+因此可以安全地重复执行。
+
+### 3. 做题流程
 
 典型流程是：
 
-~~~text
+```text
+官方 starter
+  ↓ start_exercise.py 复制一次
+个人 work Notebook
+  ↓
 读题
   ↓
 先预测 / 手算
@@ -31,13 +89,13 @@ uv run jupyter lab
 根据结果修订
   ↓
 完成 Human Check
-~~~
+```
 
-学生可见 Notebook **不直接展示自动测试的 assert、具体测试向量或完整判题逻辑**。检查单元会把当前 Jupyter kernel 中刚定义的函数传给 exercises/grader/ 下的外部 grader。
+学生可见 Notebook **不直接展示自动测试的 assert、具体测试向量或完整判题逻辑**。检查单元会把当前 Jupyter kernel 中刚定义的函数传给 `exercises/grader/` 下的外部 grader。
 
 grader 只报告概念分组是否通过，例如：
 
-~~~text
+```text
 第 05 课检查
 
 ✓ Boolean gates
@@ -45,13 +103,49 @@ grader 只报告概念分组是否通过，例如：
 ✗ Enable behavior
 
 2 / 3 groups passed
-~~~
+```
 
 失败信息可以提示应检查哪个概念，但不会打印具体失败输入和期望答案。
 
+### 4. 更新课程不会覆盖你的答案
+
+以后更新仓库时：
+
+```bash
+git pull
+```
+
+Git 更新的是官方课程模板和代码。你的 `exercises/work/` 不被跟踪，因此不会因为课程更新而产生 Notebook merge conflict。
+
+如果官方 starter 更新了，你可以继续保留现有 work 副本；如果想从新 starter 重新开始，可以先自行备份或重命名旧 work 文件，再运行 `start_exercise.py`。脚本不会主动删除或覆盖任何已有答案。
+
+### 5. 如果你已经直接修改过官方 Notebook
+
+如果你是在引入 `exercises/work/` 之前开始做题，并且答案还写在例如：
+
+```text
+exercises/zh/01_membrane_to_lif.ipynb
+```
+
+先运行：
+
+```bash
+uv run python scripts/start_exercise.py 01
+```
+
+脚本会把你**当前本地版本**复制到 `exercises/work/zh/`。确认个人副本中答案完整后，再把官方模板恢复为 Git 版本：
+
+```bash
+git restore exercises/zh/01_membrane_to_lif.ipynb
+```
+
+这样以后你的答案和课程源码就分开了。
+
 ## Python 作业目录
 
-| Lesson | 作业 Notebook | 主要练习 |
+下表链接指向官方 starter，方便阅读和版本追踪。真正做题时请通过 `start_exercise.py` 建立 `work/` 副本。
+
+| Lesson | 官方作业 Notebook | 主要练习 |
 |---|---|---|
 | 01 | [从膜电位到 LIF 的一步更新](zh/01_membrane_to_lif.ipynb) | leak、integration、threshold、reset |
 | 02 | [把小数放进有限位宽](zh/02_float_to_fixed.ipynb) | signed range、rounding、quantization、saturation |
@@ -65,24 +159,27 @@ grader 只报告概念分组是否通过，例如：
 
 第 6–8 课主要练习 SystemVerilog、testbench 和 waveform，继续使用 RTL 教学检查：
 
-~~~bash
+```bash
 ./scripts/check_rtl_learning.sh
-~~~
+```
 
 后续如果为 6–8 课增加独立作业册，也遵守同一套“题目先于代码、检查不泄露答案、Human Check 补充理解”的原则。
 
 ## 对课程维护者
 
-学生即时检查实现位于 exercises/grader/。
+学生即时检查实现位于 `exercises/grader/`。
 
-维护者测试位于 exercises/checks/，当前主要入口：
+维护者测试位于 `exercises/checks/`，当前主要入口：
 
-~~~bash
-uv run pytest   exercises/checks/test_graders.py   exercises/checks/test_notebook_structure.py -q
-~~~
+```bash
+uv run pytest \
+  exercises/checks/test_graders.py \
+  exercises/checks/test_notebook_structure.py \
+  exercises/checks/test_start_exercise.py -q
+```
 
-test_graders.py 验证 grader 能接受 reference implementation，并能抓住典型错误实现。test_notebook_structure.py 验证双语 Notebook 可以解析、保留 TODO、使用外部 grader，并且学生代码单元没有内嵌测试函数或 assert。
+`test_start_exercise.py` 会验证 lesson 选择、工作副本路径以及“已有学生答案绝不覆盖”的行为。
 
-GitHub Actions 的 Python exercise infrastructure workflow 会自动运行这两组检查。
+GitHub Actions 的 Python exercise infrastructure workflow 会自动运行作业基础设施测试。
 
 当前不使用 nbgrader，也不使用 testbook。只有出现明确的新需求时再评估。
