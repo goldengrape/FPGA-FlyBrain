@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "exercises/**"
+      - "scripts/start_exercise.py"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/python-exercises.yml"
