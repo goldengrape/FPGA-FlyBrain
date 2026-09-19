@@ -142,3 +142,18 @@ LSN-011 可以提供“实现规划”，例如提醒学生最终需要完成：
 ### 9.4 完成状态
 
 LSN-013~018 六份作业均完成内容审稿与学生 dry run。对应执行记录见 `EXERCISE_STUDENT_DRY_RUN.md` 第 10 节。
+
+
+## 10. Platform 5 作业内容审稿：LSN-019~023
+
+本轮按客观审稿结果修订，不以 CI 绿灯替代题意与 oracle 审查。
+
+- **L19**：directed degree 任务保留；grader 新增“不修改输入 list”检查；pre-code 数值与隐藏向量解耦。
+- **L20**：标题改为“装入真实 MaleCNS 子图之前”；manifest 从仅 integrity 修正为 integrity + provenance，统一要求 `schema_version/source_release/converter_version/byte_count/sha256`，grader 要求 exact key set。
+- **L21**：pre-code 数值与 grader 解耦；grader 新增输入 dict 不可修改检查；hotspot 明确为 supporting term。
+- **L22**：grader 新增 reverse-direction oracle，拒绝只会向右移动的实现。
+- **L23**：pre-code benchmark 数值与 grader 解耦；energy/event 明确为 supporting metric。
+
+Platform 5 五张课程结构图全部迁移为 Markdown inline SVG，不再使用 Mermaid。PDF CI 使用 SVG 专用填充色验证最终渲染，且已对生成 artifact 做真实视觉检查。
+
+对应学生路径执行记录见 `EXERCISE_STUDENT_DRY_RUN.md` 第 11 节。
