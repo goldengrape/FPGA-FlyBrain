@@ -33,7 +33,7 @@ A real learner can therefore reach the final check cell and see:
 ModuleNotFoundError: No module named 'exercises'
 ```
 
-This is the only blocker found in the dry run and should be fixed before content polish continues.
+This was the only blocker found in the dry run, and it was fixed in the same revision cycle. Each grader check cell now locates the repository root by walking upward from the current working directory and inserts that root into sys.path before importing the grader. A maintainer regression test now launches a separate Python process from both exercises/zh and exercises/en to verify the same path.
 
 ## 3. Lesson-by-lesson dry run
 
@@ -74,9 +74,9 @@ Direct answer paths are strongest in Lessons 2, 3, 11, and 12. Do not remove the
 
 Keep the signature for grader compatibility and explicitly explain why state is present but not recomputed from.
 
-## 8. Environment recommendation
+## 8. Environment result
 
-Fix the grader import path first, then add a maintainer test that starts Python/kernel-like execution from `exercises/zh` and `exercises/en`, rather than only testing from the repository root.
+The grader import blocker has been fixed. Maintainer tests now start an independent Python subprocess from `exercises/zh` and `exercises/en`, run the same repository-root bootstrap used by the notebooks, and verify that the grader can be imported. This check is part of the Python exercise infrastructure CI and currently passes.
 
 ## 9. Conclusion
 
@@ -84,9 +84,9 @@ The exercises are usable in terms of conceptual clarity, pre-code reasoning, TOD
 
 Priorities after this dry run:
 
-1. fix the real-Jupyter grader import blocker;
-2. explain Lesson 4's intentionally unused state parameter;
-3. distinguish consolidation exercises from transfer/design exercises;
-4. then decide whether to reduce direct answer-copy paths in Lessons 2, 3, 11, and 12.
+1. the real-Jupyter grader import blocker is fixed;
+2. Lesson 4 now explains the intentionally unused state parameter;
+3. Lesson 3 now requires learner-chosen probe values rather than direct reuse of lesson examples;
+4. the remaining design question is how strongly Lessons 2, 11, and 12 should shift from reproduction toward transfer/design.
 
 Do not increase code volume simply to make the assignments feel harder.
