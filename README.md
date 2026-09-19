@@ -205,11 +205,12 @@ These are the foundational sources currently used or repeatedly referenced by th
 
 Planning, system architecture, and the first curriculum audit are complete. The first formal implementation slice has not yet been declared complete.
 
-Current build sequence:
+Current first implementation batch:
 
 1. `RMD-001` — Python LIF float reference
 2. `RMD-002` — fixed-point exploration
 3. `RMD-003` — freeze v0 neuron semantics
-4. `RMD-003A` — Digital Hardware Bridge
+
+`RMD-003A` — Digital Hardware Bridge is the **first item of the next batch**, not part of the current first batch.
 
 Hardware purchase is intentionally deferred until the early simulation stages are understood and verified.
