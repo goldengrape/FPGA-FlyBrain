@@ -269,22 +269,24 @@ def test_platform4_cells_have_stable_bilingual_ids():
 
 
 
-def test_lesson18_protocol_diagrams_use_embedded_svg():
+def test_lesson18_protocol_diagrams_use_inline_svg():
     expected = {
-        3: "axi_handshake.svg",
-        7: "axi_transaction_burst_beat.svg",
+        3: ("VALID READY handshake diagram", "handshake check"),
+        7: ("transaction burst beat diagram", "burst of one or more beats"),
     }
     for language in ("zh", "en"):
         notebook = _read(language, "18_axi_subset.ipynb")
         all_markdown = _markdown(notebook)
         assert "```mermaid" not in all_markdown
+        assert "attachment:" not in all_markdown
 
-        for cell_index, attachment_name in expected.items():
+        for cell_index, markers in expected.items():
             cell = notebook["cells"][cell_index]
             source = "".join(cell.get("source", []))
-            attachments = cell.get("attachments", {})
-            assert f"attachment:{attachment_name}" in source
-            assert attachment_name in attachments
-            svg = attachments[attachment_name].get("image/svg+xml", "")
-            assert svg.lstrip().startswith("<svg")
-            assert "</svg>" in svg
+            assert "<svg " in source
+            assert "</svg>" in source
+            assert "<rect " in source
+            assert "<path " in source
+            for marker in markers:
+                assert marker in source
+            assert not cell.get("attachments")
