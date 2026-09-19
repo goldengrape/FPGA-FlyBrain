@@ -34,11 +34,17 @@ def evaluate(bottleneck, language: str = "zh"):
         return stage == "tight" and abs(util["tight"] - 1.0) < 1e-12
 
     def under_capacity():
-        util, stage = bottleneck(
-            {"fifo": 2.0, "memory": 3.0, "update": 3.0},
-            {"fifo": 10.0, "memory": 4.0, "update": 8.0},
+        demand = {"fifo": 2.0, "memory": 3.0, "update": 3.0}
+        capacity = {"fifo": 10.0, "memory": 4.0, "update": 8.0}
+        demand_before = dict(demand)
+        capacity_before = dict(capacity)
+        util, stage = bottleneck(demand, capacity)
+        return (
+            stage == "memory"
+            and abs(util["memory"] - 0.75) < 1e-12
+            and demand == demand_before
+            and capacity == capacity_before
         )
-        return stage == "memory" and abs(util["memory"] - 0.75) < 1e-12
 
     return [
         evaluate_group(labels[0][0], ratios, labels[0][1]),
