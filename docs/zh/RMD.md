@@ -15,6 +15,7 @@
 5. 不提前引入当前 slice 不需要的复杂度。
 6. 最多引入一个主要陌生概念，或一个不可分割的紧密概念簇。
 7. AI 可以生成代码；学习者必须能解释输入、状态、输出、时序和验收标准。
+8. 遵守 [文档优先与规范治理](DOCUMENT_AUTHORITY.md)：涉及 contract 的 slice 先更新中英文文档与 oracle / TRACE，再进入实现；RMD 不得用“现有代码已经这样写”代替 specification decision。
 
 ## 2. 五个平台
 ```text
