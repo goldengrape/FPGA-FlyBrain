@@ -155,30 +155,52 @@ Host / Python
 - build scripts
 
 ## 7. 双语仓库结构
+
+### 7.1 当前实际结构
+
 ```text
 FPGA-FlyBrain/
   README.md
   README.zh-CN.md
   docs/
     en/
-      URD.md ADD.md MDD.md TDD.md RMD.md TRACE.md
     zh/
-      URD.md ADD.md MDD.md TDD.md RMD.md TRACE.md
-  python/
-    reference/
-    connectome/
+  lessons/
+    en/
+    zh/
+  exercises/
+    en/
+    zh/
+    grader/
+    checks/
   rtl/
-    neuron/
-    event/
-    memory/
-    top/
+    learning/
   tb/
-  boards/
-  tests/
-  data/
+    learning/
   scripts/
-  okf/
-  .vibe/
+  .github/workflows/
 ```
+
+### 7.2 规划中的正式工程目录
+
+以下目录属于后续 RMD slice 的**规划态**，尚未因为出现在 MDD 中就视为已实现：
+
+```text
+python/
+  reference/
+  connectome/
+rtl/
+  neuron/
+  event/
+  memory/
+  top/
+boards/
+tests/
+data/
+okf/
+.vibe/
+```
+
+当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
 中英文文档必须共享同一套 FR/DP/MOD/T/RMD ID；设计含义改变时两种语言同步更新。
