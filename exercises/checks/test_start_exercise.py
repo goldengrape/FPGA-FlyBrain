@@ -46,3 +46,25 @@ def test_create_work_copy_creates_ignored_style_workspace_and_never_overwrites(t
 def test_create_work_copy_requires_official_template(tmp_path: Path):
     with pytest.raises(FileNotFoundError):
         create_work_copy(tmp_path, "01", "en")
+
+
+
+def test_all_declared_exercises_can_be_copied_without_overwriting(tmp_path: Path):
+    for lesson, filename in EXERCISE_FILES.items():
+        source = tmp_path / "exercises" / "zh" / filename
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text(f"official starter {lesson}", encoding="utf-8")
+
+    destinations = []
+    for lesson in EXERCISE_FILES:
+        destination, created = create_work_copy(tmp_path, lesson, "zh")
+        assert created is True
+        destinations.append(destination)
+
+    assert len(destinations) == len(EXERCISE_FILES)
+    assert len(set(destinations)) == len(EXERCISE_FILES)
+
+    for lesson in EXERCISE_FILES:
+        destination, created = create_work_copy(tmp_path, lesson, "zh")
+        assert created is False
+        assert destination.read_text(encoding="utf-8") == f"official starter {lesson}"
