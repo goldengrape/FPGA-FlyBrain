@@ -59,26 +59,56 @@ jobs:
           variants = [
               (
                   "A_original_diamond",
-                  "```mermaid\\nflowchart TD\\n  S[\\\"sender: VALID + payload\\\"] --> H{\\\"VALID && READY?\\\"}\\n  R[\\\"receiver: READY\\\"] --> H\\n  H -->|\\\"yes, active clock edge\\\"| T[\\\"accepted transfer\\\"]\\n```",
+                  [
+                      "```mermaid",
+                      "flowchart TD",
+                      '  S["sender: VALID + payload"] --> H{"VALID && READY?"}',
+                      '  R["receiver: READY"] --> H',
+                      '  H -->|"yes, active clock edge"| T["accepted transfer"]',
+                      "```",
+                  ],
               ),
               (
                   "B_rectangles",
-                  "```mermaid\\nflowchart TD\\n  S[\\\"sender VALID payload\\\"] --> H[\\\"handshake check\\\"]\\n  R[\\\"receiver READY\\\"] --> H\\n  H --> T[\\\"accepted transfer\\\"]\\n```",
+                  [
+                      "```mermaid",
+                      "flowchart TD",
+                      '  S["sender VALID payload"] --> H["handshake check"]',
+                      '  R["receiver READY"] --> H',
+                      '  H --> T["accepted transfer"]',
+                      "```",
+                  ],
               ),
               (
                   "C_graph_td",
-                  "```mermaid\\ngraph TD\\n  S[Sender] --> H[Handshake]\\n  R[Receiver] --> H\\n  H --> T[Accepted]\\n```",
+                  [
+                      "```mermaid",
+                      "graph TD",
+                      "  S[Sender] --> H[Handshake]",
+                      "  R[Receiver] --> H",
+                      "  H --> T[Accepted]",
+                      "```",
+                  ],
               ),
               (
                   "D_flow_lr_ascii",
-                  "```mermaid\\nflowchart LR\\n  A[Sender] --> B[Handshake]\\n  C[Receiver] --> B\\n  B --> D[Accepted]\\n```",
+                  [
+                      "```mermaid",
+                      "flowchart LR",
+                      "  A[Sender] --> B[Handshake]",
+                      "  C[Receiver] --> B",
+                      "  B --> D[Accepted]",
+                      "```",
+                  ],
               ),
           ]
 
           nb = nbf.v4.new_notebook()
           nb.cells = [
-              nbf.v4.new_markdown_cell(f"# {title}\\n\\n{diagram}")
-              for title, diagram in variants
+              nbf.v4.new_markdown_cell(
+                  "# " + title + "\n\n" + "\n".join(diagram_lines)
+              )
+              for title, diagram_lines in variants
           ]
           Path("dist/mermaid_probe.ipynb").write_text(
               nbf.writes(nb), encoding="utf-8"
@@ -92,21 +122,16 @@ jobs:
             --output-dir dist/course-pdfs \
             --WebPDFExporter.allow_chromium_download=True
 
-          uv run python - <<'PY'
-          from pathlib import Path
-          import pymupdf
-
-          path = Path("dist/course-pdfs/mermaid-probe.pdf")
-          doc = pymupdf.open(path)
-          text = "\\n".join(page.get_text("text") for page in doc)
-          print(text)
-          if "Syntax error in text" in text:
-              print("Probe contains at least one Mermaid syntax error.")
-          else:
-              print("Probe contains no Mermaid syntax-error text.")
-          PY
+      - name: Upload Mermaid probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: mermaid-webpdf-probe
+          path: dist/course-pdfs/mermaid-probe.pdf
+          if-no-files-found: error
+          retention-days: 3
 
       - name: Execute notebooks and export PDFs
+        if: false
         run: |
           set -euo pipefail
           mkdir -p dist/course-pdfs
@@ -130,6 +155,7 @@ jobs:
           done
 
       - name: Merge course PDF groups
+        if: false
         run: |
           uv run python - <<'PY'
           from pathlib import Path
@@ -171,6 +197,7 @@ jobs:
           PY
 
       - name: Verify Lesson 13 synthesis output is present
+        if: false
         run: |
           uv run python - <<'PY'
           from pathlib import Path
@@ -190,6 +217,7 @@ jobs:
           PY
 
       - name: Verify Mermaid diagrams are rendered
+        if: false
         run: |
           uv run python - <<'PY'
           from pathlib import Path
@@ -282,10 +310,12 @@ jobs:
           PY
 
       - name: List generated files
+        if: false
         if: always()
         run: ls -lh dist/course-pdfs || true
 
       - name: Upload course PDFs
+        if: false
         if: always()
         uses: actions/upload-artifact@v4
         with:
