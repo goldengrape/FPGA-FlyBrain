@@ -155,30 +155,52 @@ Core RTL must not be tied to one board. Platform-specific material lives under `
 - build scripts
 
 ## 7. Bilingual repository layout
+
+### 7.1 Current repository structure
+
 ```text
 FPGA-FlyBrain/
   README.md
   README.zh-CN.md
   docs/
     en/
-      URD.md ADD.md MDD.md TDD.md RMD.md TRACE.md
     zh/
-      URD.md ADD.md MDD.md TDD.md RMD.md TRACE.md
-  python/
-    reference/
-    connectome/
+  lessons/
+    en/
+    zh/
+  exercises/
+    en/
+    zh/
+    grader/
+    checks/
   rtl/
-    neuron/
-    event/
-    memory/
-    top/
+    learning/
   tb/
-  boards/
-  tests/
-  data/
+    learning/
   scripts/
-  okf/
-  .vibe/
+  .github/workflows/
 ```
+
+### 7.2 Planned formal-engineering directories
+
+The following directories are **planned** for later RMD slices. Their presence in MDD does not mean they already exist or are implemented:
+
+```text
+python/
+  reference/
+  connectome/
+rtl/
+  neuron/
+  event/
+  memory/
+  top/
+boards/
+tests/
+data/
+okf/
+.vibe/
+```
+
+Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
 English and Chinese documents share the same FR/DP/MOD/T/RMD IDs. Any design-meaning change must be reflected in both languages.
