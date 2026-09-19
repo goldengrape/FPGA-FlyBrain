@@ -123,3 +123,62 @@ def test_lesson18_states_valid_and_payload_stability_rule():
     assert "payload/control" in zh and "保持稳定" in zh
     assert "must not withdraw VALID" in en
     assert "payload/control" in en and "remain stable" in en
+
+
+def _numbered_sections(notebook):
+    sections = []
+    for cell in notebook["cells"]:
+        if cell.get("cell_type") != "markdown":
+            continue
+        first = "".join(cell.get("source", [])).splitlines()[0]
+        match = __import__("re").match(r"^## (\d+)\. ", first)
+        if match:
+            sections.append((int(match.group(1)), first))
+    return sections
+
+
+def test_platform4_numbered_sections_are_unique_and_monotonic():
+    for language in ("zh", "en"):
+        for name in LESSONS:
+            sections = _numbered_sections(_read(language, name))
+            numbers = [number for number, _ in sections]
+            assert numbers == list(range(1, len(numbers) + 1)), (
+                f"{language}/{name} numbered sections are out of order or duplicated: {numbers}"
+            )
+
+
+def test_lesson13_student_flow_keeps_run_observe_try_exercise_order():
+    expected = {
+        "zh": {
+            4: "Yosys",
+            5: "Observe",
+            6: "timing",
+            7: "Run",
+            8: "Observe",
+            9: "Try It",
+            10: "作业",
+            11: "AI Task",
+            12: "Human Check",
+            13: "Engineering Handoff",
+            14: "Project Trace",
+            15: "Exit Ticket",
+        },
+        "en": {
+            4: "Yosys",
+            5: "Observe",
+            6: "timing",
+            7: "Run",
+            8: "Observe",
+            9: "Try It",
+            10: "Exercise",
+            11: "AI Task",
+            12: "Human Check",
+            13: "Engineering Handoff",
+            14: "Project Trace",
+            15: "Exit Ticket",
+        },
+    }
+    for language in ("zh", "en"):
+        sections = dict(_numbered_sections(_read(language, "13_simulation_is_not_chip.ipynb")))
+        for number, marker in expected[language].items():
+            assert marker.lower() in sections[number].lower()
