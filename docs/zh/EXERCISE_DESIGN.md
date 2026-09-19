@@ -187,7 +187,13 @@ exercises/
 │   ├── lesson09.py
 │   ├── lesson10.py
 │   ├── lesson11.py
-│   └── lesson12.py
+│   ├── lesson12.py
+│   ├── lesson13.py
+│   ├── lesson14.py
+│   ├── lesson15.py
+│   ├── lesson16.py
+│   ├── lesson17.py
+│   └── lesson18.py
 ├── checks/
 │   └── ...
 ├── en/
