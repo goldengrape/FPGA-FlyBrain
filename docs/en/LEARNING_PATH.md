@@ -206,7 +206,7 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 
 ### Platform 4: from simulation to real FPGA and external memory
 
-| Planned lesson | First-use concepts | Engineering mapping |
+| Lesson | First-use concepts | Engineering mapping |
 |---|---|---|
 | LSN-013 Simulation is not a chip | synthesis, implementation, timing, bitstream | RMD-011A |
 | LSN-014 What is an FPGA board? | FPGA, I/O, clock/reset, development board | RMD-012/012A |
@@ -270,5 +270,5 @@ Notebook imports formal module for teaching and experiments
 - LSN-001~004: being revised from experiment skeletons into textbook-quality executable lessons, with first-use terminology and project IDs moved to the end.
 - LSN-005~008: the second bilingual lesson block is established; teaching RTL lives in `rtl/learning/` and does not replace formal `MOD-003`.
 - LSN-009~012: the third bilingual Notebook block is established; small Python event-machine experiments teach time multiplexing, FIFO/backpressure, sparse lookup, and the event-driven causal chain without declaring MOD-004~009 complete.
-- LSN-013 onward: concept sequence planned; formal Notebooks not yet created.
+- LSN-013~018: the fourth bilingual Notebook block is established; formal exercises remain board-independent, while physical FPGA/DDR labs remain engineering extensions of RMD-012A~016.
 - First formal implementation remains `RMD-001`; it is not yet declared complete.

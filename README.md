@@ -124,7 +124,7 @@ This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanit
 
 ## Start learning
 
-The first executable lessons are in [`lessons/`](lessons/README.md):
+The current executable lessons are in [`lessons/`](lessons/README.md):
 
 1. [From membrane potential to a minimal computational neuron](lessons/en/01_membrane_to_lif.ipynb)
 2. [How does digital hardware store 0.22?](lessons/en/02_float_to_fixed.ipynb)
@@ -138,6 +138,12 @@ The first executable lessons are in [`lessons/`](lessons/README.md):
 10. [Why do spikes need a queue?](lessons/en/10_spike_fifo_backpressure.ipynb)
 11. [Why not scan every synapse after every spike?](lessons/en/11_sparse_synapse_lookup.ipynb)
 12. [The complete journey of one spike](lessons/en/12_one_spike_journey.ipynb)
+13. [Simulation is not a chip](lessons/en/13_simulation_is_not_chip.ipynb)
+14. [What is an FPGA board?](lessons/en/14_what_is_fpga_board.ipynb)
+15. [How does the computer talk to the FPGA?](lessons/en/15_host_talks_to_fpga.ipynb)
+16. [Why can moving data be harder than adding?](lessons/en/16_data_movement_cost.ipynb)
+17. [What is external memory?](lessons/en/17_external_memory_ddr.ipynb)
+18. [Learn only the AXI we need](lessons/en/18_axi_subset.ipynb)
 
 The corresponding standalone exercise workbooks are under [`exercises/`](exercises/README.md). Python exercises use Jupyter Notebooks with external graders; grading asserts and concrete test vectors are not displayed directly in the workbook.
 

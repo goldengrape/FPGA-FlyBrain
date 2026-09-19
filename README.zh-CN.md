@@ -124,7 +124,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 
 ## 从这里开始学
 
-第一组可执行课程位于 [`lessons/`](lessons/README.md)：
+当前可执行课程位于 [`lessons/`](lessons/README.md)：
 
 1. [从膜电位到一个最小计算神经元](lessons/zh/01_membrane_to_lif.ipynb)
 2. [数字硬件怎样保存 0.22？](lessons/zh/02_float_to_fixed.ipynb)
@@ -138,6 +138,12 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 10. [spike 为什么需要排队？](lessons/zh/10_spike_fifo_backpressure.ipynb)
 11. [为什么不能每次 spike 都扫描所有突触？](lessons/zh/11_sparse_synapse_lookup.ipynb)
 12. [一个 spike 的完整旅程](lessons/zh/12_one_spike_journey.ipynb)
+13. [仿真不是芯片](lessons/zh/13_simulation_is_not_chip.ipynb)
+14. [什么是 FPGA 板？](lessons/zh/14_what_is_fpga_board.ipynb)
+15. [电脑怎样和 FPGA 说话？](lessons/zh/15_host_talks_to_fpga.ipynb)
+16. [为什么搬数据比加法更难？](lessons/zh/16_data_movement_cost.ipynb)
+17. [外部内存是什么？](lessons/zh/17_external_memory_ddr.ipynb)
+18. [AXI 只学我们需要的部分](lessons/zh/18_axi_subset.ipynb)
 
 对应的独立作业册位于 [`exercises/`](exercises/README.zh-CN.md)。Python 作业使用 Jupyter Notebook，自动检查由外部 grader 执行；作业页面不直接展示判题 `assert` 或具体测试向量。
 

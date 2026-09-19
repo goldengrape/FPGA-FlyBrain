@@ -206,7 +206,7 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 
 ### 平台 4：从仿真到真实 FPGA 与外部内存
 
-| 计划 Lesson | 第一次重点解释 | 工程映射 |
+| Lesson | 第一次重点解释 | 工程映射 |
 |---|---|---|
 | LSN-013 仿真不是芯片 | synthesis、implementation、timing、bitstream | RMD-011A |
 | LSN-014 什么是 FPGA 板 | FPGA、I/O、clock/reset、开发板 | RMD-012/012A |
@@ -270,5 +270,5 @@ Notebook imports formal module for teaching and experiments
 - LSN-001~004：进入“教材化”修订，要求术语首次展开、工程 ID 后置、叙事先于代码。
 - LSN-005~008：第二组双语 Notebook 已建立；教学 RTL 放在 `rtl/learning/`，不替代正式 `MOD-003`。
 - LSN-009~012：第三组双语 Notebook 已建立；先用小规模 Python event-machine 实验讲清 time multiplexing、FIFO/backpressure、sparse lookup 与 event-driven causal chain，不宣称 MOD-004~009 已完成。
-- LSN-013 之后：已规划概念顺序，尚未创建正式 Notebook。
+- LSN-013~018：第四组双语 Notebook 已建立；正式作业保持无板可完成，实体 FPGA/DDR 实验作为 RMD-012A~016 的工程延伸。
 - 第一项正式工程实现仍为 `RMD-001`，尚未声明完成。
