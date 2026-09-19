@@ -98,9 +98,10 @@ def test_lesson20_does_not_claim_teaching_fixture_is_real_malecns():
     assert "不声称已经装入真实 MaleCNS 子图" in zh
     assert "source_release" in zh and "converter_version" in zh
     en = _markdown(_read("en", LESSONS[1]))
-    assert "teaching fixture" in en
-    assert "does not" in en and "real MaleCNS subset" in en
-    assert "source_release" in en and "converter_version" in en
+    normalized_en = en.replace("**", "")
+    assert "teaching fixture" in normalized_en
+    assert "does not claim that a real MaleCNS subset has been loaded" in normalized_en
+    assert "source_release" in normalized_en and "converter_version" in normalized_en
 
 
 def test_lesson21_marks_scale_numbers_as_teaching_not_measurements():
