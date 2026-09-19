@@ -169,9 +169,11 @@ jobs:
           PY
 
       - name: List generated files
-        run: ls -lh dist/course-pdfs
+        if: always()
+        run: ls -lh dist/course-pdfs || true
 
       - name: Upload course PDFs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: FPGA-FlyBrain-course-pdfs-zh
