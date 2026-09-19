@@ -2,15 +2,9 @@ name: Export course PDFs
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "lessons/zh/*.ipynb"
-      - "lessons/zh/*homework.md"
-      - "exercises/**"
-      - ".github/workflows/export-course-pdf.yml"
   pull_request:
     paths:
-      - "lessons/zh/*.ipynb"
+      - "lessons/zh/18_axi_subset.ipynb"
       - ".github/workflows/export-course-pdf.yml"
 
 permissions:
@@ -19,7 +13,7 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -31,27 +25,14 @@ jobs:
       - name: Install project dependencies
         run: uv sync --group dev
 
-      - name: Register course Jupyter kernel
-        run: |
-          uv run python -m ipykernel install --user \
-            --name fpga-flybrain \
-            --display-name "FPGA FlyBrain"
-          uv run jupyter kernelspec list
-
       - name: Install PDF exporter and browser
         run: |
-          uv pip install "nbconvert[webpdf]" pypdf pymupdf
+          uv pip install "nbconvert[webpdf]" pymupdf
           uv run playwright install --with-deps chromium
-
-      - name: Install HDL tools and Chinese fonts
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y yosys fonts-noto-cjk
-          yosys -V
 
       - name: Run Mermaid webpdf probe
         run: |
-          mkdir -p dist/course-pdfs
+          mkdir -p dist
           uv run python - <<'PY'
           from pathlib import Path
           import nbformat as nbf
@@ -119,207 +100,13 @@ jobs:
             --to webpdf \
             dist/mermaid_probe.ipynb \
             --output mermaid-probe.pdf \
-            --output-dir dist/course-pdfs \
+            --output-dir dist \
             --WebPDFExporter.allow_chromium_download=True
 
       - name: Upload Mermaid probe
         uses: actions/upload-artifact@v4
         with:
           name: mermaid-webpdf-probe
-          path: dist/course-pdfs/mermaid-probe.pdf
+          path: dist/mermaid-probe.pdf
           if-no-files-found: error
           retention-days: 3
-
-      - name: Execute notebooks and export PDFs
-        if: false
-        run: |
-          set -euo pipefail
-          mkdir -p dist/course-pdfs
-          shopt -s nullglob
-          notebooks=(lessons/zh/[0-9][0-9]_*.ipynb)
-          if [ "${#notebooks[@]}" -eq 0 ]; then
-            echo "No lesson notebooks found" >&2
-            exit 1
-          fi
-
-          printf 'Exporting %d lesson notebooks:\n' "${#notebooks[@]}"
-          printf '  %s\n' "${notebooks[@]}"
-
-          for notebook in "${notebooks[@]}"; do
-            uv run jupyter nbconvert \
-              --to webpdf \
-              --execute "$notebook" \
-              --output-dir dist/course-pdfs \
-              --ExecutePreprocessor.timeout=180 \
-              --WebPDFExporter.allow_chromium_download=True
-          done
-
-      - name: Merge course PDF groups
-        if: false
-        run: |
-          uv run python - <<'PY'
-          from pathlib import Path
-          from pypdf import PdfReader, PdfWriter
-
-          out = Path("dist/course-pdfs")
-          lesson_pdfs = sorted(
-              path
-              for path in out.glob("[0-9][0-9]_*.pdf")
-              if path.stem[:2].isdigit()
-          )
-          if not lesson_pdfs:
-              raise SystemExit("No lesson PDFs were generated")
-
-          by_number = {int(path.stem[:2]): path for path in lesson_pdfs}
-
-          def merge(start: int, end: int, filename: str) -> None:
-              selected = [by_number[number] for number in range(start, end + 1) if number in by_number]
-              expected = end - start + 1
-              if len(selected) != expected:
-                  missing = [number for number in range(start, end + 1) if number not in by_number]
-                  raise SystemExit(f"Missing lesson PDFs for {filename}: {missing}")
-
-              writer = PdfWriter()
-              for path in selected:
-                  reader = PdfReader(str(path))
-                  for page in reader.pages:
-                      writer.add_page(page)
-
-              combined = out / filename
-              with combined.open("wb") as handle:
-                  writer.write(handle)
-              print(f"Wrote {combined} from {len(selected)} lessons")
-
-          merge(1, 4, "FPGA-FlyBrain-lessons-01-04-zh.pdf")
-          merge(5, 12, "FPGA-FlyBrain-lessons-05-12-zh.pdf")
-          merge(13, 18, "FPGA-FlyBrain-lessons-13-18-zh.pdf")
-          merge(1, 18, "FPGA-FlyBrain-lessons-01-18-zh.pdf")
-          PY
-
-      - name: Verify Lesson 13 synthesis output is present
-        if: false
-        run: |
-          uv run python - <<'PY'
-          from pathlib import Path
-          from pypdf import PdfReader
-
-          path = Path("dist/course-pdfs/13_simulation_is_not_chip.pdf")
-          text = "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
-          required = (
-              "Yosys synthesis succeeded.",
-              "clocked_accumulator",
-              "Structural check problems: 0",
-          )
-          missing = [item for item in required if item not in text]
-          if missing:
-              raise SystemExit(f"Lesson 13 PDF is missing synthesis evidence: {missing}")
-          print("Lesson 13 PDF contains real synthesis evidence.")
-          PY
-
-      - name: Verify Mermaid diagrams are rendered
-        if: false
-        run: |
-          uv run python - <<'PY'
-          from pathlib import Path
-          import pymupdf
-
-          # JupyterLab's light Mermaid theme renders node interiors in a pale
-          # lavender family. Text extraction from SVG-backed PDF content is not
-          # reliable across PDF libraries, so verify the rendered pixels instead.
-          checks = (
-              "13_simulation_is_not_chip.pdf",
-              "14_what_is_fpga_board.pdf",
-              "15_host_talks_to_fpga.pdf",
-              "16_data_movement_cost.pdf",
-              "17_external_memory_ddr.pdf",
-              "18_axi_subset.pdf",
-          )
-
-          for filename in checks:
-              path = Path("dist/course-pdfs") / filename
-              document = pymupdf.open(path)
-              text = "\n".join(page.get_text("text") for page in document)
-
-              leaked = [
-                  marker
-                  for marker in ("flowchart LR", "flowchart TD")
-                  if marker in text
-              ]
-              if leaked:
-                  raise SystemExit(
-                      f"{filename} contains Mermaid source instead of a rendered diagram: {leaked}"
-                  )
-
-              mermaid_errors = [
-                  marker
-                  for marker in ("Syntax error in text", "mermaid version")
-                  if marker in text
-              ]
-              if mermaid_errors:
-                  raise SystemExit(
-                      f"{filename} contains a Mermaid render error: {mermaid_errors}"
-                  )
-
-              if filename == "18_axi_subset.pdf":
-                  expected_labels = (
-                      "sender: VALID + payload",
-                      "receiver: READY",
-                      "handshake check",
-                      "accepted when VALID and READY",
-                      "read/write transaction",
-                      "burst of one or more beats",
-                  )
-                  missing_labels = [
-                      label for label in expected_labels if label not in text
-                  ]
-                  if missing_labels:
-                      raise SystemExit(
-                          f"{filename} is missing rendered Mermaid labels: {missing_labels}"
-                      )
-
-              lavender_pixels = 0
-              for page in document:
-                  pixmap = page.get_pixmap(alpha=False)
-                  samples = pixmap.samples
-                  channels = pixmap.n
-                  for index in range(0, len(samples), channels):
-                      red, green, blue = (
-                          samples[index],
-                          samples[index + 1],
-                          samples[index + 2],
-                      )
-                      if (
-                          red >= 180
-                          and green >= 180
-                          and blue >= 230
-                          and blue - red >= 8
-                          and blue - green >= 8
-                      ):
-                          lavender_pixels += 1
-
-              if lavender_pixels < 500:
-                  raise SystemExit(
-                      f"{filename} does not contain enough rendered Mermaid-colored pixels: "
-                      f"{lavender_pixels}"
-                  )
-
-              print(
-                  f"{filename}: Mermaid source is absent and "
-                  f"{lavender_pixels} rendered diagram pixels were detected."
-              )
-          PY
-
-      - name: List generated files
-        if: false
-        if: always()
-        run: ls -lh dist/course-pdfs || true
-
-      - name: Upload course PDFs
-        if: false
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: FPGA-FlyBrain-course-pdfs-zh
-          path: dist/course-pdfs/*.pdf
-          if-no-files-found: error
-          retention-days: 30
