@@ -1,9 +1,10 @@
 # TDD — Check Plan / 测试与验证文档
 
 ## 0. 原则
+- 遵守 [文档优先与规范治理](DOCUMENT_AUTHORITY.md)：先有批准的需求/语义/接口 contract，再把它翻译成 oracle，最后写实现。
 - 先定义 oracle，再写实现。
 - 不宣称测试通过，除非具体命令实际成功运行。
-- Python float reference 是概念真值；Python fixed-point reference 是 RTL 直接真值。
+- 在对应模型语义已经冻结的前提下，Python float reference 是概念 oracle；Python fixed-point reference 是 RTL 直接 oracle。reference model 本身也必须追随已批准的文档 contract。
 - 单元测试、集成测试、性能测试分开。
 
 ## 1. 验证层级
