@@ -148,3 +148,35 @@ def test_platform5_trace_register_contains_lessons():
             assert f"LSN-{number:03d}" in trace
         for filename in expected_files[language]:
             assert filename in trace
+
+
+
+def test_platform5_first_use_terms_are_expanded_near_start():
+    required = {
+        "19_what_is_connectome.ipynb": ("connectome",),
+        "20_load_malecns_subset.ipynb": (
+            "Field-Programmable Gate Array",
+            "Secure Hash Algorithm 256-bit",
+        ),
+        "21_scaling_bottlenecks.ipynb": (
+            "First-In First-Out",
+            "Double Data Rate",
+        ),
+        "22_closed_loop_world.ipynb": ("closed loop",),
+        "23_cpu_gpu_fpga_benchmark.ipynb": (
+            "Central Processing Unit",
+            "Graphics Processing Unit",
+            "Field-Programmable Gate Array",
+        ),
+    }
+    for language in ("zh", "en"):
+        for name, markers in required.items():
+            notebook = _read(language, name)
+            opening = "\n".join(
+                "".join(cell.get("source", []))
+                for cell in notebook["cells"][:2]
+            )
+            for marker in markers:
+                assert marker in opening, (
+                    f"{language}/{name} does not refresh {marker} near lesson start"
+                )
