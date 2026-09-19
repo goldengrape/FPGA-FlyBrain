@@ -19,7 +19,7 @@
 | U5 导入真实 MaleCNS | FR7 | DP7 | MOD-011 | T-014/015 | 017~021 |
 | U6 建立验证链 | PFR4 | PDP4 | LSN-002/003 + float/fixed/RTL/FPGA oracle chain | L0~L7 | all relevant |
 | U7 公理设计与追踪 | PFR2/PFR3 | PDP2/PDP3 | docs/ + lessons/ + .vibe/ + okf/ | trace checks + checkpoints | all |
-| U8 进入 AI hardware | FR2~FR8 + PFR1~4 | DP2~DP8 + PDP1~4 | full learning + engineering system | performance + explanation | 003A~028 |
+| U8 进入 AI hardware | FR2~FR8 + PFR1~4 | DP2~DP8 + PDP1~4 | full learning + engineering system | T-016 + P-001~008 + explanation | 003A~028 |
 
 ## 3. 教学 artifact 追踪
 | Lesson | 主要目标 | FR / PFR | Test / Check | RMD | Notebook |
@@ -80,6 +80,31 @@ DP：DP7
 模块：MOD-011  
 测试：T-014/T-015 + manifest/checksum  
 任务：RMD-017~020
+
+
+### TRACE-IO-001 — 感觉输入与行为输出闭环
+需求：外部环境输入可映射到感觉神经元，神经输出可解码为行为/控制，同时保持 host/FPGA 边界可观察。  
+FR：FR8  
+DP：DP8  
+模块：MOD-010, MOD-012, MOD-013, MOD-014  
+测试：接口/闭环 replay + telemetry consistency；完整系统确定性由 T-016 覆盖  
+任务：RMD-023~025
+
+### TRACE-F-001 — 全系统可重复回放
+需求：同一版本模型、网络 image、初始状态与输入事件应产生可重复结果；若模型含噪声则固定 PRNG seed。  
+FR：FR2~FR8 + PFR4  
+DP：DP2~DP8 + PDP4  
+模块：全系统正式模块集合  
+测试：T-016  
+任务：RMD-021, RMD-025, RMD-027
+
+### TRACE-P-001 — 性能指标与 benchmark
+需求：正确性冻结后，对吞吐、延迟、带宽、资源与功耗进行可重复测量。  
+FR：FR2~FR8  
+DP：对应实现 DP  
+模块：MOD-003~014 中当前 benchmark 涉及的正式模块  
+测试/指标：P-001~P-008  
+任务：RMD-016, RMD-019, RMD-021, RMD-028
 
 ### TRACE-L-001 — 学习独立性
 需求：一个学习任务不应同时依赖多个尚未掌握的新概念。  
