@@ -33,7 +33,17 @@ This is a reference sheet, not a substitute for first-use explanations in the le
 | latency | latency | Time from starting one operation until its result becomes available. |
 | throughput | throughput | Sustained work completed per unit time. |
 | bandwidth | bandwidth | Sustained data moved per unit time. |
-| DDR | Double Data Rate SDRAM | Large external memory commonly found on FPGA boards; it offers much more capacity than on-chip memory but has different access costs and behavior. |
+| critical path | critical path | The longest relevant combinational path in a timing analysis scope and a common limiter of target clock period. |
+| slack | slack | Remaining timing margin after subtracting path delay from the available time budget; negative slack fails the lesson's simplified timing rule. |
+| memory hierarchy | memory hierarchy | A view of registers, on-chip RAM, external memory, and other storage levels with different capacity, distance, and access cost. |
+| development board | development board | An experiment platform that surrounds an FPGA with power, clocks, reset, I/O, configuration paths, and common peripherals. |
+| host | host | The software/control side that exchanges data with FPGA programmable logic through a platform communication path. |
+| PL | programmable logic | The FPGA region configured by a bitstream into concrete hardware datapaths and control logic. |
+| DDR | Double Data Rate Synchronous Dynamic Random-Access Memory (DDR SDRAM) | Large external memory commonly found on FPGA boards; it offers much more capacity than on-chip memory but has different access costs and behavior. |
+| burst | burst | A contiguous batch of adjacent data transfers that can amortize fixed startup cost. |
+| transaction | transaction | A complete read or write operation at the protocol level; in AXI it can contain one or more beats. |
+| beat | beat | One data-transfer unit inside a transaction. |
+| VALID/READY handshake | VALID/READY handshake | The sender marks a payload valid with VALID, the receiver marks acceptance capability with READY, and transfer occurs only when both are high on an active clock edge. |
 | AXI | Advanced eXtensible Interface | A family of on-chip communication protocols common in ARM/FPGA systems; this project will teach only the subset it actually needs. |
 | CPU | Central Processing Unit | A general-purpose processor optimized for flexible instruction execution and complex control flow. |
 | GPU | Graphics Processing Unit | A highly parallel processor especially effective for large amounts of regular numerical work. |
