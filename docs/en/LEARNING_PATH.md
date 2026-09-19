@@ -122,18 +122,18 @@ Each Notebook should state:
 
 This prevents preview terms from quietly becoming assumed knowledge.
 
-### LP-8 Use declarative vector diagrams; Mermaid by default, no ASCII art
+### LP-8 Standardize course diagrams on inline SVG; no new Mermaid or ASCII art
 
-Conceptual flows, dataflow graphs, state transitions, timing relationships, and hardware block diagrams must use a **declarative, version-controllable representation**. Prefer Mermaid fenced blocks (```mermaid`) by default. If actual Jupyter/webpdf testing shows that a critical diagram is unreliable through the Mermaid export path, the Notebook may use **inline SVG** in Markdown instead. Do not fall back to hand-aligned ASCII art or opaque screenshots merely to bypass rendering problems.
+Starting with Platform 5, conceptual flows, dataflow graphs, state transitions, timing relationships, and hardware block diagrams use **inline SVG inside Markdown**. New or revised course material should not introduce Mermaid. Hand-aligned ASCII art and opaque screenshots are also prohibited as substitutes for structural diagrams.
 
 **Engineering rationale:**
 
-1. **Maintainability**: Mermaid and inline SVG are text and produce reviewable Git diffs; ASCII alignment and screenshots are poor long-term sources of structural truth;
-2. **Prefer simplicity**: normal conceptual diagrams stay in Mermaid; inline SVG is an evidence-driven exception when export reliability requires it;
-3. **Verify delivery paths**: a diagram that looks correct in JupyterLab is not automatically proven correct in webpdf/print output;
-4. **Human-AI collaboration**: nodes, connections, and labels remain explicit and inspectable after AI assistance.
+1. **PDF-verifiable**: this project has observed blank Mermaid output and false-positive PDF checks in the Jupyter/webpdf path; inline SVG enters the browser DOM directly and is more controllable;
+2. **Version-controllable**: SVG is still text, so nodes, labels, connections, and styling remain visible in Git diffs;
+3. **Visual CI is possible**: course SVGs use a dedicated fill color, allowing PDF CI to verify that the diagram is actually present on the rendered page;
+4. **Semantics stay explicit**: diagrams remain declarative and reviewable rather than falling back to screenshots or manual ASCII.
 
-Lesson 18 AXI protocol diagrams are the regression example for this exception: Mermaid and attachment-SVG variants produced blank/broken output under webpdf, so the final diagrams use inline SVG and PDF CI verifies that they are visibly rendered.
+All LSN-019~023 diagrams are inline SVG. Earlier lessons may still contain legacy Mermaid outside this PR; whenever those lessons are revised, their diagrams should migrate to inline SVG as well.
 ---
 
 ## 4. Recommended Notebook structure
