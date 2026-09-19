@@ -146,8 +146,15 @@ The links below point to official starters for reading and version tracking. Whe
 | 16 | [Identify compute / data-movement bottleneck](en/16_data_movement_cost.ipynb) | latency, bandwidth, simple cost model |
 | 17 | [Estimate sequential/random burst cost](en/17_external_memory_ddr.ipynb) | burst grouping, setup cost, access pattern |
 | 18 | [Identify VALID/READY accepted beats](en/18_axi_subset.ipynb) | handshake, stall, accepted beat |
+| 19 | [Compute connectome in/out degree](en/19_what_is_connectome.ipynb) | directed graph structure, zero-degree neurons |
+| 20 | [Build a minimal image manifest](en/20_load_malecns_subset.ipynb) | schema version, byte count, SHA-256 integrity |
+| 21 | [Identify the highest-utilization stage](en/21_scaling_bottlenecks.ipynb) | utilization, scale-dependent bottleneck |
+| 22 | [Generate a closed-loop position trace](en/22_closed_loop_world.ipynb) | feedback, target-reaching trace |
+| 23 | [Calculate throughput and energy per event](en/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark metrics, duration-aware energy |
 
 Lessons 13–18 enter FPGA-board, host, DDR, and AXI topics, but their formal workbooks remain **board-independent** Python/reasoning exercises. Physical-board labs are engineering extensions of the matching RMD slices, so hardware purchase does not block course progress.
+
+Lessons 19–23 enter connectome integrity, scaling, closed-loop experiments, and benchmarking. Their official exercises use teaching fixtures and synthetic measurements so full MaleCNS downloads, a finished converter, GPU access, and a physical FPGA are not prerequisites for learning the contracts.
 
 Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms and continue to use the RTL learning check:
 
@@ -167,7 +174,9 @@ uv run pytest \
   exercises/checks/test_notebook_structure.py \
   exercises/checks/test_start_exercise.py \
   lessons/checks/test_platform4_notebook_structure.py \
-  lessons/checks/test_platform4_student_dryrun.py -q
+  lessons/checks/test_platform4_student_dryrun.py \
+  lessons/checks/test_platform5_notebook_structure.py \
+  lessons/checks/test_platform5_student_dryrun.py -q
 ```
 
 `test_start_exercise.py` verifies lesson selection, work-copy paths, and the guarantee that existing student answers are never overwritten.
