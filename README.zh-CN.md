@@ -100,9 +100,9 @@ uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA F
 - **禁止在 Notebook 中临时安装**：不要在 Notebook 单元格中使用 `%pip install` 或 `!pip install`，以免破坏环境的可复现性。
 - **声明式增补依赖**：如果后续需要新增科学计算库，请在命令行执行 `uv add <package>`；若需要开发或测试工具，执行 `uv add --dev <package>`。版本变动会记录在 `pyproject.toml` 与 `uv.lock` 中。
 
-### 6. 第六到八课的 RTL 工具链
+### 6. 第六到八课与第十三课的 HDL 工具链
 
-RTL 课程使用 **SystemVerilog-2012**，包括 `logic`、`always_ff`、`always_comb` 等语法。Python 依赖继续由 `uv` 管理；HDL simulator 与 synthesis tool 是独立的系统工具，不属于 Python 包。
+第 6–8 课使用 **SystemVerilog-2012** 做 RTL/仿真，第 13 课会直接调用 Yosys 做一次真实 synthesis dry run。Python 依赖继续由 `uv` 管理；HDL simulator 与 synthesis tool 是独立的系统工具，不属于 Python 包。
 
 GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys，并在每次 CI 中打印实际版本。目前已经完整验证通过的一组基线是：
 
@@ -120,7 +120,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 ./scripts/check_rtl_learning.sh
 ```
 
-它会运行 Icarus self-checking simulation、Verilator lint、Yosys synthesis sanity check，并确认 Lesson 8 的 VCD 波形确实生成。
+它会运行 Icarus self-checking simulation、Verilator lint、Yosys synthesis sanity check，并确认 Lesson 8 的 VCD 波形确实生成。第 13 课 Notebook 还会单独调用 Yosys 综合 `rtl/learning/clocked_accumulator.sv`，让学生直接阅读一次真实 synthesis 输出。
 
 ## 从这里开始学
 
