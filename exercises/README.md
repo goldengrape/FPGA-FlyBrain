@@ -8,18 +8,74 @@ See the full specification: [Exercise Notebook Design](../docs/en/EXERCISE_DESIG
 
 ## Student workflow
 
+### 1. Do not edit the official starter in place
+
+`exercises/zh/` and `exercises/en/` contain the Git-tracked **official exercise templates**. They may change as the course evolves, so they are not the right place for long-lived personal answers.
+
+Student work belongs under:
+
+```text
+exercises/work/
+├── zh/
+└── en/
+```
+
+The entire `exercises/work/` directory is ignored by Git, so normal `git status`, commits, and `git pull` do not treat your answers as course source files.
+
+### 2. Start an exercise with one command
+
 From the repository root:
 
-~~~bash
+```bash
 uv sync --group dev
+uv run python scripts/start_exercise.py 01 --lang en
+```
+
+This creates:
+
+```text
+exercises/work/en/01_membrane_to_lif.ipynb
+```
+
+Then launch:
+
+```bash
 uv run jupyter lab
-~~~
+```
 
-Then open the corresponding Notebook under exercises/en/.
+In JupyterLab, open the copy under **`exercises/work/en/`**, not the official starter under `exercises/en/`.
 
-The normal flow is:
+Other examples:
 
-~~~text
+```bash
+# Lesson 11 in English
+uv run python scripts/start_exercise.py 11 --lang en
+
+# Lesson 1 in Chinese
+uv run python scripts/start_exercise.py 01
+
+# Create all current English Python exercises
+uv run python scripts/start_exercise.py all --lang en
+
+# Create all current Chinese Python exercises
+uv run python scripts/start_exercise.py all
+```
+
+The helper **never overwrites an existing student copy**. Running the same command again reports:
+
+```text
+Already exists, kept unchanged: exercises/work/en/01_membrane_to_lif.ipynb
+```
+
+so it is safe to rerun.
+
+### 3. Normal exercise flow
+
+```text
+official starter
+  ↓ copied once by start_exercise.py
+personal work notebook
+  ↓
 read the task
   ↓
 predict / hand-calculate
@@ -31,27 +87,49 @@ run “Check your implementation”
 revise if needed
   ↓
 complete the Human Check
-~~~
+```
 
-Student-facing Notebooks **do not directly show grading asserts, concrete grader vectors, or the complete grading logic**. A check cell passes the functions defined in the current Jupyter kernel to the external grader under exercises/grader/.
+Student-facing Notebooks **do not directly show grading asserts, concrete grader vectors, or the complete grading logic**. A check cell passes functions from the current Jupyter kernel to the external grader under `exercises/grader/`.
 
-The grader reports conceptual groups rather than failing vectors, for example:
+### 4. Course updates do not overwrite your answers
 
-~~~text
-Lesson 05 checks
+Later you can update the repository normally:
 
-✓ Boolean gates
-✓ Threshold behavior
-✗ Enable behavior
+```bash
+git pull
+```
 
-2 / 3 groups passed
-~~~
+Git updates the official templates and course source. Your `exercises/work/` directory is untracked, so course updates do not create Notebook merge conflicts with your answers.
 
-Failure output may indicate which concept to revisit, but it does not print the exact failing input and expected answer.
+If an official starter changes, you may keep using your existing work copy. To start again from a newer starter, first back up or rename your old work file, then run `start_exercise.py` again. The helper never deletes or overwrites existing work.
+
+### 5. If you already edited an official Notebook
+
+If you started before the `exercises/work/` workflow existed and your answers are still in a tracked file such as:
+
+```text
+exercises/en/01_membrane_to_lif.ipynb
+```
+
+first run:
+
+```bash
+uv run python scripts/start_exercise.py 01 --lang en
+```
+
+The helper copies your **current local version**, including your answers, into `exercises/work/en/`. After verifying that personal copy, restore the official starter:
+
+```bash
+git restore exercises/en/01_membrane_to_lif.ipynb
+```
+
+Your answers and course source are now separated.
 
 ## Python exercise index
 
-| Lesson | Exercise Notebook | Main practice |
+The links below point to official starters for reading and version tracking. When doing an exercise, use `start_exercise.py` to create a personal `work/` copy.
+
+| Lesson | Official Exercise Notebook | Main practice |
 |---|---|---|
 | 01 | [One LIF membrane update](en/01_membrane_to_lif.ipynb) | leak, integration, threshold, reset |
 | 02 | [Finite-width values](en/02_float_to_fixed.ipynb) | signed range, rounding, quantization, saturation |
@@ -65,24 +143,25 @@ Failure output may indicate which concept to revisit, but it does not print the 
 
 Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms and continue to use the RTL learning check:
 
-~~~bash
+```bash
 ./scripts/check_rtl_learning.sh
-~~~
-
-Any future dedicated workbooks for Lessons 6–8 should follow the same rules: state the task before code, do not leak grading answers, and pair automatic checks with Human Checks.
+```
 
 ## For maintainers
 
-Student-facing grader implementations live under exercises/grader/.
+Student-facing grader implementations live under `exercises/grader/`.
 
-Maintainer tests live under exercises/checks/. The current entry point is:
+Maintainer tests live under `exercises/checks/`. The current entry point is:
 
-~~~bash
-uv run pytest   exercises/checks/test_graders.py   exercises/checks/test_notebook_structure.py -q
-~~~
+```bash
+uv run pytest \
+  exercises/checks/test_graders.py \
+  exercises/checks/test_notebook_structure.py \
+  exercises/checks/test_start_exercise.py -q
+```
 
-test_graders.py checks that graders accept reference implementations and reject representative conceptual mistakes. test_notebook_structure.py checks that bilingual Notebooks parse, retain TODOs, use external graders, and do not embed test functions or asserts in student code cells.
+`test_start_exercise.py` verifies lesson selection, work-copy paths, and the guarantee that existing student answers are never overwritten.
 
-The GitHub Actions Python exercise infrastructure workflow runs these checks automatically.
+The GitHub Actions Python exercise infrastructure workflow runs the exercise-infrastructure checks automatically.
 
 The project does not currently use nbgrader or testbook. They will be reconsidered only when a concrete new requirement appears.
