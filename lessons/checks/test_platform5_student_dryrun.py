@@ -23,6 +23,8 @@ EXAMPLES = [
     (
         "20_load_malecns_subset.ipynb",
         (
+            '"source_release": "teaching-fixture-v1"',
+            '"converter_version": "teaching-converter-v1"',
             '"byte_count": 8',
             "same image: True",
             "software checksum:",
