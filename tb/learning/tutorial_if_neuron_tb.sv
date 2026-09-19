@@ -56,4 +56,8 @@ module tutorial_if_neuron_tb;
         $display("PASS lesson08 tutorial_if_neuron");
         $finish;
     end
+    initial begin
+        #1000;
+        $fatal(1, "watchdog timeout");
+    end
 endmodule
