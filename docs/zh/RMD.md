@@ -133,33 +133,104 @@ Host 生成 source index + synapse records。
 主要新概念：**synthesis 与 simulation 回答不同问题**。  
 综合 counter/accumulator，阅读基础 resource/timing report；不学习 AXI/DDR。
 
-### RMD-012 Select board and create platform shell
-此时才购买硬件。默认候选：KV260 级 SoC FPGA；保持平台接口可替换。
+### RMD-012 Select reference board and create platform shell
+
+reference board 冻结为 **AMD Kria KV260 Vision AI Starter Kit**。正式实体教学从这里开始使用 board-specific facts，但 FlyBrain core 保持板卡无关。
+
+对应 Physical Lab：
+
+- **LAB-HW-00**：board orientation；识别 K26 SOM、carrier、J12 power、J4 UART/JTAG、microSD、Ethernet、reset、carrier revision；
+- **LAB-HW-01**：正确供电并完成 target enumeration；把 power/cable/JTAG/driver/tool 问题与 RTL 问题分层。
+
+通过标准：
+- 学生能从未上电状态开始正确连接 KV260；
+- development host 能稳定发现目标；
+- 记录 board revision、tool version、target identification；
+- 规划中的 `boards/kv260/` platform shell 边界清楚，不把 pin/platform IP 写进 core RTL。
 
 ### RMD-012A First physical proof
-主要新概念：**bitstream 把 RTL 变成真实芯片中的实现**。  
-用 counter / LED 或可观察寄存器验证。
+
+主要新概念：**bitstream 把 RTL 变成真实芯片中的实现；logical port 还需要 board/constraint mapping 才有物理意义。**
+
+对应：
+
+- **LAB-HW-02**：最小 RTL 完成 synthesis → implementation → timing → bitstream → program；
+- **LAB-HW-03**：clock/reset/一个安全 physical I/O 的 constraint 与实体行为。
+
+通过标准至少包括：
+- build/implementation 无阻断错误；
+- bitstream/build artifact hash；
+- programming success；
+- KV260 PL configuration status evidence；
+- 至少一个能证明“这是我们的设计在运行，而不是只有板卡上电”的可观察结果；
+- 实体 reset/input 与预期输出一致。
+
+第一次 Physical Lab 不同时学习 AXI、DDR 或 FlyBrain network。
 
 ### RMD-012B Host ↔ FPGA minimal loopback
-主要新概念：**host 与 programmable logic 是两个执行域**。  
-最小实验：host 写值 → FPGA accumulator/register → host 读回。暂不深入 AXI 细节。
+
+主要新概念：**development PC 负责 build/program，与 KV260 PS/runtime host 控制 PL 是两个不同路径。**
+
+对应 **LAB-HW-04**。冻结最小 semantic contract：
+
+```text
+write value → PL stores/processes → read back result
+```
+
+具体 runtime transport（如 AXI-Lite/UIO/XRT 等）在 Lab prose 与 TDD oracle 审批后选择；选择标准是最小稳定路径，而不是提前教授完整 AXI。
+
+通过标准：
+- write/readback 可重复；
+- PL state/operation 与顺序 contract 一致；
+- host script 自检失败时能区分 transport failure 与 core behavior failure。
 
 ### RMD-013 Run small network on FPGA
-迁移平台 3 已验证的小网络，做 L5 replay。
+
+先用 **LAB-HW-05** 把 L9 的抽象 neuron state memory 映射到真实片上 BRAM resource，再用 **LAB-HW-06** 迁移平台 3 已验证的小网络。
+
+LAB-HW-05 只学习本设计需要的 address/read/write/synchronous-read behavior 与 resource report，不展开 BRAM primitive 全参数。
+
+LAB-HW-06 使用同一 fixed input/seed，把 KV260 输出与 Python fixed-point reference 做 L5 replay。
+
+通过标准：
+- 多地址 neuron state read/write 正确；
+- synthesis/resource report 确认预期的 on-chip memory resource；
+- 小网络 spike/state trace 与 reference 在冻结 contract 下匹配；
+- 保存 bitstream、network fixture、input fixture、输出 hash/trace 与 Git commit。
 
 # Bridge 4 — 内存不是“一个很大的 RAM”
 
 ### RMD-013A Memory hierarchy & bandwidth bridge
 主要新概念：**数据移动成本可以高于算术成本**。  
-先比较 sequential、random、batched/burst-like access，理解 latency 与 throughput。
+先比较 sequential、random、batched/burst-like access，理解 latency 与 throughput。概念 Lesson 可以先用模型；真实 measurement 由 LAB-HW-07/08 完成。
 
 ### RMD-014 DDR hello-world
-主要新概念：**外部存储具有独立访问延迟与控制路径**。  
-通过平台控制器/IP 做稳定 read/write + integrity test；不手写 DDR 物理控制器。
+
+主要新概念：**外部存储具有独立访问延迟与控制路径**。
+
+对应 **LAB-HW-07**：通过 KV260 平台已有 controller/IP 完成：
+
+```text
+known payload → DDR write → DDR read → byte/checksum compare → measurement
+```
+
+不手写 DDR PHY/controller。
+
+通过标准：
+- integrity PASS；
+- transfer size、elapsed time、access pattern、effective bandwidth 有记录；
+- 错误数据必须先使 integrity fail，不能用性能数字掩盖 correctness failure。
 
 ### RMD-014A AXI burst practical bridge
-主要新概念：**用标准总线事务批量搬运连续数据**。  
-只学习本项目需要的 AXI subset；比较小/random transaction 与 burst 的有效带宽。
+
+主要新概念：**用标准总线事务批量搬运连续数据**。
+
+对应 **LAB-HW-08**：只学习本项目需要的 AXI subset，在真实 KV260 上比较 small/scattered 与 burst-oriented transfer。第一次必做目标是“使用 + 测量”；从零实现完整 AXI master 只作为可选挑战。
+
+通过标准：
+- 相同 data volume / 明确 measurement window；
+- 至少两种 access pattern 的可重复 latency/effective-bandwidth 结果；
+- workload contract 写清楚，不从单个数字泛化“AXI/FPGA 更快”。
 
 ### RMD-015 Move synapse store to DDR
 替换存储后端，不改变 `IF-SYNAPSE-STREAM`。  
@@ -168,7 +239,7 @@ Host 生成 source index + synapse records。
 ### RMD-016 Throughput baseline
 测 P-001~P-008 中当前可测项目。
 
-**平台 4 完成标志：** FPGA 网络使用外部内存，并能解释和测量内存瓶颈。
+**平台 4 完成标志：** 学生能够从一块未配置的 KV260 开始独立完成 target discovery、bitstream build/program、physical I/O、host↔PL loopback、BRAM state、small-network replay、DDR integrity 与真实 bandwidth measurement；FPGA 网络使用外部内存，并能解释和测量内存瓶颈。
 
 # 平台 5 — 我可以运行真实神经系统数据
 
