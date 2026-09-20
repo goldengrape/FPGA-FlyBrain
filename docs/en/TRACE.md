@@ -187,7 +187,7 @@ Change routing:
 - LSN-009~012: third bilingual lesson block established; Python teaching models do not declare MOD-004~009 complete
 - LSN-013~018: fourth bilingual lesson block established; concept Notebooks do not declare the physical-platform implementation complete
 - Reference board: **AMD Kria KV260 Vision AI Starter Kit** is frozen
-- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen at the documentation layer; Lab Notebooks and board-specific implementation have not started
+- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen; **LAB-HW-00~02** now have bilingual Notebooks plus preflight/target-discovery helpers and CI contract checks. No real-KV260 pass is claimed; LAB-HW-03~10 remain pending
 - LSN-019~023: fifth bilingual lesson block established; connectome teaching fixtures, synthetic scale/benchmark numbers, and the toy closed loop do not declare RMD-017~028 formal data artifacts, full-system implementation, or real performance results complete
 - TRACE: synchronized across engineering and teaching paths through LSN-023
 - First formal implementation slice: not started
