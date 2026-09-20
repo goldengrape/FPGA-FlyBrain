@@ -78,7 +78,7 @@ proc get_board_parts {args} { return [list "xilinx.com:kv260_som:part0:1.4"] }
         CHECK,
     )
     assert result.returncode == 2
-    assert "ERROR=UNSUPPORTED_VIVADO_VERSION" in result.stderr
+    assert "ERROR=AUTHORING_BASELINE_MISMATCH" in result.stderr
 
 
 @pytest.mark.skipif(TCLSH is None, reason="tclsh is not installed")
