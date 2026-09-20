@@ -362,9 +362,18 @@ def test_lesson19_grader_rejects_reversed_edge_meaning():
         edges.clear()
         return incoming, outgoing
 
+    def drops_zero_degree_nodes(neuron_ids, edges):
+        incoming = {}
+        outgoing = {}
+        for source, target in edges:
+            outgoing[source] = outgoing.get(source, 0) + 1
+            incoming[target] = incoming.get(target, 0) + 1
+        return incoming, outgoing
+
     assert _all_pass(lesson19.evaluate(good))
     assert _some_fail(lesson19.evaluate(bad))
     assert _some_fail(lesson19.evaluate(mutates_inputs))
+    assert _some_fail(lesson19.evaluate(drops_zero_degree_nodes))
 
 
 def test_lesson20_grader_rejects_bad_integrity_or_provenance():
@@ -388,14 +397,42 @@ def test_lesson20_grader_rejects_bad_integrity_or_provenance():
             "sha256": str(len(payload)),
         }
 
+    def uppercase_digest(payload, schema_version, source_release, converter_version):
+        result = good(payload, schema_version, source_release, converter_version)
+        result["sha256"] = result["sha256"].upper()
+        return result
+
+    def wrong_byte_count(payload, schema_version, source_release, converter_version):
+        result = good(payload, schema_version, source_release, converter_version)
+        result["byte_count"] += 1
+        return result
+
     def extra_key(payload, schema_version, source_release, converter_version):
         result = good(payload, schema_version, source_release, converter_version)
         result["extra"] = "not allowed"
         return result
 
+    seen = {}
+
+    def nondeterministic(payload, schema_version, source_release, converter_version):
+        key = (payload, schema_version, source_release, converter_version)
+        count = seen.get(key, 0)
+        seen[key] = count + 1
+        result = good(payload, schema_version, source_release, converter_version)
+        if count:
+            result["converter_version"] = converter_version + "-changed"
+        return result
+
     assert _all_pass(lesson20.evaluate(good))
     assert _some_fail(lesson20.evaluate(bad_digest))
+    assert _some_fail(lesson20.evaluate(uppercase_digest))
+    assert _some_fail(lesson20.evaluate(wrong_byte_count))
     assert _some_fail(lesson20.evaluate(extra_key))
+
+    groups = {group.name: group.passed for group in lesson20.evaluate(nondeterministic)}
+    assert groups["Schema and provenance"] is True
+    assert groups["Byte integrity"] is False
+    assert groups["Payload sensitivity"] is True
 
 
 def test_lesson21_grader_rejects_raw_demand_as_bottleneck():
@@ -449,9 +486,13 @@ def test_lesson22_grader_rejects_open_loop_or_one_direction_logic():
             trace.append(position)
         return trace
 
+    def drops_initial_position(initial_position, target_position, steps):
+        return good(initial_position, target_position, steps)[1:]
+
     assert _all_pass(lesson22.evaluate(good))
     assert _some_fail(lesson22.evaluate(overshoots))
     assert _some_fail(lesson22.evaluate(only_moves_right))
+    assert _some_fail(lesson22.evaluate(drops_initial_position))
 
 
 def test_lesson23_grader_rejects_energy_without_duration():
@@ -461,5 +502,10 @@ def test_lesson23_grader_rejects_energy_without_duration():
     def bad(events, seconds, watts):
         return events / seconds, watts / events
 
+    def swaps_metrics(events, seconds, watts):
+        throughput, energy_per_event = good(events, seconds, watts)
+        return energy_per_event, throughput
+
     assert _all_pass(lesson23.evaluate(good))
     assert _some_fail(lesson23.evaluate(bad))
+    assert _some_fail(lesson23.evaluate(swaps_metrics))

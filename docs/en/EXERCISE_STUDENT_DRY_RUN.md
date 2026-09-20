@@ -173,8 +173,8 @@ The reviewer can see grader code, so this is not a blind test. To protect the le
 
 Hand calculations from the revised pre-code prompts are internally consistent:
 
-- L19: `[11,22,44]` with `11→22, 22→44, 11→44` gives in-degree `{11:0,22:1,44:2}` and out-degree `{11:2,22:1,44:0}`;
-- L21: A=`9/12=0.75`, B=`5/5=1.0`; A has larger raw demand while B has higher utilization;
+- L19: `[11,22,44,55]` with `11→22, 22→22, 44→11, 44→55` gives in-degree `{11:1,22:2,44:0,55:1}` and out-degree `{11:1,22:1,44:2,55:0}`;
+- L21: A=`6/12=0.5`, B=`6/8=0.75`; the raw demands are equal, while B has higher utilization;
 - L22: initial=0, target=2, steps=4 gives `[0,1,2,2,2]`;
 - L23: 1200 events / 0.4 s = 3000 events/s; 15 W × 0.4 s = 6 J; 6/1200 = 0.005 J/event.
 

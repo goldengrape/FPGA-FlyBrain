@@ -133,3 +133,21 @@ def test_platform5_student_workbook_runs_from_personal_work_copy(
 
     output = capsys.readouterr().out
     assert "3 / 3 groups passed" in output
+
+@pytest.mark.parametrize("language", ["zh", "en"])
+@pytest.mark.parametrize("name", EXERCISES)
+def test_platform5_bootstrap_reports_clear_repo_root_error(
+    language, name, tmp_path, monkeypatch
+):
+    check_cell = next(
+        code for code in _code_cells(_template(language, name))
+        if "from exercises.grader" in code
+    )
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(FileNotFoundError, match="FPGA-FlyBrain"):
+        exec(
+            compile(check_cell, f"<repo-root-error/{language}/{name}>", "exec"),
+            {},
+        )
+

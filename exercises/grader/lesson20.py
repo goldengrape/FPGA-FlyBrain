@@ -19,13 +19,13 @@ def evaluate(image_manifest, language: str = "zh"):
     labels = (
         (
             ("Schema and provenance", "检查 schema/source/converter 字段与 exact key set。"),
-            ("Byte integrity", "检查 exact payload 的 byte count 与 SHA-256 digest。"),
+            ("Byte integrity", "检查 exact payload 的 byte count、SHA-256 digest 与重复调用一致性。"),
             ("Payload sensitivity", "检查 payload 改变时 digest 也改变。"),
         )
         if zh
         else (
             ("Schema and provenance", "Check schema/source/converter fields and the exact key set."),
-            ("Byte integrity", "Check byte count and SHA-256 for the exact payload."),
+            ("Byte integrity", "Check byte count, SHA-256, and deterministic repeat calls for the exact payload."),
             ("Payload sensitivity", "Check digest changes when payload changes."),
         )
     )
@@ -52,8 +52,15 @@ def evaluate(image_manifest, language: str = "zh"):
             "source-r1",
             "converter-v1",
         )
+        repeated = image_manifest(
+            payload,
+            "schema-v1",
+            "source-r1",
+            "converter-v1",
+        )
         return (
-            result.get("byte_count") == len(payload)
+            result == repeated
+            and result.get("byte_count") == len(payload)
             and result.get("sha256") == hashlib.sha256(payload).hexdigest()
         )
 
