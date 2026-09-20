@@ -157,7 +157,7 @@ The build helper emits the bitstream, utilization report, and timing summary int
 
 **Pass evidence includes:**
 
-- no blocking implementation/timing error;
+- synthesis/implementation/DRC complete; because this marker is intentionally clockless, the build explicitly reports `TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS` and retains a timing summary rather than claiming timing closure;
 - bitstream SHA-256;
 - Vivado/JTAG programming success;
 - `xck26*` target identification;
@@ -198,7 +198,7 @@ Teach only the constraints needed here:
 
 **Pass evidence:**
 
-- synthesis/implementation/timing complete;
+- synthesis/implementation complete, a real clock and setup timing path are present, and worst setup slack is non-negative;
 - blink bitstream hash and programming log;
 - periodic activity on `bank45_gpio[0]` with the other marker bits stable;
 - the learner can explain at least one logical-bit → package-pin XDC mapping;
