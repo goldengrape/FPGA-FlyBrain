@@ -4,6 +4,8 @@ These tests are intentionally outside the student notebooks. They verify that
 reference implementations pass and representative conceptual mistakes fail.
 """
 
+from exercises.grader._core import evaluate_group, report
+
 from exercises.grader import (
     lesson01,
     lesson02,
@@ -29,6 +31,43 @@ from exercises.grader import (
     lesson22,
     lesson23,
 )
+
+
+
+
+
+def test_grader_core_hides_traceback_by_default(monkeypatch, capsys):
+    monkeypatch.delenv("FPGA_FLYBRAIN_GRADER_DEBUG", raising=False)
+
+    def boom():
+        raise RuntimeError("grader exploded")
+
+    group = evaluate_group("Exploding group", boom, "student hint")
+    assert group.passed is False
+    assert group.error is None
+
+    report("Debug test", [group])
+    output = capsys.readouterr().out
+    assert "student hint" in output
+    assert "RuntimeError" not in output
+    assert "grader exploded" not in output
+
+
+def test_grader_core_exposes_traceback_in_maintainer_debug_mode(monkeypatch, capsys):
+    monkeypatch.setenv("FPGA_FLYBRAIN_GRADER_DEBUG", "1")
+
+    def boom():
+        raise RuntimeError("grader exploded")
+
+    group = evaluate_group("Exploding group", boom, "student hint")
+    assert group.passed is False
+    assert group.error is not None
+    assert "RuntimeError: grader exploded" in group.error
+
+    report("Debug test", [group])
+    output = capsys.readouterr().out
+    assert "Debug exception:" in output
+    assert "RuntimeError: grader exploded" in output
 
 
 def _all_pass(groups):
