@@ -2,8 +2,8 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Version: v0.3-init
-- Status: Draft for first implementation cycle
+- Version: v0.3-r1
+- Status: Reference board frozen; physical-lab documentation pass
 - Purpose: define why the project exists, who it is for, and what counts as success.
 
 ## 1. Vision
