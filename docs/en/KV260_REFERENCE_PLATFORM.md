@@ -44,8 +44,8 @@ The current official documentation confirms:
 - **J3** provides direct JTAG bypassing the FTDI device;
 - **J11** is the microSD interface;
 - **J10** is 1 Gb/s Ethernet;
-- **SW2** resets the SOM;
-- SOM **DS34** is the PS done LED and indicates successful loading of a PL design;
+- **SW2** is a SOM-level reset; it resets the SOM and **must not be treated automatically as the local `rst_n` of a FlyBrain RTL module**;
+- SOM **DS34** is the PS done LED and indicates that **the PS successfully loaded a PL design**; it is not a universal “FPGA configured” indicator for every programming path;
 - KV260 carrier-card revisions 1.0 and 2.0 both exist, with some revision-specific differences;
 - Vivado provides a **KV260 Starter Kit** board flow using SOM/companion-card metadata for fixed platform resources and associated constraints;
 - AMD's software getting-started path uses a starter Linux image on microSD; later host↔PL labs will distinguish the external development computer from the PS/Linux runtime host on the KV260.
@@ -60,7 +60,7 @@ Official entry points:
 
 ## 3. Learner hardware preparation
 
-Each lab will re-check its exact bill of materials. This documentation pass freezes these categories:
+Each lab will re-check its exact bill of materials. Before touching the real board, complete **LAB-HW-00 vendor-toolchain preflight** so Vivado, the JTAG cable driver, and KV260 board files are separated from physical-board failures. This documentation pass freezes these categories:
 
 - KV260 Vision AI Starter Kit;
 - a power supply meeting the official 12 V / 3 A requirement;
@@ -95,6 +95,8 @@ The Arm processing system on the K26, later typically running Linux, that handle
 - later data loading and telemetry.
 
 Physical Labs must not blur “the development PC programs the device over JTAG” with “runtime software controls PL through the PS↔PL path.”
+
+A separate **PS/Linux first-boot bridge** belongs between them: starter Linux image → microSD → UART console → boot/login. The learner proves that the PS/Linux runtime host can boot before learning the PS↔PL loopback; Linux boot, serial-console use, and the runtime transport must not arrive for the first time in the same lab.
 
 ## 5. Platform abstraction boundary
 
@@ -148,9 +150,13 @@ This is a **documentation-first** revision. Board code is not written yet, so th
 - exact XDC pin assignments;
 - whether the final host↔PL implementation uses AXI-Lite, UIO, XRT, or another runtime transport;
 - the DDR access software stack;
-- the exact Vivado supported version.
+- the exact supported Vivado version;
+- the exact starter-Linux image version/checksum;
+- the final source of the design-local reset.
 
-Those decisions are made only after the matching `LAB-HW-*` prose and TDD oracle are reviewed. Implementations should prefer AMD's official board flow and must not change the FlyBrain core contract merely because one demo path is convenient.
+Those decisions are made only after the matching `LAB-HW-*` prose and TDD oracle are reviewed and the corresponding path is dry-run on a real KV260. LAB-HW-00 freezes the vendor-toolchain version/board files; LAB-HW-05 freezes the starter-Linux image/UART first-boot path; LAB-HW-04 freezes the design-local reset source; LAB-HW-06 freezes the runtime transport. Implementations should prefer AMD-supported paths and must not change the FlyBrain core contract merely because one demo path is convenient.
+
+**Evidence semantics must match the actual path:** if PL is programmed directly through Vivado/JTAG, use Vivado/device status and the design's own observable output as primary evidence. DS34's PS-done meaning is evidence only when the PS actually loads the PL design.
 
 ## 8. Reference-board decision
 
