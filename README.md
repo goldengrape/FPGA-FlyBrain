@@ -128,7 +128,7 @@ This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanit
 
 ### 7. Physical FPGA reference board: AMD Kria KV260
 
-The physical teaching path now freezes the **AMD Kria KV260 Vision AI Starter Kit** as the first complete reference board. Concept lessons remain board-neutral where practical, while the zero-experience Physical Lab track will give explicit KV260 steps for power, JTAG/UART, target discovery, first bitstream, constraints/I/O, host↔PL, BRAM, DDR, and AXI/burst measurement.
+The physical teaching path now freezes the **AMD Kria KV260 Vision AI Starter Kit** as the first complete reference board. Concept lessons remain board-neutral where practical, while the zero-experience Physical Lab track will give explicit KV260 steps for vendor-toolchain preflight, power, JTAG/UART, target discovery, first bitstream, constraints/I/O, PS/Linux first boot, host↔PL, BRAM, DDR, and AXI/burst measurement.
 
 This change is currently documentation-first; the Physical Lab Notebooks and `boards/kv260/` implementation come next.
 
@@ -237,7 +237,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 
 ## Current status
 
-Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~08 physical-teaching/acceptance standards are frozen at the documentation layer**; matching Lab Notebooks and board code are not implemented yet. The first formal implementation slice has not yet been declared complete.
+Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen at the documentation layer**; matching Lab Notebooks and board code are not implemented yet. The first formal implementation slice has not yet been declared complete.
 
 Current first implementation batch:
 
