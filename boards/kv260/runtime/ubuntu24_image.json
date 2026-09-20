@@ -1,0 +1,12 @@
+{
+  "status": "AUTHORING_CANDIDATE",
+  "distribution": "Ubuntu Server 24.04 LTS",
+  "target": "AMD Kria K26 Starter Kits (KV260/KR260; unified Kria image)",
+  "image_filename": "iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz",
+  "source_page": "https://ubuntu.com/download/amd",
+  "source_url": "https://people.canonical.com/~platform/images/xilinx/kria-ubuntu-24.04/iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz",
+  "source_observed_date": "2026-09-20",
+  "expected_sha256": null,
+  "formal_hash_pass_blocked": true,
+  "note": "The visible Canonical directory used during authoring did not publish an upstream SHA-256 value. Record the locally computed archive hash; promote expected_sha256 only after a controlled course download."
+}
