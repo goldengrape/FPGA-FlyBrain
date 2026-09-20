@@ -216,6 +216,37 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 | LSN-017 What is external memory? | DDR, burst, random vs sequential access | RMD-014 |
 | LSN-018 Learn only the AXI we need | Advanced eXtensible Interface (AXI), transaction, valid/ready | RMD-014A/015/016 |
 
+### Platform 4A: KV260 Physical Lab Track
+
+Concept lessons no longer leave “real board use” as a one-line Engineering Handoff. The reference board is frozen to the **AMD Kria KV260 Vision AI Starter Kit**, and physical competence is built through separate `LAB-HW-*` steps.
+
+Detailed standards:
+
+- [KV260 Reference Hardware Platform](KV260_REFERENCE_PLATFORM.md)
+- [Physical FPGA Lab Teaching Standard](PHYSICAL_FPGA_LABS.md)
+
+| Physical Lab | Primary new operation | Concept prerequisite | RMD |
+|---|---|---|---|
+| LAB-HW-00 | Identify KV260 power, JTAG/UART, microSD, reset, I/O, and carrier revision | LSN-014 | RMD-012 |
+| LAB-HW-01 | Power correctly and let the development tools discover a real target | LSN-014 | RMD-012 |
+| LAB-HW-02 | synthesis → implementation → bitstream → program | LSN-013/014 | RMD-012A |
+| LAB-HW-03 | clock/reset/I/O constraints and physical input/output | LSN-014 | RMD-012A |
+| LAB-HW-04 | real KV260 PS/runtime-host ↔ PL loopback | LSN-015 | RMD-012B |
+| LAB-HW-05 | map abstract neuron-state RAM onto real on-chip BRAM resources | LSN-009/016 | RMD-013 |
+| LAB-HW-06 | run a small FlyBrain network on hardware and compare replay with the Python fixed reference | LSN-012~016 | RMD-013 |
+| LAB-HW-07 | real DDR write/read integrity + bandwidth measurement | LSN-016/017 | RMD-014 |
+| LAB-HW-08 | compare small/scattered versus burst-oriented transfers on real hardware | LSN-018 | RMD-014A |
+
+Every Physical Lab must:
+
+- introduce one primary physical operation at a time;
+- state the exact board/cable/power setup;
+- separate Build / Program / Run;
+- define Expected Evidence instead of “no error”;
+- troubleshoot in the order power → cable/JTAG → toolchain → constraints → programming → runtime → core;
+- record board revision, tool version, Git commit, artifact hash, and experimental result;
+- never let ordinary CI pretend that a real-KV260 verification occurred.
+
 ### Platform 5: real connectome and full system
 
 | Planned lesson | First-use concepts | Engineering mapping |
@@ -271,6 +302,7 @@ Notebook imports formal module for teaching and experiments
 - LSN-001~004: being revised from experiment skeletons into textbook-quality executable lessons, with first-use terminology and project IDs moved to the end.
 - LSN-005~008: the second bilingual lesson block is established; teaching RTL lives in `rtl/learning/` and does not replace formal `MOD-003`.
 - LSN-009~012: the third bilingual Notebook block is established; small Python event-machine experiments teach time multiplexing, FIFO/backpressure, sparse lookup, and the event-driven causal chain without declaring MOD-004~009 complete.
-- LSN-013~018: the fourth bilingual Notebook block is established; formal exercises remain board-independent, while physical FPGA/DDR labs remain engineering extensions of RMD-012A~016.
+- LSN-013~018: the fourth bilingual Notebook block is established; formal exercises remain board-independent, but the **KV260 Physical Lab Track is now a formal documented learning path** rather than an optional engineering extension.
 - LSN-019~023: the fifth bilingual Notebook and exercise block is established; connectome teaching fixtures, synthetic scaling/benchmark numbers, and the toy closed loop teach contracts without impersonating RMD-017~028 formal MaleCNS artifacts, full-system results, or real performance measurements.
+- The KV260 reference board and `LAB-HW-00~08` teaching/acceptance standards are frozen at the documentation level; Lab Notebooks and board-specific RTL/constraints/scripts are not implemented yet.
 - First formal implementation remains `RMD-001`; it is not yet declared complete.
