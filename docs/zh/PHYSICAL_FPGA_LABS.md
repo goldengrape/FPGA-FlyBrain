@@ -86,15 +86,15 @@ KV260 上存在不同层级的 reset。课程必须明确区分：
 
 学生只处理 development host：
 
-- 安装课程冻结的 AMD Vivado 版本；
+- 使用本 Lab 指定的当前 AMD Vivado **authoring candidate** 版本；
 - 安装/验证 JTAG cable driver；
-- 安装/验证课程冻结的 KV260 board files / board flow；
+- 安装/验证与该版本匹配的 KV260 board files / board flow；
 - 记录 OS、Vivado version、board-file/platform version；
 - 运行课程给出的版本与 board-definition 自检命令。
 
 本 Lab 不连接板卡、不生成 bitstream、不学习 AXI。
 
-**通过证据：** tool/version/board-definition preflight 全部通过，并保存文本输出。精确 Vivado 版本和自检命令由本 Lab prose 在真实 KV260 dry run 后冻结。
+**通过证据：** tool/version/board-definition preflight 全部通过，并保存文本输出。authoring 阶段可以先指定 candidate version，防止教材/脚本静默漂移；但只有真实 KV260 dry run 留下 evidence 后，才能把它升级为**已测试的课程支持 baseline**。
 
 ### LAB-HW-01 — Board orientation / 第一次认识 KV260
 
