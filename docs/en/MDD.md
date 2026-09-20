@@ -218,6 +218,7 @@ FPGA-FlyBrain/
     kv260/
       README.md
       scripts/      # preflight + target discovery for LAB-HW-00~02
+      evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
   tb/
@@ -243,14 +244,13 @@ boards/
   kv260/
     rtl/            # later platform shell
     constraints/    # approved board/XDC glue
-    evidence/       # generated physical evidence, not design source
 tests/
 data/
 okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/scripts/` implement only the LAB-HW-00~02 teaching/support slice. They do not declare the KV260 platform shell, MOD-003, or any later formal hardware module complete.
+Current `labs/`, `boards/kv260/scripts/`, and the `boards/kv260/evidence/` template implement only the LAB-HW-00~02 teaching/support slice. They do not declare the KV260 platform shell, MOD-003, or any later formal hardware module complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
