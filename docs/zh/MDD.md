@@ -211,13 +211,16 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~02 已实现
+    en/             # LAB-HW-00~04 已实现
     zh/
     checks/
   boards/
     kv260/
       README.md
-      scripts/      # LAB-HW-00~02 的 preflight + target discovery
+      rtl/          # LAB-HW-03/04 board-specific teaching RTL
+      tb/           # open-source self-checking teaching testbench
+      constraints/  # 冻结的 Bank 45 XDC mapping
+      scripts/      # preflight、discovery、build、program helper
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -242,15 +245,15 @@ rtl/
   top/
 boards/
   kv260/
-    rtl/            # 后续 platform shell
-    constraints/    # 经 Lab 审批的 board/XDC glue
+    runtime/        # 后续 PS/Linux runtime helper
+    platform/       # 后续 host↔PL / DDR platform integration
 tests/
 data/
 okf/
 .vibe/
 ```
 
-当前 `labs/`、`boards/kv260/scripts/` 与 `boards/kv260/evidence/` template 只实现 LAB-HW-00~02 的教学/support slice，不代表 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~04 的教学/support slice，其中包括首批 board-specific marker/blink RTL 与冻结的 Bank 45 physical mapping，不代表 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
