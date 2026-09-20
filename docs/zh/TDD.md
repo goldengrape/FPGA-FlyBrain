@@ -66,15 +66,15 @@ Oracle：Python fixed-point vectors 或直接构造 expected values。
 
 - **T-HW-001 Vendor toolchain preflight**：development host 上课程冻结的 Vivado、JTAG cable driver 与 KV260 board files/board flow 可用；保存 OS、tool version、board-file/platform version 与自检输出。
 - **T-HW-002 Target discovery**：KV260 正确供电后，development host 能通过课程指定 JTAG 路径稳定枚举目标；记录 board/carrier revision 与 target identification。
-- **T-HW-003 First bitstream program**：课程冻结的 `kv260_marker_top` 在 `xck26-sfvc784-2LV-c` 上完成 implementation/timing、生成 bitstream 并通过 Vivado/JTAG 成功 program；`bank45_gpio[4:0]` 逻辑值为 `5'b10101`，使用课程冻结的 Bank 45 XDC。保存 bitstream SHA-256、`xck26*` target identification、program log 与真实可见 marker observation。DS34 不作为 direct-JTAG 主 oracle。
-- **T-HW-004 Physical clock/reset/I/O**：`pl_clk0`（nominal 100 MHz）驱动 `kv260_blink_core`，PS `pl_resetn0` 经 `proc_sys_reset` 生成 `peripheral_aresetn` 作为 design-local active-low reset；Bank 45 XDC 的 logical-port→package-pin mapping 必须与课程表一致，`bank45_gpio[0]` 出现周期变化且其余 marker bits 保持稳定。错误 constraint、held reset 或缺失 clock 必须阻断 PASS。SW2 只证明 SOM-level hard reset，不自动等价于 module reset。
+- **T-HW-003 First bitstream program**：课程冻结的 clockless `kv260_marker_top` 在 `xck26-sfvc784-2LV-c` 上完成 synthesis/implementation/DRC、生成 bitstream 并通过 Vivado/JTAG 成功 program；`bank45_gpio[4:0]` 逻辑值为 `5'b10101`，使用课程冻结的 Bank 45 XDC。因为这个 proof 没有 clocked timing path，build 必须明确输出 `TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS`，不能假装已经证明 timing closure。保存 timing summary、bitstream SHA-256、`xck26*` target identification、program log 与真实可见 marker observation。DS34 不作为 direct-JTAG 主 oracle。
+- **T-HW-004 Physical clock/reset/I/O**：`pl_clk0`（nominal 100 MHz）驱动 `kv260_blink_core`，PS `pl_resetn0` 经 `proc_sys_reset` 生成 `peripheral_aresetn` 作为 design-local active-low reset。implemented design 必须真正存在 clock 和至少一条 setup timing path；worst setup slack 必须非负，否则 build FAIL。Bank 45 XDC 的 logical-port→package-pin mapping 必须与课程表一致，`bank45_gpio[0]` 出现周期变化且其余 marker bits 保持稳定。错误 constraint、held reset、缺失 clock、没有 setup timing path 或 negative setup slack 都必须阻断 PASS。SW2 只证明 SOM-level hard reset，不自动等价于 module reset。
 - **T-HW-005 PS/Linux first boot**：课程冻结的 starter Linux image 经 checksum/version 验证后写入 microSD；KV260 能通过课程指定 UART console 启动、输出 boot log 并进入 shell；development host 与 runtime host/PS 的角色可区分。
 - **T-HW-006 Host↔PL loopback**：在 T-HW-005 已通过的前提下，runtime host 按固定 sequence 写入 PL state/operation 并读回；self-checking script 能检测错误值/错误顺序，并区分 Linux/transport failure 与 core-behavior failure。
 - **T-HW-007 BRAM neuron-state store**：多个 address 的 state write/read 正确，且 synthesis/resource report 显示预期的 on-chip memory mapping。
 - **T-HW-008 Small FlyBrain replay**：固定 network image / seed / input 下，KV260 的 spike/state trace 与 Python fixed-point reference 在冻结 contract 下匹配。
 - **T-HW-009 DDR integrity**：已知 payload 写入后读回，byte-for-byte 或批准 checksum 完全一致；任何 integrity failure 都阻断性能结论。
 - **T-HW-010 AXI/burst measurement**：在相同 bitstream、data volume、payload 与 measurement boundary 下，每种 access pattern 先做 5 次 warm-up，再至少做 20 次 measured repetitions；主结果取 median，并保存全部 raw samples 与 min/max。同一 session 的第二批 measurement 与第一批 median 相对差异应 ≤10%；否则标记为 `measurement unstable`，不得下性能结论。
-- **T-HW-011 Hardware evidence manifest**：每次 physical checkpoint 记录 Git commit、board model/revision、tool version、board/platform version（能确定时）、Linux image/version（涉及 PS boot 时）、bitstream/build hash、测试输入、输出摘要和日期。
+- **T-HW-011 Hardware evidence manifest**：每次 physical checkpoint 显式记录 Git commit、board model/revision、development-host OS、tool version、board/platform version（能确定时）、Linux image/version（涉及 PS boot 时）、适用时的 bitstream SHA-256 和/或 build hash、测试输入、输出摘要、保留 artifact path 与日期；这些必须是 manifest 的明确字段，不能只藏在 free-form notes 中。
 
 ### 3.1 Physical evidence 最低要求
 
