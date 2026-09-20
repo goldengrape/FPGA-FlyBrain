@@ -294,7 +294,7 @@ Vivado address 冻结为 **0xA0010000**；AMD/Xilinx K26 starter-kit `base_gpio_
 4. **不要 power-cycle**，回到 PS/Linux，以 root 身份运行 `boards/kv260/runtime/loopback_mmio.py`；
 5. self-checking script 对固定 vector 逐个 write/read，任何 mismatch 都 FAIL。
 
-初版 runtime access 用 Python `mmap` 访问 `/dev/mem`，因为它让 software side 最小并直接暴露 MMIO boundary。但它在真实 Ubuntu 24.04 dry run 通过之前仍是 **authoring-candidate transport**。如果受支持 image 的系统策略阻止这条 MMIO path，应记录 transport failure 并修订（例如改 UIO）；**不能为了强行 PASS 去降低系统安全策略**。
+runtime access 使用 Python `mmap` 访问固定的 `/dev/mem` MMIO region，因为它让 software side 最小并直接暴露 MMIO boundary。这条 fixed-address path 冻结为 **LAB-HW-06 的教学 transport**，不代表后续 MOD-010 一定继续使用 `/dev/mem`；helper 不开放任意 base address。如果受支持 image 的系统策略阻止这条 MMIO path，应保存 transport failure、保持 T-HW-006 阻塞并在后续仓库修订 transport；**不能为了强行 PASS 去降低系统安全策略**。
 
 **通过证据：** LAB-HW-06 bitstream SHA-256、build/timing reports、JTAG program log、固定 base address/register offsets、runtime script version/hash、每个 write/expected/read triple、最终 `STATUS=PASS`、Git commit、OS/image identity、board/carrier revision。第一次 MMIO read 之前的失败必须与“PL 算错了”分开分类。
 
