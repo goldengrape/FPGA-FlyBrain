@@ -85,9 +85,11 @@ uv run jupyter lab
 
 When doing exercises, open your personal copy under `exercises/work/en/`; `exercises/en/` contains the official course starters.
 
-### 4. Register the Dedicated Kernel (Recommended)
+### 4. Register the Dedicated Kernel (Required)
 
-To avoid kernel confusion inside Jupyter, install a named kernel spec:
+The course and exercise notebooks declare the `fpga-flybrain` kernel spec. Register it before opening or executing the notebooks. JupyterLab can sometimes recover interactively by asking you to choose another kernel, but headless execution such as `nbconvert --execute` will fail with `NoSuchKernel` if this kernel is missing.
+
+Register the named kernel with:
 
 ```bash
 uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA FlyBrain"
@@ -146,6 +148,11 @@ The current executable lessons are in [`lessons/`](lessons/README.md):
 16. [Why can moving data be harder than adding?](lessons/en/16_data_movement_cost.ipynb)
 17. [What is external memory?](lessons/en/17_external_memory_ddr.ipynb)
 18. [Learn only the AXI we need](lessons/en/18_axi_subset.ipynb)
+19. [What is a connectome?](lessons/en/19_what_is_connectome.ipynb)
+20. [Before loading a real MaleCNS subset: verify the network image](lessons/en/20_load_malecns_subset.ipynb)
+21. [What changes when the network becomes larger?](lessons/en/21_scaling_bottlenecks.ipynb)
+22. [Give the fly a world: close the loop](lessons/en/22_closed_loop_world.ipynb)
+23. [Three machines, one experiment](lessons/en/23_cpu_gpu_fpga_benchmark.ipynb)
 
 The corresponding standalone exercise workbooks are under [`exercises/`](exercises/README.md). Python exercises use Jupyter Notebooks with external graders; grading asserts and concrete test vectors are not displayed directly in the workbook.
 

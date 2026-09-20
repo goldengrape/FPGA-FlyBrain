@@ -122,17 +122,18 @@ Each Notebook should state:
 
 This prevents preview terms from quietly becoming assumed knowledge.
 
-### LP-8 Use declarative diagram syntax (Mermaid), avoid ASCII art
+### LP-8 Standardize course diagrams on inline SVG; no new Mermaid or ASCII art
 
-All conceptual flows, dataflow graphs, state transition diagrams, clock timing relationships, and hardware block diagrams must be expressed using declarative diagram code (primarily Mermaid fenced blocks: ```` ```mermaid ````). Do not draw diagrams by manually aligning spaces, hyphens, and slashes as ASCII art.
+Starting with Platform 5, conceptual flows, dataflow graphs, state transitions, timing relationships, and hardware block diagrams use **inline SVG inside Markdown**. New or revised course material should not introduce Mermaid. Hand-aligned ASCII art and opaque screenshots are also prohibited as substitutes for structural diagrams.
 
 **Engineering rationale:**
 
-1. **Rendering stability**: ASCII art relies on rigid monospace fonts and breaks easily across operating systems, mobile viewports, variable-width fonts, and screen readers;
-2. **Native vector rendering**: Modern JupyterLab 4, GitHub web viewer, and modern IDEs natively render Mermaid into crisp vector diagrams without extra plugins;
-3. **Traceability and Git diffs**: Declarative diagrams represent graph structure and semantics (`A --> B`). Modifying nodes or connections produces minimal, readable Git diffs, avoiding full-block whitespace realignments;
-4. **Human-AI collaboration**: Structured diagram code is precise and easy for both humans and AI to inspect, edit, and validate programmatically.
+1. **PDF-verifiable**: this project has observed blank Mermaid output and false-positive PDF checks in the Jupyter/webpdf path; inline SVG enters the browser DOM directly and is more controllable;
+2. **Version-controllable**: SVG is still text, so nodes, labels, connections, and styling remain visible in Git diffs;
+3. **Visual CI is possible**: course SVGs use a dedicated fill color, allowing PDF CI to verify that the diagram is actually present on the rendered page;
+4. **Semantics stay explicit**: diagrams remain declarative and reviewable rather than falling back to screenshots or manual ASCII.
 
+All LSN-019~023 diagrams are inline SVG. Earlier lessons may still contain legacy Mermaid outside this PR; whenever those lessons are revised, their diagrams should migrate to inline SVG as well.
 ---
 
 ## 4. Recommended Notebook structure
@@ -186,7 +187,7 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 
 ### Platform 2: from digital state to the first RTL neuron
 
-| Planned lesson | First-use concepts | Engineering mapping |
+| Lesson | First-use concepts | Engineering mapping |
 |---|---|---|
 | LSN-005 Digital logic building blocks | bit, Boolean logic, AND/OR/NOT, comparator | RMD-003A |
 | LSN-006 What is RTL? | Register-Transfer Level, HDL, SystemVerilog, module/port | prepares RMD-004 |
@@ -220,7 +221,7 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 | Planned lesson | First-use concepts | Engineering mapping |
 |---|---|---|
 | LSN-019 What is a connectome? | connectome, neuron ID, edge, metadata | RMD-017 |
-| LSN-020 First real MaleCNS subset | manifest, checksum, differential test | RMD-018 |
+| LSN-020 Before loading a real MaleCNS subset: verify the network image | manifest, checksum, provenance, differential test; teaching fixture does not impersonate a formal artifact | RMD-017/018 |
 | LSN-021 What changes when scale grows? | bottleneck, utilization, hotspot | RMD-019~022 |
 | LSN-022 Give the fly a world | sensory encoder, decoder, closed loop | RMD-023~025 |
 | LSN-023 Run the same experiment on three machines | CPU, GPU, FPGA, latency/throughput/power | RMD-028 |
@@ -271,4 +272,5 @@ Notebook imports formal module for teaching and experiments
 - LSN-005~008: the second bilingual lesson block is established; teaching RTL lives in `rtl/learning/` and does not replace formal `MOD-003`.
 - LSN-009~012: the third bilingual Notebook block is established; small Python event-machine experiments teach time multiplexing, FIFO/backpressure, sparse lookup, and the event-driven causal chain without declaring MOD-004~009 complete.
 - LSN-013~018: the fourth bilingual Notebook block is established; formal exercises remain board-independent, while physical FPGA/DDR labs remain engineering extensions of RMD-012A~016.
+- LSN-019~023: the fifth bilingual Notebook and exercise block is established; connectome teaching fixtures, synthetic scaling/benchmark numbers, and the toy closed loop teach contracts without impersonating RMD-017~028 formal MaleCNS artifacts, full-system results, or real performance measurements.
 - First formal implementation remains `RMD-001`; it is not yet declared complete.

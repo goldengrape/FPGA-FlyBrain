@@ -142,3 +142,74 @@ Their `stat` cell formats differ, and the Notebook parser supports both. Learner
 LSN-013~018 meet the current workbook bar: standalone task meaning, explicit valid-input domains, small TODO scope, non-leaking graders, implementation-focused Human Checks, and a 6/6 end-to-end student path.
 
 Future Platform 5 exercises should reuse the same pattern: **manual student dry run first, then move automatable student-path checks into CI.**
+
+
+## 11. Platform 5 (LSN-019~023) simulated reading and dry run
+
+### 11.1 Method
+
+This pass follows the path a learner actually uses rather than calling grader functions directly:
+
+1. read lesson/exercise prose from the learner perspective and verify that function purpose, inputs, outputs, valid domain, and return order are independently inferable;
+2. compare pre-code examples against hidden grader vectors; L19/L21/L23 overlaps found during review were replaced with distinct values;
+3. use the same `create_work_copy()` path as `scripts/start_exercise.py` to create personal `exercises/work/<lang>/` copies inside a temporary repository;
+4. execute from the personal-work directory so the notebook bootstrap must walk upward and discover `exercises/grader`;
+5. compile every learner-visible code cell before inserting a solution, preventing a false pass where the grader cell works but the TODO cell is syntactically broken;
+6. insert reference implementations derived from the written task contract, then execute workbook code cells in order and require `3 / 3 groups passed`;
+7. execute the teaching code cells for both Chinese and English Lessons 19~23 and check the public outputs;
+8. render the produced PDFs and inspect them visually rather than relying only on automated pixel checks.
+
+The reviewer can see grader code, so this is not a blind test. To protect the learner perspective despite that access, the pass separately checks that pre-code values do not reuse hidden grader vectors.
+
+### 11.2 Simulated reading: can the task be solved from prose alone?
+
+| Lesson | Core algorithm inferable from the task text | Learner friction |
+|---|---|---|
+| 19 | Initialize in/out degree for every neuron; for each `source→target`, increment outgoing/incoming respectively; keep zero-degree entries | Low; main conceptual failure is reversing source and target |
+| 20 | Copy schema/source/converter versions; compute `byte_count=len(payload)`; SHA-256 the exact bytes; return the exact 5-key dict | Low-medium; integrity and provenance must be kept conceptually separate |
+| 21 | Compute `demand/capacity` per stage and select the unique maximum utilization without mutating inputs | Medium; Python `max(..., key=...)` may need language help, but the engineering contract is clear |
+| 22 | Trace starts with initial position; re-observe every step; +1 below target, -1 above target, 0 at target; never overshoot | Low; reverse direction is now independently protected by the grader |
+| 23 | `throughput=events/seconds`; `energy=watts*seconds`; `energy/event=energy/events` | Low; the important distinction is metric calculation versus benchmark comparability |
+
+Hand calculations from the revised pre-code prompts are internally consistent:
+
+- L19: `[11,22,44,55]` with `11→22, 22→22, 44→11, 44→55` gives in-degree `{11:1,22:2,44:0,55:1}` and out-degree `{11:1,22:1,44:2,55:0}`;
+- L21: A=`6/12=0.5`, B=`6/8=0.75`; the raw demands are equal, while B has higher utilization;
+- L22: initial=0, target=2, steps=4 gives `[0,1,2,2,2]`;
+- L23: 1200 events / 0.4 s = 3000 events/s; 15 W × 0.4 s = 6 J; 6/1200 = 0.005 J/event.
+
+### 11.3 Dry-run result
+
+Automated learner-path coverage now includes:
+
+- all learner-visible code cells for 5 lessons × 2 languages compile successfully;
+- all 5 × 2 personal-work copies execute from `exercises/work/<lang>/`;
+- all 10 workbooks report **3 / 3 groups passed** with independently derived reference implementations;
+- teaching code for all 5 lessons × 2 languages runs in learner-visible order and matches expected output;
+- Python exercise infrastructure result: **107 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job where Yosys is absent; the RTL workflow executes that path for real.
+
+### 11.4 Problems found and fixed during this dry run
+
+1. L19/L21/L23 pre-code values overlapped hidden grader vectors; all were replaced with independent values.
+2. L20's old title implied that a real MaleCNS subset had already been loaded even though the lesson used only a byte fixture; the lesson is now explicitly before the real subset load.
+3. L20 prose required provenance while the old exercise/manifest omitted it; the contract is now aligned on `schema_version/source_release/converter_version/byte_count/sha256`.
+4. L20 grader now requires the exact key set.
+5. L19/L21 graders now enforce the written non-mutation contracts.
+6. L22 grader now includes an `initial > target` reverse-direction oracle and rejects right-only logic.
+7. The old student-flow test only injected a function and ran the grader cell. It now creates personal work copies, compiles all student code cells, and executes the workbook code path in order.
+
+### 11.5 Diagram-delivery verification
+
+All five Platform 5 course diagrams were migrated from Mermaid to inline SVG. Final GitHub Actions webpdf output contains these dedicated SVG-fill pixel counts:
+
+- L19: 10,194
+- L20: 14,163
+- L21: 10,284
+- L22: 10,408
+- L23: 15,444
+
+The final artifact was also rendered and inspected visually. All five diagrams show complete boxes, arrows, and labels with no blank Mermaid container, broken-image icon, leaked SVG source, or clipping.
+
+### 11.6 Platform 5 conclusion
+
+The revised LSN-019~023 workbooks now meet the current learner-path bar: **standalone task meaning, non-leaking pre-code examples, explicit TODO contracts, graders that enforce written semantics, runnable personal work copies, aligned bilingual paths, and diagrams that are visibly present in final PDFs.**

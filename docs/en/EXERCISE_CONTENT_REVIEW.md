@@ -136,3 +136,18 @@ All six exercises passed an end-to-end student-path rerun. Maintainer tests also
 ### 9.4 Completion status
 
 All six LSN-013~018 exercises now have recorded content review and student dry-run evidence. See Section 10 of `EXERCISE_STUDENT_DRY_RUN.md` for execution details.
+
+
+## 10. Platform 5 exercise-content review: LSN-019~023
+
+This pass applies the objective review findings rather than treating green CI as a substitute for task/oracle review.
+
+- **L19** keeps the directed-degree task; the grader now enforces input-list immutability and pre-code values are independent of hidden vectors.
+- **L20** is explicitly before a real MaleCNS subset load. The manifest is aligned on integrity + provenance with `schema_version/source_release/converter_version/byte_count/sha256`, and the grader requires the exact key set.
+- **L21** uses pre-code values distinct from grader vectors, enforces input-dictionary immutability, and labels hotspot as a supporting term.
+- **L22** adds a reverse-direction oracle and rejects right-only movement.
+- **L23** uses independent pre-code benchmark values and labels energy/event as a supporting metric.
+
+All five Platform 5 structural diagrams were migrated to Markdown inline SVG; Mermaid is no longer used in LSN-019~023. PDF CI verifies the dedicated SVG fill in final output, and the generated artifact has also been visually inspected.
+
+See Section 11 of `EXERCISE_STUDENT_DRY_RUN.md` for the learner-path execution record.

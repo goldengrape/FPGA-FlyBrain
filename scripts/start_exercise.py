@@ -24,6 +24,11 @@ EXERCISE_FILES = {
     "16": "16_data_movement_cost.ipynb",
     "17": "17_external_memory_ddr.ipynb",
     "18": "18_axi_subset.ipynb",
+    "19": "19_what_is_connectome.ipynb",
+    "20": "20_load_malecns_subset.ipynb",
+    "21": "21_scaling_bottlenecks.ipynb",
+    "22": "22_closed_loop_world.ipynb",
+    "23": "23_cpu_gpu_fpga_benchmark.ipynb",
 }
 
 

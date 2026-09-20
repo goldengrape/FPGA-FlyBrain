@@ -2,8 +2,8 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r4
-- Date: 2026-09-18
+- Revision: v0.3-r5
+- Date: 2026-09-19
 - Purpose: synchronize ADD's product/process FR split, RMD bridge slices, and the new Learning Architecture / Notebook teaching layer.
 
 ## 1. Purpose
@@ -42,6 +42,11 @@ Link user needs → functional requirements → design parameters → teaching a
 | LSN-016 | Distinguish latency, throughput, and bandwidth and compare compute/data-movement costs | FR5/FR6 + PFR1 | `exercises/en/16_data_movement_cost.ipynb` (grader: `exercises/grader/lesson16.py`) + Human Check | RMD-013A | `lessons/en/16_data_movement_cost.ipynb` |
 | LSN-017 | Understand external DDR, bursts, and access-pattern cost | FR6/DP6 + PFR1 | `exercises/en/17_external_memory_ddr.ipynb` (grader: `exercises/grader/lesson17.py`) + Human Check | RMD-014 | `lessons/en/17_external_memory_ddr.ipynb` |
 | LSN-018 | Learn the minimal AXI transaction/beat and VALID/READY handshake subset | FR6/DP6 + PFR4 | `exercises/en/18_axi_subset.ipynb` (grader: `exercises/grader/lesson18.py`) + Human Check | RMD-014A/015/016 | `lessons/en/18_axi_subset.ipynb` |
+| LSN-019 | Separate connectome neuron IDs, directed edges, metadata, and dynamic state | FR7/DP7 + PFR1 | `exercises/en/19_what_is_connectome.ipynb` (grader: `exercises/grader/lesson19.py`) + Human Check | RMD-017 | `lessons/en/19_what_is_connectome.ipynb` |
+| LSN-020 | Build a manifest/checksum/provenance network-image contract while keeping teaching fixture ≠ formal MaleCNS artifact explicit | FR7/DP7 + PFR4 | `exercises/en/20_load_malecns_subset.ipynb` (grader: `exercises/grader/lesson20.py`); prepares T-014/015 | RMD-017/018 | `lessons/en/20_load_malecns_subset.ipynb` |
+| LSN-021 | Use demand/capacity utilization to identify a bottleneck that can move with scale | FR7 + PFR4 | `exercises/en/21_scaling_bottlenecks.ipynb` (grader: `exercises/grader/lesson21.py`) + synthetic scale dry run | RMD-019~022 | `lessons/en/21_scaling_bottlenecks.ipynb` |
+| LSN-022 | Build closed-loop feedback while making manual sensory/output mappings explicit | FR8/DP8 + PFR4 | `exercises/en/22_closed_loop_world.ipynb` (grader: `exercises/grader/lesson22.py`); prepares T-016 | RMD-023~025 | `lessons/en/22_closed_loop_world.ipynb` |
+| LSN-023 | Freeze a CPU/GPU/FPGA benchmark comparability contract before calculating throughput/energy metrics | FR2~FR8 + PFR4 | `exercises/en/23_cpu_gpu_fpga_benchmark.ipynb` (grader: `exercises/grader/lesson23.py`); prepares P-001~008 | RMD-028 | `lessons/en/23_cpu_gpu_fpga_benchmark.ipynb` |
 
 Principle: Notebooks may prototype and demonstrate, but formal algorithms, RTL, interfaces, and oracles remain authoritative in `python/`, `rtl/`, MDD, TDD, and other engineering sources.
 
@@ -157,7 +162,8 @@ Change routing:
 - LSN-005~008: second bilingual lesson block established; `rtl/learning/` and `tb/learning/` do not declare MOD-003 complete
 - LSN-009~012: third bilingual lesson block established; Python teaching models do not declare MOD-004~009 complete
 - LSN-013~018: fourth bilingual lesson block established; synthesis/board/host/DDR/AXI teaching experiments do not declare the corresponding formal MODs or physical-platform implementation complete
-- TRACE: synchronized across engineering and teaching paths through LSN-018
+- LSN-019~023: fifth bilingual lesson block established; connectome teaching fixtures, synthetic scale/benchmark numbers, and the toy closed loop do not declare RMD-017~028 formal data artifacts, full-system implementation, or real performance results complete
+- TRACE: synchronized across engineering and teaching paths through LSN-023
 - First formal implementation slice: not started
 
 ## 8. Events that require a TRACE update

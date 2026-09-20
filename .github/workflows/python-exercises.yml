@@ -29,4 +29,4 @@ jobs:
       - name: Sync environment
         run: uv sync --group dev
       - name: Check graders and notebook structure
-        run: uv run pytest exercises/checks/test_graders.py exercises/checks/test_notebook_structure.py exercises/checks/test_start_exercise.py lessons/checks/test_platform4_notebook_structure.py lessons/checks/test_platform4_student_dryrun.py -q
+        run: uv run pytest exercises/checks/test_graders.py exercises/checks/test_notebook_structure.py exercises/checks/test_start_exercise.py exercises/checks/test_platform5_student_flow.py lessons/checks/test_platform4_notebook_structure.py lessons/checks/test_platform4_student_dryrun.py lessons/checks/test_platform5_notebook_structure.py lessons/checks/test_platform5_student_dryrun.py -q

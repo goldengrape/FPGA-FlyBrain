@@ -122,17 +122,18 @@ Notebook 应明确写出：
 
 这样避免预告词被误认为考试范围。
 
-### LP-8 图表使用字符描述语法（Mermaid），禁用 ASCII 字符画
+### LP-8 课程图统一使用 inline SVG；禁用 Mermaid 与 ASCII 字符画
 
-所有的概念流程、数据流图、状态转移图、时序因果及硬件模块架构，在 Notebook 与文档中一律使用字符声明式语法（以 Mermaid 为标准：```` ```mermaid ````），禁止使用空格、连字符和文本折线拼凑 ASCII 字符画。
+从 Platform 5 开始，概念流程、数据流图、状态转移图、时序因果及硬件模块架构统一使用 **Markdown 中的 inline SVG**。不再为新课或本轮修订内容引入 Mermaid。也禁止用空格、连字符拼 ASCII 字符画，或用不可审查截图替代结构图。
 
-**确立该原则的工程原因：**
+**工程理由：**
 
-1. **终端排版可靠**：ASCII 字符画依赖特定字体的严格等宽，在不同操作系统、移动设备、变宽字体或缩放环境下极易排版错位崩塌；
-2. **原生矢量渲染**：现代 JupyterLab 4、GitHub 网页端及主流代码编辑器均原生内置 Mermaid 渲染器，可直接渲染为高清晰度的矢量流程图；
-3. **版本控制与协作**：声明式图表本质是描述逻辑结构与节点关系的纯文本（如 `A --> B`），增删节点或修改连线时 Git diff 一目了然；ASCII 字符画稍作调整便需通篇重新手工对齐空格；
-4. **人机协作稳定**：人类构思或借助 AI 生成图表时，Mermaid 的文本结构严谨、歧义少，便于快速审查与自动化校验。
+1. **PDF 可验证**：本项目已经实际观察到 Jupyter/webpdf 对 Mermaid 的空图与假阳性问题；inline SVG 直接进入浏览器 DOM，打印链路更可控；
+2. **可版本控制**：SVG 仍是文本，节点、标签、连线与颜色都可进入 Git diff；
+3. **可以做视觉 CI**：课程 SVG 使用专用填充色，PDF CI 可检查这些像素是否真正出现在最终页面；
+4. **语义显式**：图仍然是可审查的声明式结构，不退化成截图或手工 ASCII。
 
+Platform 5 的 LSN-019~023 已全部改为 inline SVG。较早 lesson 中尚存的 legacy Mermaid 不在本 PR 中批量重写；后续只要这些 lesson 被修改，就应同步迁移为 inline SVG。
 ---
 
 ## 4. 每个 Notebook 的推荐结构
@@ -180,13 +181,13 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 
 ---
 
-## 6. 后续课程的概念路径（规划）
+## 6. 课程的概念路径
 
-下面是教学顺序，不表示这些 Notebook 已经全部创建。
+下面是当前正式教学顺序。表中的 Notebook 是否已经建立，以第 9 节“当前教学状态”和仓库实际文件为准。
 
 ### 平台 2：从数字状态到第一个 RTL 神经元
 
-| 计划 Lesson | 第一次重点解释 | 工程映射 |
+| Lesson | 第一次重点解释 | 工程映射 |
 |---|---|---|
 | LSN-005 数字逻辑积木 | bit、Boolean logic、AND/OR/NOT、comparator | RMD-003A |
 | LSN-006 什么是 RTL | Register-Transfer Level、HDL、SystemVerilog、module/port | 准备 RMD-004 |
@@ -220,7 +221,7 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 | 计划 Lesson | 第一次重点解释 | 工程映射 |
 |---|---|---|
 | LSN-019 什么是 connectome | connectome、neuron ID、edge、metadata | RMD-017 |
-| LSN-020 第一次装入真实 MaleCNS 子图 | manifest、checksum、differential test | RMD-018 |
+| LSN-020 装入真实 MaleCNS 子图之前：先验证 network image | manifest、checksum、provenance、differential test；teaching fixture 不冒充正式 artifact | RMD-017/018 |
 | LSN-021 规模变大以后发生什么 | bottleneck、utilization、hotspot | RMD-019~022 |
 | LSN-022 给果蝇一个世界 | sensory encoder、decoder、closed loop | RMD-023~025 |
 | LSN-023 三种机器做同一个实验 | CPU、GPU、FPGA、latency/throughput/power | RMD-028 |
@@ -271,4 +272,5 @@ Notebook imports formal module for teaching and experiments
 - LSN-005~008：第二组双语 Notebook 已建立；教学 RTL 放在 `rtl/learning/`，不替代正式 `MOD-003`。
 - LSN-009~012：第三组双语 Notebook 已建立；先用小规模 Python event-machine 实验讲清 time multiplexing、FIFO/backpressure、sparse lookup 与 event-driven causal chain，不宣称 MOD-004~009 已完成。
 - LSN-013~018：第四组双语 Notebook 已建立；正式作业保持无板可完成，实体 FPGA/DDR 实验作为 RMD-012A~016 的工程延伸。
+- LSN-019~023：第五组双语 Notebook 与独立作业已建立；connectome teaching fixture、synthetic scaling/benchmark 数字与 toy closed loop 只教学 contract，不冒充 RMD-017~028 的正式 MaleCNS artifact、全系统结果或真实性能 measurement。
 - 第一项正式工程实现仍为 `RMD-001`，尚未声明完成。

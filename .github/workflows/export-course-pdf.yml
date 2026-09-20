@@ -118,7 +118,9 @@ jobs:
           merge(1, 4, "FPGA-FlyBrain-lessons-01-04-zh.pdf")
           merge(5, 12, "FPGA-FlyBrain-lessons-05-12-zh.pdf")
           merge(13, 18, "FPGA-FlyBrain-lessons-13-18-zh.pdf")
+          merge(19, 23, "FPGA-FlyBrain-lessons-19-23-zh.pdf")
           merge(1, 18, "FPGA-FlyBrain-lessons-01-18-zh.pdf")
+          merge(1, 23, "FPGA-FlyBrain-lessons-01-23-zh.pdf")
           PY
 
       - name: Verify Lesson 13 synthesis output is present
@@ -217,6 +219,68 @@ jobs:
               print(
                   f"{filename}: diagram source/error text is absent and "
                   f"{lavender_pixels} rendered diagram pixels were detected."
+              )
+
+
+          # Platform 5 standardizes course diagrams on inline SVG.
+          # Use a dedicated pale-green fill (#e6f4ea) so PDF verification can
+          # distinguish real diagram rendering from notebook syntax colors.
+          platform5_svg_checks = (
+              "19_what_is_connectome.pdf",
+              "20_load_malecns_subset.pdf",
+              "21_scaling_bottlenecks.pdf",
+              "22_closed_loop_world.pdf",
+              "23_cpu_gpu_fpga_benchmark.pdf",
+          )
+
+          def count_platform5_svg_fill(page):
+              pixmap = page.get_pixmap(alpha=False)
+              samples = pixmap.samples
+              channels = pixmap.n
+              count = 0
+              for index in range(0, len(samples), channels):
+                  red, green, blue = (
+                      samples[index],
+                      samples[index + 1],
+                      samples[index + 2],
+                  )
+                  # Inline SVG box fill is #e6f4ea = (230, 244, 234).
+                  if (
+                      220 <= red <= 240
+                      and 238 <= green <= 250
+                      and 225 <= blue <= 245
+                      and green - red >= 4
+                      and green - blue >= 4
+                  ):
+                      count += 1
+              return count
+
+          for filename in platform5_svg_checks:
+              path = Path("dist/course-pdfs") / filename
+              document = pymupdf.open(path)
+              text = "\n".join(page.get_text("text") for page in document)
+
+              leaked_svg = [
+                  marker for marker in ("<svg", "<rect", "<path", "<defs")
+                  if marker in text
+              ]
+              if leaked_svg:
+                  raise SystemExit(
+                      f"{filename} contains escaped SVG source: {leaked_svg}"
+                  )
+
+              rendered_pixels = sum(
+                  count_platform5_svg_fill(page) for page in document
+              )
+              if rendered_pixels < 1500:
+                  raise SystemExit(
+                      f"{filename} is missing a visibly rendered Platform 5 SVG: "
+                      f"{rendered_pixels} SVG-fill pixels"
+                  )
+
+              print(
+                  f"{filename}: inline SVG visibly rendered with "
+                  f"{rendered_pixels} dedicated SVG-fill pixels."
               )
 
 

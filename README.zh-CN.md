@@ -85,9 +85,11 @@ uv run jupyter lab
 
 做作业时打开 `exercises/work/zh/` 下的个人副本；`exercises/zh/` 是课程发布的官方 starter。
 
-### 4. 注册课程专属内核（推荐）
+### 4. 注册课程专属内核（必须）
 
-为了避免在 Jupyter 中混淆不同环境的 Python 内核，建议注册一个显式内核：
+课程与作业 Notebook 的元数据指定了 `fpga-flybrain` 内核，因此第一次使用前需要先注册它。JupyterLab 在交互界面里有时可以通过手动选择其他内核恢复，但 `nbconvert --execute` 这类无交互执行会在缺少该内核时直接报 `NoSuchKernel`。
+
+执行：
 
 ```bash
 uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA FlyBrain"
@@ -146,6 +148,11 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 16. [为什么搬数据比加法更难？](lessons/zh/16_data_movement_cost.ipynb)
 17. [外部内存是什么？](lessons/zh/17_external_memory_ddr.ipynb)
 18. [AXI 只学我们需要的部分](lessons/zh/18_axi_subset.ipynb)
+19. [什么是 connectome？](lessons/zh/19_what_is_connectome.ipynb)
+20. [装入真实 MaleCNS 子图之前：先验证 network image](lessons/zh/20_load_malecns_subset.ipynb)
+21. [规模变大以后，瓶颈会跑到哪里？](lessons/zh/21_scaling_bottlenecks.ipynb)
+22. [给果蝇一个世界：把 loop 闭合起来](lessons/zh/22_closed_loop_world.ipynb)
+23. [三种机器做同一个实验](lessons/zh/23_cpu_gpu_fpga_benchmark.ipynb)
 
 对应的独立作业册位于 [`exercises/`](exercises/README.zh-CN.md)。Python 作业使用 Jupyter Notebook，自动检查由外部 grader 执行；作业页面不直接展示判题 `assert` 或具体测试向量。
 
