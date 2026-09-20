@@ -211,36 +211,94 @@ build helper 输出固定目录下的 bitstream、utilization report、timing su
 
 **前置：** LAB-HW-00~04。
 
-**主要新操作：** 让 KV260 的 PS/runtime host 独立启动起来，不同时学习 PS↔PL transport。
+**主要新操作：** 让 KV260 的 PS/runtime host 独立启动起来，不同时第一次学习 PS↔PL transport。
 
-学生完成：
+第二阶段 authoring image 冻结为当前 AMD/Canonical 面向 Kria K26 的 Ubuntu Server image：
 
-- 按课程冻结来源获取并校验 starter Linux image；
-- 把 image 写入 microSD；
-- 使用课程指定 UART console path；
-- 启动 KV260；
-- 观察 boot log 并完成首次 login / shell check；
-- 明确 development host 与 KV260 PS/Linux runtime host 是两台不同执行环境。
+- distribution：**Ubuntu Server 24.04 LTS**；
+- image archive：`iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`；
+- 来源：Canonical **Install Ubuntu on AMD** / Kria K26；
+- target：KV260/KR260/KD240 unified Kria image；
+- microSD：16 GB UHS-1 或更大；
+- 初学者写卡工具：**Raspberry Pi Imager**，与当前 AMD Kria guide 一致。
 
-本 Lab 不要求 host↔PL register readback，也不教授完整 AXI。
+下载身份写入 `boards/kv260/runtime/ubuntu24_image.json`。仓库现在冻结 image filename/source，但**不会伪造** Canonical 可见下载目录没有发布的 upstream SHA-256。学生使用课程 helper 对实际下载的 archive 计算 SHA-256 并记录。在课程完成一次受控下载、把 expected SHA-256 升级写入 manifest 之前，可以执行 T-HW-005，但不能把 image-hash gate 宣称为 fully frozen PASS。
 
-**通过证据：** 保存 image/version/checksum、UART boot log、kernel/OS identification 与一次简单 shell command 输出。能够回答“JTAG program PL”和“PS/Linux boot”为什么是两条不同路径。
+实体 boot path：
+
+- microSD 插 J11；
+- J4 FTDI USB 作为 UART console；
+- J12 12 V / 3 A power；
+- UART：**115200 baud、8 data bits、no parity、1 stop bit、no flow control**；
+- Ubuntu 初始登录：`ubuntu` / `ubuntu`，首次登录按系统要求修改密码。
+
+从上电开始保存完整 UART transcript，进入 shell 后记录：
+
+```bash
+uname -a
+cat /etc/os-release
+cat /proc/device-tree/model; echo
+sudo xmutil boardid
+sudo xmutil bootfw_status
+```
+
+Linux 成功启动不等于 custom PL 已加载；反过来，Vivado/JTAG 成功 program PL 也不等于 Linux 已启动。两条路径必须分开理解。
+
+boot firmware 在主流程中**先观察，不把“更新固件”混成第一次 Linux boot 的必做动作**。如果当前 firmware 阻止受支持 Ubuntu image 启动，再按 AMD boot-firmware update/recovery guide 走 troubleshooting branch，并保留证据。
+
+断电前执行：
+
+```bash
+sudo shutdown -h now
+```
+
+**通过证据：** exact image filename、实际下载 archive 的 SHA-256、写卡方法、UART settings/port、UART boot log、kernel/OS/model 输出、boot-firmware status、当前 Git commit、board/carrier revision 与 clean shutdown record。只要 course expected SHA-256 仍为 null，就不能宣称 formal image-hash PASS。
 
 ### LAB-HW-06 — Real host↔PL loopback / 真正的软件到硬件往返
 
 **前置：** LSN-015、LAB-HW-05。
 
-**主要新操作：** 在已经会启动 PS/Linux 的前提下，让 KV260 runtime host 控制 PL。
+**主要新操作：** 在已经会启动 PS/Linux 的前提下，让 KV260 runtime host 控制真实 PL register path，但不把第一次 roundtrip 变成完整 AXI 课程。
 
-最小语义保持与 L15 一致：
+第二阶段 authoring transport 冻结为最小、可检查的路径：
 
 ```text
-write value → PL stores/processes → read back result
+Ubuntu/Python on PS
+  → /dev/mem MMIO
+  → PS M_AXI_HPM0_FPD
+  → AXI SmartConnect
+  → dual-channel AXI GPIO @ 0xA0010000
+  → kv260_loopback_transform
 ```
 
-本 Lab 先冻结 semantic contract，再在 RMD-012B 选择 KV260 的最小稳定 runtime transport；不为了“先跑起来”提前要求学生理解完整 AXI。
+AXI GPIO 只作为 teaching adapter，不要求学生第一次 loopback 就手写 AXI slave。本 Lab 只需要 AMD PG144 的两个 register-map 事实：
 
-**通过证据：** 写入、PL 状态变化、读回顺序均与预期一致，self-checking script 能检测错误值/错误顺序，并能区分 Linux/transport failure 与 core behavior failure。
+- Channel 1 `GPIO_DATA`：base + `0x0000`，配置为 32-bit output；
+- Channel 2 `GPIO2_DATA`：base + `0x0008`，配置为 32-bit input。
+
+冻结的 PL behavior：
+
+```text
+write_value = host 写 GPIO_DATA
+read_value  = (write_value + 1) mod 2^32
+host 从 GPIO2_DATA 读回
+```
+
+Vivado address 冻结为 **0xA0010000**；AMD/Xilinx K26 starter-kit `base_gpio_bram` reference 也把 AXI GPIO 放在这一 address region。完整 AXI channel/ordering 细节继续推迟到 Lesson 18 / LAB-HW-10。
+
+第二阶段 deployment sequence 刻意让两个执行域保持可见：
+
+1. PS/Linux 已通过 LAB-HW-05 启动；
+2. runtime host 上如果已有 Kria application firmware active，执行 `sudo xmutil unloadapp`；
+3. development host 上 build 并通过 direct JTAG program 专用 LAB-HW-06 bitstream；
+4. **不要 power-cycle**，回到 PS/Linux，以 root 身份运行 `boards/kv260/runtime/loopback_mmio.py`；
+5. self-checking script 对固定 vector 逐个 write/read，任何 mismatch 都 FAIL。
+
+初版 runtime access 用 Python `mmap` 访问 `/dev/mem`，因为它让 software side 最小并直接暴露 MMIO boundary。但它在真实 Ubuntu 24.04 dry run 通过之前仍是 **authoring-candidate transport**。如果受支持 image 的系统策略阻止这条 MMIO path，应记录 transport failure 并修订（例如改 UIO）；**不能为了强行 PASS 去降低系统安全策略**。
+
+**通过证据：** LAB-HW-06 bitstream SHA-256、build/timing reports、JTAG program log、固定 base address/register offsets、runtime script version/hash、每个 write/expected/read triple、最终 `STATUS=PASS`、Git commit、OS/image identity、board/carrier revision。第一次 MMIO read 之前的失败必须与“PL 算错了”分开分类。
+
+
 
 ### LAB-HW-07 — BRAM neuron state / 第一次使用真实片上 RAM resource
 
