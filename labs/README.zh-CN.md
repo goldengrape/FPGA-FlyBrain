@@ -11,8 +11,10 @@ Physical Lab 是第 13–18 课的真实硬件配套路径，面向此前没有�
 | LAB-HW-00 | [厂商工具链预检](zh/00_vendor_toolchain_preflight.ipynb) | [Vendor toolchain preflight](en/00_vendor_toolchain_preflight.ipynb) | 否 |
 | LAB-HW-01 | [第一次认识 KV260](zh/01_board_orientation.ipynb) | [Board orientation](en/01_board_orientation.ipynb) | KV260，不上电 |
 | LAB-HW-02 | [供电与目标发现](zh/02_power_target_detection.ipynb) | [Power + target detection](en/02_power_target_detection.ipynb) | KV260 + 12 V / 3 A 电源 + J4 USB data cable |
+| LAB-HW-03 | [第一次生成并配置 bitstream](zh/03_first_bitstream.ipynb) | [First bitstream](en/03_first_bitstream.ipynb) | KV260 + LAB-HW-02 connection |
+| LAB-HW-04 | [Clock、reset 与 physical I/O](zh/04_clock_reset_io.ipynb) | [Clock, reset, and physical I/O](en/04_clock_reset_io.ipynb) | KV260 + LAB-HW-03 passed |
 
-LAB-HW-03~10 已在 `docs/*/PHYSICAL_FPGA_LABS.md` 中冻结教学 contract；只有前一 physical checkpoint 实际验证后才继续实现。
+**第一阶段（LAB-HW-00~04）的教材、board helper、RTL/XDC contract 已实现。** LAB-HW-05~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
 
 ## Evidence 规则
 
