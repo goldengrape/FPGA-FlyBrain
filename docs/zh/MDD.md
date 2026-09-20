@@ -186,7 +186,7 @@ boards/
 
 - `rtl/neuron/`、`rtl/event/`、`rtl/memory/` 不得出现 KV260 connector/pin 名称；
 - JTAG/UART、PS/Linux boot/runtime、DDR controller、Vivado board flow、pin constraints 都属于 platform layer；
-- `MOD-010 host_if` 的**逻辑语义**是装载参数/刺激与读取 spike/telemetry；KV260 上到底通过 AXI-Lite、UIO、XRT 或其他受支持 transport 实现，在 RMD-012B / LAB-HW-06 的文档与 oracle 审批后冻结；
+- `MOD-010 host_if` 的**逻辑语义**是装载参数/刺激与读取 spike/telemetry；RMD-012B / LAB-HW-06 现在冻结第一条 KV260 **教学 transport**：PS `M_AXI_HPM0_FPD` → SmartConnect → dual-channel AXI GPIO，PS/Linux Python `/dev/mem` MMIO 作为 authoring candidate。这不等于冻结后续正式 MOD-010 software stack；真实板 dry run 若要求 UIO/其他受支持路径，可以修订 transport；
 - board-specific convenience 不得反向改变 `IF-NEURON-UPDATE`、`IF-SPIKE-QUEUE`、`IF-SYNAPSE-STREAM`；
 - Physical Lab 需要的板卡事实以 `KV260_REFERENCE_PLATFORM.md` 与 AMD 官方 board docs 为依据。
 
@@ -211,16 +211,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~04 已实现
+    en/             # LAB-HW-00~06 已实现
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbench
       constraints/  # 冻结的 Bank 45 XDC mapping
       scripts/      # preflight、discovery、build、program helper
+      runtime/      # LAB-HW-05/06 Ubuntu identity、boot evidence、MMIO checker
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -245,15 +246,14 @@ rtl/
   top/
 boards/
   kv260/
-    runtime/        # 后续 PS/Linux runtime helper
-    platform/       # 后续 host↔PL / DDR platform integration
+    platform/       # 后续 BRAM/DDR/更深 platform integration
 tests/
 data/
 okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~04 的教学/support slice，其中包括首批 board-specific marker/blink RTL 与冻结的 Bank 45 physical mapping，不代表 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~06 的教学/support slice，包括 marker/blink RTL、冻结的 Bank 45 physical mapping、Ubuntu/UART bring-up helper，以及第一条 authoring-candidate PS↔PL MMIO teaching transport；这不代表 MOD-010、后续 KV260 platform shell 或任何正式 FlyBrain 硬件模块已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
