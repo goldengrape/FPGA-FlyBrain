@@ -181,10 +181,13 @@ Physical Labs:
 - **LAB-HW-05**: starter Linux image → microSD → UART console → PS boot/login; prove only that the KV260 PS/Linux runtime host can boot;
 - **LAB-HW-06**: after LAB-HW-05 passes, perform the real PS/runtime-host ↔ PL minimal loopback.
 
-LAB-HW-05 pass criteria:
-- starter Linux image version/checksum recorded;
-- UART boot log retained;
-- shell reached with kernel/OS identification;
+LAB-HW-05 authoring contract:
+- Ubuntu Server 24.04 LTS for Kria K26 is selected, currently `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`;
+- the downloaded archive filename and locally computed SHA-256 are recorded; the course expected hash remains a promotion gate after a controlled download rather than an invented value;
+- microSD is flashed with the AMD-recommended beginner path (Raspberry Pi Imager);
+- J4 UART is 115200 8N1, no flow control;
+- UART boot log is retained through login/password change;
+- shell records kernel/OS/model, `xmutil boardid`, and `xmutil bootfw_status`;
 - learner distinguishes development host from runtime host/PS.
 
 LAB-HW-06 freezes the semantic contract first:
@@ -193,12 +196,14 @@ LAB-HW-06 freezes the semantic contract first:
 write value → PL stores/processes → read back result
 ```
 
-The exact runtime transport (for example AXI-Lite/UIO/XRT or another supported path) is selected only after the Lab prose and TDD oracle are reviewed. Prefer the smallest stable path rather than using the first loopback to teach full AXI.
+The Stage-2 authoring transport is now selected: PS/Linux Python maps dual-channel AXI GPIO through `/dev/mem` at `0xA0010000`; Channel 1 is a 32-bit host-write output, Channel 2 is a 32-bit PL-result input, and a tiny PL transform returns `(value + 1) mod 2^32`. PS `M_AXI_HPM0_FPD` plus AXI SmartConnect provides the memory-mapped path. This intentionally uses AXI GPIO as a teaching adapter instead of requiring the learner to implement an AXI slave. The `/dev/mem` choice remains provisional until the real Ubuntu 24.04 dry run proves that the supported image permits this device-MMIO path; a policy failure triggers transport revision (for example UIO), not a security-policy workaround.
 
 LAB-HW-06 pass criteria:
-- write/readback is repeatable;
-- PL state/operation ordering matches the contract;
-- a self-checking host script distinguishes Linux/transport failure from core-behavior failure.
+- the dedicated bitstream builds with timing closure and is direct-JTAG programmed while LAB-HW-05 Linux remains booted;
+- fixed MMIO base/register offsets are recorded;
+- every fixed test vector produces the frozen `+1 mod 2^32` result repeatedly;
+- a self-checking host script logs write/expected/read triples and distinguishes Linux/permission/policy/transport failure from core-behavior mismatch;
+- bitstream hash, runtime-script hash, OS/image identity, Git commit, and board revision are retained.
 
 ### RMD-013 Run small network on FPGA
 
