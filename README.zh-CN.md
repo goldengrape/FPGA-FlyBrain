@@ -130,7 +130,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 
 实体上板教学已冻结 **AMD Kria KV260 Vision AI Starter Kit** 为第一套完整 reference board。概念课仍尽量板卡无关，但零基础 Physical Lab 会给出 KV260 的 vendor toolchain preflight、供电、JTAG/UART、target discovery、first bitstream、constraints/I/O、PS/Linux first boot、host↔PL、BRAM、DDR 与 AXI/burst 实操路径。
 
-documentation-first 规范已经进入实现阶段。**LAB-HW-00~04** 已有中英文学生 Notebook 与第一阶段 `boards/kv260/` support artifact；真实 KV260 physical verification 与真实 Vivado full-build dry run 仍待执行。
+documentation-first 规范已经进入实现阶段。**LAB-HW-00~06** 已有中英文学生 Notebook 与 `boards/kv260/` support artifact。LAB-HW-05 增加 Ubuntu/UART runtime-host bring-up；LAB-HW-06 增加 authoring-candidate PS/Linux MMIO ↔ PL loopback。真实 KV260 physical verification、image-hash promotion 与真实 Vivado full-build dry run 仍待执行。
 
 先看：
 
@@ -238,7 +238,7 @@ documentation-first 规范已经进入实现阶段。**LAB-HW-00~04** 已有中�
 
 ## 当前状态
 
-项目规划、系统架构和第一次课程审计已经完成；**KV260 reference board 与 LAB-HW-00~10 的实体教学/验收规范已冻结。** LAB-HW-00~04 已建立双语 Notebook 与 CI contract。LAB-HW-03/04 还加入 board-specific RTL、冻结的 Bank 45 XDC mapping、Vivado build/program helper 与 open-source RTL simulation；LAB-HW-05~10 和所有真实板卡 evidence 尚待实现。第一段正式工程实现尚未声明完成。
+项目规划、系统架构和第一次课程审计已经完成；**KV260 reference board 与 LAB-HW-00~10 的实体教学/验收规范已冻结。** LAB-HW-00~06 已建立双语 Notebook 与 CI contract。LAB-HW-03/04 覆盖 first bitstream 与 physical I/O；LAB-HW-05/06 覆盖 PS/Linux boot 与第一条 authoring-candidate host↔PL MMIO path。LAB-HW-07~10 与所有真实板卡 evidence 仍待实现。第一段正式工程实现尚未声明完成。
 
 当前第一批工程任务：
 
