@@ -130,7 +130,7 @@ This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanit
 
 The physical teaching path now freezes the **AMD Kria KV260 Vision AI Starter Kit** as the first complete reference board. Concept lessons remain board-neutral where practical, while the zero-experience Physical Lab track will give explicit KV260 steps for vendor-toolchain preflight, power, JTAG/UART, target discovery, first bitstream, constraints/I/O, PS/Linux first boot, host↔PL, BRAM, DDR, and AXI/burst measurement.
 
-The documentation-first design is now being implemented. **LAB-HW-00~04** have bilingual student Notebooks and first-stage board-support artifacts under `boards/kv260/`; real-KV260 physical verification and a real Vivado full-build dry run are still pending.
+The documentation-first design is now being implemented. **LAB-HW-00~06** now have bilingual student Notebooks and board-support artifacts under `boards/kv260/`. LAB-HW-05 adds the Ubuntu/UART runtime-host bring-up path; LAB-HW-06 adds the authoring-candidate PS/Linux MMIO ↔ PL loopback. Real-KV260 physical verification, image-hash promotion, and real Vivado full-build dry runs are still pending.
 
 Read:
 
@@ -238,7 +238,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 
 ## Current status
 
-Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen.** LAB-HW-00~04 now have bilingual Notebooks and CI contracts. LAB-HW-03/04 also include board-specific RTL, the frozen Bank 45 XDC mapping, Vivado build/program helpers, and open-source RTL simulations; LAB-HW-05~10 and all real-board evidence remain pending. The first formal implementation slice has not yet been declared complete.
+Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen.** LAB-HW-00~06 now have bilingual Notebooks and CI contracts. LAB-HW-03/04 cover first bitstream and physical I/O; LAB-HW-05/06 cover PS/Linux boot and the first authoring-candidate host↔PL MMIO path. LAB-HW-07~10 and all real-board evidence remain pending. The first formal implementation slice has not yet been declared complete.
 
 Current first implementation batch:
 
