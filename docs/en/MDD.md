@@ -204,11 +204,20 @@ FPGA-FlyBrain/
   lessons/
     en/
     zh/
+    checks/
   exercises/
     en/
     zh/
     grader/
     checks/
+  labs/
+    en/             # LAB-HW-00~02 implemented
+    zh/
+    checks/
+  boards/
+    kv260/
+      README.md
+      scripts/      # preflight + target discovery for LAB-HW-00~02
   rtl/
     learning/
   tb/
@@ -219,7 +228,7 @@ FPGA-FlyBrain/
 
 ### 7.2 Planned formal-engineering directories
 
-The following directories are **planned** for later RMD slices. Their presence in MDD does not mean they already exist or are implemented:
+The following directories or deeper contents are **planned** for later RMD slices. Their presence in MDD does not mean they are already implemented:
 
 ```text
 python/
@@ -231,12 +240,17 @@ rtl/
   memory/
   top/
 boards/
-  kv260/          # planned reference-board platform shell
+  kv260/
+    rtl/            # later platform shell
+    constraints/    # approved board/XDC glue
+    evidence/       # generated physical evidence, not design source
 tests/
 data/
 okf/
 .vibe/
 ```
+
+Current `labs/` and `boards/kv260/scripts/` implement only the LAB-HW-00~02 teaching/support slice. They do not declare the KV260 platform shell, MOD-003, or any later formal hardware module complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
