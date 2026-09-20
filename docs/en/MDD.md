@@ -186,7 +186,7 @@ Boundary rules:
 
 - `rtl/neuron/`, `rtl/event/`, and `rtl/memory/` must not contain KV260 connector/pin names;
 - JTAG/UART, PS/Linux boot/runtime, DDR controller, Vivado board flow, and pin constraints belong to the platform layer;
-- the **logical contract** of `MOD-010 host_if` is parameter/stimulus loading plus spike/telemetry readback. Whether KV260 realizes it with AXI-Lite, UIO, XRT, or another supported transport is frozen only after RMD-012B / LAB-HW-06 prose and oracle approval;
+- the **logical contract** of `MOD-010 host_if` is parameter/stimulus loading plus spike/telemetry readback. RMD-012B / LAB-HW-06 now freezes the first KV260 **teaching transport** as PS `M_AXI_HPM0_FPD` → SmartConnect → dual-channel AXI GPIO with PS/Linux Python `/dev/mem` MMIO as an authoring candidate. This does not freeze the later formal MOD-010 software stack or prevent replacing `/dev/mem` with UIO/another supported path after the real-board dry run;
 - board-specific convenience must not redefine `IF-NEURON-UPDATE`, `IF-SPIKE-QUEUE`, or `IF-SYNAPSE-STREAM`;
 - Physical Lab board facts are grounded in `KV260_REFERENCE_PLATFORM.md` and AMD official board documentation.
 
@@ -211,16 +211,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~04 implemented
+    en/             # LAB-HW-00~06 implemented
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbenches
       constraints/  # frozen Bank 45 XDC mapping
       scripts/      # preflight, discovery, build, and program helpers
+      runtime/      # LAB-HW-05/06 Ubuntu identity, boot evidence, MMIO checker
       evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
@@ -245,15 +246,14 @@ rtl/
   top/
 boards/
   kv260/
-    runtime/        # later PS/Linux runtime helpers
-    platform/       # later host↔PL / DDR platform integration
+    platform/       # later BRAM/DDR/deeper platform integration
 tests/
 data/
 okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/` implement the LAB-HW-00~04 teaching/support slice, including the first board-specific marker/blink RTL and frozen Bank 45 physical mapping. They do not declare the KV260 platform shell, MOD-003, or any later formal hardware module complete.
+Current `labs/` and `boards/kv260/` implement the LAB-HW-00~06 teaching/support slice, including marker/blink RTL, frozen Bank 45 physical mapping, Ubuntu/UART bring-up helpers, and the first authoring-candidate PS↔PL MMIO teaching transport. They do not declare MOD-010, the later KV260 platform shell, or any formal FlyBrain hardware module complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
