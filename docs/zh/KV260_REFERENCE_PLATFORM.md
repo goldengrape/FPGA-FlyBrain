@@ -144,7 +144,7 @@ boards/kv260/
 
 ## 7. 当前已实现实体 Lab 冻结了什么——什么仍然只是 provisional
 
-documentation-first 决策已经推进到 **LAB-HW-00~05** 的实际实现阶段。
+documentation-first 决策已经推进到 **LAB-HW-00~06** 的实际实现阶段。
 
 仓库现在冻结：
 
@@ -153,22 +153,25 @@ documentation-first 决策已经推进到 **LAB-HW-00~05** 的实际实现阶段
 - 这 5 个 logical bit 的 Bank 45 XDC mapping；
 - LAB-HW-04 platform clock source：PS `pl_clk0`，教学口径为 nominal 100 MHz；
 - LAB-HW-04 platform reset source：PS `pl_resetn0`；
-- LAB-HW-04 design-local active-low reset：`proc_sys_reset/peripheral_aresetn`，再送入教学 RTL；
-- LAB-HW-03/04 采用 direct Vivado/JTAG programming；
-- direct-JTAG 的主要 evidence 必须是 Vivado/device status + 设计自身 observable output，不能只看 DS34；
+- LAB-HW-04 design-local active-low reset：`proc_sys_reset/peripheral_aresetn`；
+- LAB-HW-03/04/06 采用 direct Vivado/JTAG programming；
+- direct-JTAG 的主要 evidence 必须是 Vivado/device status + 设计自身 observable/readback evidence，不能只看 DS34；
 - LAB-HW-05 distribution：AMD Kria K26 starter-kit 路径使用 **Ubuntu Server 24.04 LTS**；
 - LAB-HW-05 authoring image identity：`iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`；
 - LAB-HW-05 physical path：J11 microSD + J4 FTDI USB UART + J12 12 V / 3 A board power；
 - LAB-HW-05 UART contract：115200 baud、8 data bits、no parity、1 stop bit、no flow control；
-- LAB-HW-05 evidence contract：下载 image identity/本地 SHA-256、UART boot transcript、kernel/OS identification、device-tree model、board/boot-firmware observation、shell access、Git commit、board revision、date 与 clean shutdown。
+- LAB-HW-06 hardware path：PS `M_AXI_HPM0_FPD` → SmartConnect → dual-channel AXI GPIO → `kv260_loopback_transform`；
+- LAB-HW-06 AXI GPIO base：`0xA0010000`，与 AMD/Xilinx K26 `base_gpio_bram` 一致；Channel 1 `GPIO_DATA` 为 `+0x0`，Channel 2 `GPIO2_DATA` 为 `+0x8`；
+- LAB-HW-06 semantic contract：`read = (write + 1) mod 2^32`；
+- LAB-HW-06 教学 software transport：fixed-address、root-only 的 Python `/dev/mem` mapping；helper 刻意不开放任意 physical base address。
 
 以下内容**还不能升级成已验证的实体事实**：
 
 - 每个 Bank 45 bit 在真实板上对应的具体丝印 LED designator 与肉眼可见 polarity；
 - Vivado 2026.1 是否可从 authoring candidate 升级为 tested/supported course baseline；
-- LAB-HW-05 Ubuntu archive 的可信 expected SHA-256。撰写时使用的上游可见下载目录没有发布该值，因此 `ubuntu24_image.json` 刻意保持 `expected_sha256: null`；本地 hash 只记为 `RECORDED_UNVERIFIED`，正式 T-HW-005 image-hash PASS 仍被阻塞；
-- LAB-HW-06 最终 runtime transport（AXI-Lite/UIO/XRT/其他）；
-- 后续 DDR access software stack。
+- LAB-HW-05 Ubuntu archive 的可信 expected SHA-256；`ubuntu24_image.json` 继续保持 `expected_sha256: null`，本地 hash 只记为 `RECORDED_UNVERIFIED`，正式 T-HW-005 image-hash PASS 仍被阻塞；
+- 选定 Ubuntu 24.04 image/kernel 在真实 KV260 上是否允许 LAB-HW-06 冻结的 `/dev/mem` mapping。如果 OS policy 阻止，T-HW-006 继续阻塞，并通过后续仓库修订 transport，不能降低系统安全设置；
+- 后续正式 MOD-010 software stack 与 DDR access software stack。
 
 这些事实只有在真实 KV260 dry run 针对具体 Git commit 与 artifact 留下 T-HW evidence 后，才能升级为 tested fact。
 
