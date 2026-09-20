@@ -54,9 +54,9 @@ Link user needs → functional requirements → design parameters → teaching a
 
 | Lab | Objective | Primary test | RMD | Artifact |
 |---|---|---|---|---|
-| LAB-HW-00 | vendor-toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | planned `labs/en/00_*` |
-| LAB-HW-01 | identify real KV260, interfaces, SW2 SOM reset, carrier revision | T-HW-011 (inventory/evidence) | RMD-012 | planned `labs/en/01_*` |
-| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | planned `labs/en/02_*` |
+| LAB-HW-00 | vendor-toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | `labs/en/00_vendor_toolchain_preflight.ipynb` |
+| LAB-HW-01 | identify real KV260, interfaces, SW2 SOM reset, carrier revision | T-HW-011 (inventory/evidence) | RMD-012 | `labs/en/01_board_orientation.ipynb` |
+| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | `labs/en/02_power_target_detection.ipynb` |
 | LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | planned `labs/en/03_*` |
 | LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | planned `labs/en/04_*` |
 | LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | planned `labs/en/05_*` |
