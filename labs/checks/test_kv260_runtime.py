@@ -122,7 +122,7 @@ def test_loopback_dry_run_is_self_checking_and_writes_trace(tmp_path):
     )
     assert result.returncode == 0, result.stderr
     assert "FPGA_FLYBRAIN_LAB=LAB-HW-06" in result.stdout
-    assert "MMIO_BASE=0xa0010000" in result.stdout.lower()
+    assert "mmio_base=0xa0010000" in result.stdout.lower()
     assert "TRANSPORT=DRY_RUN_MODEL" in result.stdout
     assert "SAMPLE_COUNT=12" in result.stdout
     assert "STATUS=PASS" in result.stdout
