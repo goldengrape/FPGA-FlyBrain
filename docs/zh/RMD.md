@@ -139,13 +139,15 @@ reference board 冻结为 **AMD Kria KV260 Vision AI Starter Kit**。正式实�
 
 对应 Physical Lab：
 
-- **LAB-HW-00**：board orientation；识别 K26 SOM、carrier、J12 power、J4 UART/JTAG、microSD、Ethernet、reset、carrier revision；
-- **LAB-HW-01**：正确供电并完成 target enumeration；把 power/cable/JTAG/driver/tool 问题与 RTL 问题分层。
+- **LAB-HW-00**：vendor toolchain preflight；在不连接板卡时先冻结/验证 Vivado version、JTAG cable driver、KV260 board files / board flow；
+- **LAB-HW-01**：board orientation；识别 K26 SOM、carrier、J12 power、J4 UART/JTAG、microSD、Ethernet、SW2 SOM reset、carrier revision；
+- **LAB-HW-02**：正确供电并完成 target enumeration；把 power/cable/JTAG 问题与 RTL 问题分层。
 
 通过标准：
+- development host 的 vendor toolchain preflight 有文本证据；
 - 学生能从未上电状态开始正确连接 KV260；
 - development host 能稳定发现目标；
-- 记录 board revision、tool version、target identification；
+- 记录 board revision、tool version、board-file/platform version、target identification；
 - 规划中的 `boards/kv260/` platform shell 边界清楚，不把 pin/platform IP 写进 core RTL。
 
 ### RMD-012A First physical proof
@@ -154,24 +156,38 @@ reference board 冻结为 **AMD Kria KV260 Vision AI Starter Kit**。正式实�
 
 对应：
 
-- **LAB-HW-02**：最小 RTL 完成 synthesis → implementation → timing → bitstream → program；
-- **LAB-HW-03**：clock/reset/一个安全 physical I/O 的 constraint 与实体行为。
+- **LAB-HW-03**：最小 RTL 完成 synthesis → implementation → timing → bitstream → program；
+- **LAB-HW-04**：clock/design-local reset/一个安全 physical I/O 的 constraint 与实体行为。
 
 通过标准至少包括：
 - build/implementation 无阻断错误；
 - bitstream/build artifact hash；
 - programming success；
-- KV260 PL configuration status evidence；
+- 与实际 programming path 匹配的 configuration evidence；
 - 至少一个能证明“这是我们的设计在运行，而不是只有板卡上电”的可观察结果；
-- 实体 reset/input 与预期输出一致。
+- 实体/可读 input 或 local reset source 与预期输出一致；
+- 学生能区分 SW2 SOM-level hard reset 与 FlyBrain design-local reset。
+
+**DS34 不作为通用 JTAG programming oracle。** 只有 PS 实际加载 PL 时，才按其 PS-done 语义使用 DS34；Vivado/JTAG direct program 以 device programming status + design observable output 为主要证据。
 
 第一次 Physical Lab 不同时学习 AXI、DDR 或 FlyBrain network。
 
-### RMD-012B Host ↔ FPGA minimal loopback
+### RMD-012B PS/Linux runtime-host bridge → Host ↔ FPGA minimal loopback
 
-主要新概念：**development PC 负责 build/program，与 KV260 PS/runtime host 控制 PL 是两个不同路径。**
+host↔PL 前先拆出一个独立 bridge，避免 Linux boot、serial console 与 runtime transport 同时第一次出现。
 
-对应 **LAB-HW-04**。冻结最小 semantic contract：
+对应：
+
+- **LAB-HW-05**：starter Linux image → microSD → UART console → PS boot/login；只证明 KV260 PS/Linux runtime host 自己能启动；
+- **LAB-HW-06**：在 LAB-HW-05 已通过后，再做真实 PS/runtime host ↔ PL minimal loopback。
+
+LAB-HW-05 通过标准：
+- starter Linux image 的 version/checksum 有记录；
+- UART boot log 可保存；
+- 能进入 shell 并记录 kernel/OS identification；
+- 学生能解释 development host 与 runtime host/PS 的区别。
+
+LAB-HW-06 冻结最小 semantic contract：
 
 ```text
 write value → PL stores/processes → read back result
@@ -179,18 +195,18 @@ write value → PL stores/processes → read back result
 
 具体 runtime transport（如 AXI-Lite/UIO/XRT 等）在 Lab prose 与 TDD oracle 审批后选择；选择标准是最小稳定路径，而不是提前教授完整 AXI。
 
-通过标准：
+LAB-HW-06 通过标准：
 - write/readback 可重复；
 - PL state/operation 与顺序 contract 一致；
-- host script 自检失败时能区分 transport failure 与 core behavior failure。
+- host script 自检失败时能区分 Linux/transport failure 与 core behavior failure。
 
 ### RMD-013 Run small network on FPGA
 
-先用 **LAB-HW-05** 把 L9 的抽象 neuron state memory 映射到真实片上 BRAM resource，再用 **LAB-HW-06** 迁移平台 3 已验证的小网络。
+先用 **LAB-HW-07** 把 L9 的抽象 neuron state memory 映射到真实片上 BRAM resource，再用 **LAB-HW-08** 迁移平台 3 已验证的小网络。
 
-LAB-HW-05 只学习本设计需要的 address/read/write/synchronous-read behavior 与 resource report，不展开 BRAM primitive 全参数。
+LAB-HW-07 只学习本设计需要的 address/read/write/synchronous-read behavior 与 resource report，不展开 BRAM primitive 全参数。
 
-LAB-HW-06 使用同一 fixed input/seed，把 KV260 输出与 Python fixed-point reference 做 L5 replay。
+LAB-HW-08 使用同一 fixed input/seed，把 KV260 输出与 Python fixed-point reference 做 L5 replay。
 
 通过标准：
 - 多地址 neuron state read/write 正确；
@@ -202,13 +218,13 @@ LAB-HW-06 使用同一 fixed input/seed，把 KV260 输出与 Python fixed-point
 
 ### RMD-013A Memory hierarchy & bandwidth bridge
 主要新概念：**数据移动成本可以高于算术成本**。  
-先比较 sequential、random、batched/burst-like access，理解 latency 与 throughput。概念 Lesson 可以先用模型；真实 measurement 由 LAB-HW-07/08 完成。
+先比较 sequential、random、batched/burst-like access，理解 latency 与 throughput。概念 Lesson 可以先用模型；真实 measurement 由 LAB-HW-09/10 完成。
 
 ### RMD-014 DDR hello-world
 
 主要新概念：**外部存储具有独立访问延迟与控制路径**。
 
-对应 **LAB-HW-07**：通过 KV260 平台已有 controller/IP 完成：
+对应 **LAB-HW-09**：通过 KV260 平台已有 controller/IP 完成：
 
 ```text
 known payload → DDR write → DDR read → byte/checksum compare → measurement
@@ -225,11 +241,18 @@ known payload → DDR write → DDR read → byte/checksum compare → measureme
 
 主要新概念：**用标准总线事务批量搬运连续数据**。
 
-对应 **LAB-HW-08**：只学习本项目需要的 AXI subset，在真实 KV260 上比较 small/scattered 与 burst-oriented transfer。第一次必做目标是“使用 + 测量”；从零实现完整 AXI master 只作为可选挑战。
+对应 **LAB-HW-10**：只学习本项目需要的 AXI subset，在真实 KV260 上比较 small/scattered 与 burst-oriented transfer。第一次必做目标是“使用 + 测量”；从零实现完整 AXI master 只作为可选挑战。
+
+measurement 默认 protocol：
+- 同一 bitstream、data volume、payload 与 measurement boundary；
+- 5 次 warm-up 不计入统计；
+- 每种 access pattern 至少 20 次 measured repetitions；
+- 主结果取 median，并保存全部 raw samples 与 min/max；
+- 同一 session 再做第二批 measurement，两批 median 相对差异 ≤10% 才可称可重复；否则标记 `measurement unstable`；
+- 明确 timer 是否包含 host/software overhead。
 
 通过标准：
-- 相同 data volume / 明确 measurement window；
-- 至少两种 access pattern 的可重复 latency/effective-bandwidth 结果；
+- 至少两种 access pattern 满足可重复 measurement protocol；
 - workload contract 写清楚，不从单个数字泛化“AXI/FPGA 更快”。
 
 ### RMD-015 Move synapse store to DDR
@@ -239,7 +262,7 @@ known payload → DDR write → DDR read → byte/checksum compare → measureme
 ### RMD-016 Throughput baseline
 测 P-001~P-008 中当前可测项目。
 
-**平台 4 完成标志：** 学生能够从一块未配置的 KV260 开始独立完成 target discovery、bitstream build/program、physical I/O、host↔PL loopback、BRAM state、small-network replay、DDR integrity 与真实 bandwidth measurement；FPGA 网络使用外部内存，并能解释和测量内存瓶颈。
+**平台 4 完成标志：** 学生能够从一台尚未配置好 vendor toolchain 的 development host 与一块未上电的 KV260 开始，独立完成 toolchain preflight、board orientation、target discovery、bitstream build/program、physical I/O、PS/Linux first boot、host↔PL loopback、BRAM state、small-network replay、DDR integrity 与真实 bandwidth measurement；FPGA 网络使用外部内存，并能解释和测量内存瓶颈。
 
 # 平台 5 — 我可以运行真实神经系统数据
 
@@ -288,8 +311,8 @@ baseline 正确后才优化：lazy membrane update、cache、banking、多 synap
 |---|---|---|
 | Python → RTL | 同时遇到 clock/register/HDL/waveform/bit width | RMD-003A 三个微型数字硬件实验 |
 | 多神经元 → event-driven | sparse graph/FIFO/router 同时出现 | RMD-007A 四神经元事件传播 |
-| Simulation → FPGA | power/cable/JTAG、bitstream、constraint、host I/O 同时出现 | RMD-011A + LAB-HW-00~06 分成 target discovery、first bitstream、physical I/O、loopback、BRAM、small replay |
-| FPGA → DDR/AXI | memory hierarchy、DDR、AXI、bandwidth 同时出现 | RMD-013A + LAB-HW-07/08 分成 integrity 与 measurement |
+| Simulation → FPGA | vendor toolchain、power/cable/JTAG、bitstream、constraint、PS/Linux、host I/O 同时出现 | RMD-011A + LAB-HW-00~08 分成 toolchain preflight、board orientation、target discovery、first bitstream、physical I/O、PS boot、loopback、BRAM、small replay |
+| FPGA → DDR/AXI | memory hierarchy、DDR、AXI、bandwidth 同时出现 | RMD-013A + LAB-HW-09/10 分成 integrity 与 measurement |
 
 ## 4. 当前第一批只执行的任务
 1. RMD-001 Python LIF float reference
