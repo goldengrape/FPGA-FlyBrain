@@ -190,4 +190,12 @@ uv run pytest \
 
 The GitHub Actions Python exercise infrastructure workflow runs the exercise-infrastructure checks automatically.
 
+By default, student-facing graders intentionally turn exceptions inside submitted functions into a failed concept group without exposing a traceback. When maintaining or debugging a grader, enable:
+
+```bash
+FPGA_FLYBRAIN_GRADER_DEBUG=1 uv run pytest exercises/checks/test_graders.py -q
+```
+
+With this flag, `evaluate_group` retains and `report` prints the exception traceback for failed groups. Do not enable it in student-facing notebooks because hidden grader internals and concrete failure details should remain hidden.
+
 The project does not currently use nbgrader or testbook. They will be reconsidered only when a concrete new requirement appears.
