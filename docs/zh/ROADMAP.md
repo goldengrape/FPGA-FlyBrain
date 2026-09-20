@@ -70,30 +70,34 @@ spike(source)
 完成感：小网络可以只处理发生的 spike，而不是扫描全部连接。
 
 ## 阶段 6 — 第一次进入真实 FPGA
-在买板前先做 synthesis dry run。
 
-买板后顺序：
-1. counter / observable register；
-2. host ↔ FPGA 最小 loopback；
-3. 把已验证的小网络迁移到 FPGA。
+参考板卡冻结为 **AMD Kria KV260 Vision AI Starter Kit**。在买板前仍先做 synthesis dry run；买板后不把“上板”压缩成一句话，而是按零经验 Physical Lab 顺序推进：
 
-完成感：仿真里的电路真的在芯片中运行。
+1. **LAB-HW-00**：认识 KV260 实物、接口和 carrier revision；
+2. **LAB-HW-01**：正确供电，区分 J12 power 与 J4 USB/JTAG/UART，让开发工具枚举真实 target；
+3. **LAB-HW-02**：第一次 synthesis → implementation → bitstream → program；
+4. **LAB-HW-03**：把 logical port、clock/reset 与真实 board resource/constraint 联系起来；
+5. **LAB-HW-04**：完成真实 KV260 PS/runtime host ↔ PL minimal loopback；
+6. **LAB-HW-05**：把 neuron state RAM 映射到真实片上 BRAM resource；
+7. **LAB-HW-06**：把已验证的小 FlyBrain network 迁移到 KV260，并与 Python fixed reference replay 比较。
+
+完成感：不仅“知道 bitstream 是什么”，而是能从板子未配置的状态开始，独立连接、发现 target、build/program、观察实体结果、host readback，并证明一个小 FlyBrain 网络真的在 FPGA 上运行。
+
+详细教学规范见 `KV260_REFERENCE_PLATFORM.md` 与 `PHYSICAL_FPGA_LABS.md`。
 
 ## 阶段 7 — 理解内存为什么会成为瓶颈
-先建立 memory hierarchy / bandwidth 直觉，再接 DDR/AXI。
+先建立 memory hierarchy / bandwidth 直觉，再接真实 DDR/AXI。
 
-实验比较：
-- sequential access；
-- random access；
-- burst access。
+Physical Lab：
 
-然后：
-- DDR read/write integrity；
-- AXI burst；
-- 把 synapse store 从片上搬到 DDR；
-- 测 bandwidth、latency、synaptic events/s。
+1. **LAB-HW-07**：通过 KV260 已有平台基础设施做 DDR write → read → integrity compare，再测 sequential/random-like access；
+2. **LAB-HW-08**：在同一 workload 下比较 small/scattered 与 burst-oriented transfer 的 latency / effective bandwidth；
+3. integrity 与 measurement 稳定后，才把 synapse store 从片上搬到 DDR；
+4. 再测 bandwidth、latency、synaptic events/s。
 
-完成感：理解现代 AI hardware 为什么经常被数据移动限制，而不是被加法限制。
+不要求学生手写 DDR PHY/controller，也不把“完整 AXI master 从零实现”作为第一次 DDR 实验前置。
+
+完成感：学生手里有真实 KV260 measurement，而不只是 toy cost model，能解释现代 AI hardware 为什么经常被数据移动限制。
 
 ## 阶段 8 — 第一次运行真实 connectome
 - MaleCNS converter。
