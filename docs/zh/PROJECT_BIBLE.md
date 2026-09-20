@@ -47,7 +47,7 @@
 瓶颈在哪里？
 ```
 
-他/她应该已经亲手接触 register、RAM、FIFO、pipeline、fixed point、DDR bandwidth、sparse/event-driven computation、FPGA accelerator 和 neuromorphic hardware 的基本概念。
+他/她应该已经亲手接触 register、RAM/BRAM、FIFO、pipeline、fixed point、DDR bandwidth、sparse/event-driven computation、FPGA accelerator 和 neuromorphic hardware 的基本概念；并且能在 **AMD Kria KV260 Vision AI Starter Kit** 上完成从 target discovery、first bitstream、physical I/O、host↔PL loopback 到 small FlyBrain replay 的基础上板路径。
 
 ## 4. 三层翻译
 重要概念尽量同时用三种语言描述：
@@ -110,6 +110,7 @@ FlyBrain 产品系统当前被整理为严格下三角的 decoupled design。验
 - Python → RTL 的 Digital Hardware Bridge；
 - 多神经元 → event-driven 的 4-neuron bridge；
 - simulation → FPGA 的 synthesis/first-bitstream/loopback bridge；
+- **KV260 Physical Lab Track**：board orientation → target detection → first bitstream → constraints/I/O → host loopback → BRAM → small network replay；
 - FPGA → DDR/AXI 的 memory hierarchy/bandwidth bridge。
 
 桥接章节不是“补课附录”，而是正式课程内容。
@@ -126,7 +127,7 @@ FlyBrain 产品系统当前被整理为严格下三角的 decoupled design。验
 
 未来 `okf/` 是 AI 检索层，`.vibe/` 保存机器可读追踪状态。它们不得悄悄发明新需求；设计变更先改 `docs/`。
 
-**图表表达规范**：系统结构、时序状态与教学流程图一律使用声明式文本代码描述（如 Mermaid 代码块），严禁使用易错位、难维护的 ASCII 字符画。字符图在 JupyterLab 与 GitHub 中原生渲染为清晰矢量图，且利于长期版本追踪。
+**图表表达规范**：系统结构、时序状态与教学流程图优先使用 Markdown 中的 **inline SVG**；不再新增 Mermaid 或手工 ASCII 字符画。SVG 保持文本可审查、可 Git diff，并能进入 PDF visual CI。Physical Lab 可以使用官方板卡照片/截图辅助“在哪里插线”，但关键连接、命令和通过标准必须同时有文字/结构图版本。
 
 ## 9. 每章的标准结构
 每章尽量从一个已经出现的问题开始，然后依次回答：
