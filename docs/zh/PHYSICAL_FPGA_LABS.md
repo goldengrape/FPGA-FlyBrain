@@ -130,34 +130,82 @@ KV260 上存在不同层级的 reset。课程必须明确区分：
 
 ### LAB-HW-03 — First bitstream / 第一次配置 PL
 
-**主要新操作：** 从最小 RTL 完整经过 synthesis → implementation → bitstream → program。
+**主要新操作：** 从一个极小、没有 clock/reset/AXI/Linux 依赖的 RTL，完整经历 synthesis → implementation → bitstream → JTAG program。
 
-第一版实现选择一个由官方 board flow / schematic 支持、容易观察的 PL proof。具体用户输出与约束在写 Lab prose 时冻结，不在本规范阶段猜 pin。
+第一版教学实现现在冻结为 **Bank 45 GPIO marker**：
+
+- top module：`kv260_marker_top`；
+- logical output：`bank45_gpio[4:0]`；
+- 固定逻辑 pattern：`5'b10101`；
+- target part：`xck26-sfvc784-2LV-c`；
+- physical mapping 使用课程提供的 `boards/kv260/constraints/bank45_gpio.xdc`；
+- XDC 来源于 AMD/Xilinx Board Store 中 KV260 carrier `bank45_gpio` 的 5-bit LED-class interface，以及 K26 SOM `part0_pins.xml` 对应的 package pin mapping。
+
+冻结的 package pins 为：
+
+| logical bit | K26 SOM signal | package pin | I/O standard |
+|---|---|---|---|
+| `bank45_gpio[0]` | SOM240 D18 | J11 | LVCMOS33 |
+| `bank45_gpio[1]` | SOM240 B17 | J10 | LVCMOS33 |
+| `bank45_gpio[2]` | SOM240 B18 | K13 | LVCMOS33 |
+| `bank45_gpio[3]` | SOM240 A15 | F11 | LVCMOS33 |
+| `bank45_gpio[4]` | SOM240 C24 | A12 | LVCMOS33 |
+
+本 Lab **不要求学生理解这些 constraint**；把 XDC 当成课程提供的 board adapter。为什么 RTL port 还需要 XDC、为什么是这些 pin，在 LAB-HW-04 再拆开讲。
+
+build helper 输出固定目录下的 bitstream、utilization report、timing summary；program helper 只接受已经生成的 bitstream，并在 JTAG chain 中明确找到 `xck26*` device 后才 program。
 
 **通过证据至少包括：**
 
 - implementation/timing 没有阻断性错误；
-- bitstream hash；
-- programming success；
-- **与实际 programming path 对应的 configuration evidence**；
-- 至少一个能说明“这是我们的设计，不只是板卡上电”的可观察结果。
+- bitstream SHA-256；
+- Vivado/JTAG programming success；
+- `xck26*` target identification；
+- Bank 45 LED-class output 上出现稳定、可重复的 marker 状态，并记录照片/观察结果；
+- 当前 Git commit 与 carrier revision。
 
-**DS34 不是通用 JTAG programming oracle。** AMD 对 DS34 的语义是 PS done：表示 PS 已成功加载 PL design。只有当本实验实际采用的路径与该语义一致时，DS34 才能作为证据；如果 LAB-HW-03 使用 Vivado/JTAG 直接配置 PL，应使用 Vivado/device programming status 与该设计自己的可观察输出作为主要证据。
+**物理显示极性边界：** Board Store 能证明这 5 个信号属于 `bank45_gpio` LED-class output，并给出 pin mapping；在真实 KV260 dry run 之前，课程不伪造某个具体丝印 LED 的亮灭极性。学生必须记录实际可见状态；完成真实 dry run 后再把物理 designator/polarity 升级为 tested fact。
+
+**DS34 不是通用 JTAG programming oracle。** AMD 对 DS34 的定义是 PS 成功加载 PL design 时点亮。LAB-HW-03 采用 Vivado/JTAG direct programming，因此主要证据是 Vivado/device programming status + 本设计自己的 Bank 45 observable output。
 
 ### LAB-HW-04 — Constraints + clock/reset/I/O / 逻辑 port 连接到真实世界
 
-**主要新操作：** 理解 logical RTL port 与 physical board resource 之间需要 board/constraint mapping。
+**主要新操作：** 在已经会生成/program bitstream 的前提下，理解 logical RTL port 怎样通过 clock/reset/platform glue 与 physical board resource 连接。
 
-只教当前实验需要的：
+第一版教学实现冻结为 **PS clock/reset 驱动的 PL blink proof**：
 
-- clock source / period；
-- design-local reset semantics；
-- 一个安全的 board-visible I/O；
-- I/O standard / voltage boundary。
+- PS 只承担 platform infrastructure，不引入 Linux/AXI；
+- Zynq UltraScale+ MPSoC `pl_clk0` 作为 PL clock，教学口径为 nominal 100 MHz；
+- PS `pl_resetn0` 进入 `proc_sys_reset`；
+- `proc_sys_reset/peripheral_aresetn` 是本设计冻结的 **design-local active-low reset**；
+- `kv260_blink_core` 用 counter 分频，在 `bank45_gpio[0]` 产生肉眼可见的周期变化，其余 bits 保持 marker；
+- physical output 继续复用 LAB-HW-03 的 `bank45_gpio.xdc`，这样本 Lab 只新增 clock/reset/constraint interpretation，而不是再换一套外围设备。
 
-本 Lab 必须明确冻结“这个实验中的 local reset 到底从哪里来、极性是什么”，并再次说明 SW2 是 SOM-level hard reset，不能未经设计就等同于 module reset。
+这里必须明确三层 reset：
 
-**通过证据：** 课程冻结的实体/可读 input 或 local reset source 能以预期方式改变输出；学生能够解释“RTL port 名称本身为什么没有物理 pin 含义”，并区分 SOM reset 与 design-local reset。
+1. **SW2**：SOM-level hard reset，作用于整块 SOM；
+2. **PS `pl_resetn0`**：platform reset source；
+3. **`peripheral_aresetn`**：经过 reset controller 同步后送入 `kv260_blink_core.resetn` 的 design-local reset。
+
+因此可以说“SW2 会在更上游触发系统级 reset sequence”，但**不能说 SW2 就是 RTL 的 `resetn`**。
+
+本 Lab 只教当前需要的 constraint 概念：
+
+- logical port 没有天然 package pin；
+- `PACKAGE_PIN` 把 port 连接到 K26 package；
+- `IOSTANDARD LVCMOS33` 对应 Board Store 对这些 Bank 45 carrier signals 的 3.3 V 约束；
+- clock 来自 PS→PL 内部 clock path，所以不为 `bank45_gpio` 伪造外部 clock constraint。
+
+**通过证据：**
+
+- synthesis/implementation/timing 完成；
+- blink bitstream hash 与 program log；
+- `bank45_gpio[0]` 出现周期变化、其他 marker bits 保持稳定；
+- 学生能指出 XDC 中至少一个 logical bit → package pin 的 mapping；
+- 学生能解释 `pl_resetn0`、`peripheral_aresetn` 与 SW2 的层级差异；
+- resource/timing report、Git commit、board/carrier revision 被写入 T-HW-011 evidence manifest。
+
+
 
 ### LAB-HW-05 — PS/Linux first boot + UART console / 第一次启动 runtime host
 

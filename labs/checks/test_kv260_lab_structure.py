@@ -11,6 +11,8 @@ LABS = [
     "00_vendor_toolchain_preflight.ipynb",
     "01_board_orientation.ipynb",
     "02_power_target_detection.ipynb",
+    "03_first_bitstream.ipynb",
+    "04_clock_reset_io.ipynb",
 ]
 
 
@@ -130,12 +132,12 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
         assert "bitstream" in text.lower()
 
 
-def test_lab_readmes_name_only_the_implemented_first_batch():
+def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04"):
             assert lab in text
-        assert "LAB-HW-03~10" in text
+        assert "LAB-HW-05~10" in text
 
 
 def test_trace_register_points_to_implemented_first_batch():
@@ -144,11 +146,15 @@ def test_trace_register_points_to_implemented_first_batch():
             "labs/en/00_vendor_toolchain_preflight.ipynb",
             "labs/en/01_board_orientation.ipynb",
             "labs/en/02_power_target_detection.ipynb",
+            "labs/en/03_first_bitstream.ipynb",
+            "labs/en/04_clock_reset_io.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
             "labs/zh/01_board_orientation.ipynb",
             "labs/zh/02_power_target_detection.ipynb",
+            "labs/zh/03_first_bitstream.ipynb",
+            "labs/zh/04_clock_reset_io.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -168,3 +174,62 @@ def test_physical_evidence_template_is_versioned_but_generated_evidence_is_ignor
     ignore = (evidence / ".gitignore").read_text(encoding="utf-8")
     assert "!manifest.example.json" in ignore
     assert "!README.md" in ignore
+
+
+
+def test_lab03_freezes_minimal_marker_build_and_program_contract():
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "03_first_bitstream.ipynb"))
+        assert "5'b10101" in text
+        assert "xck26-sfvc784-2LV-c" in text
+        assert "build_lab03_marker.tcl" in text
+        assert "program_bitstream.tcl" in text
+        assert "SHA-256" in text
+        assert "T-HW-003" in text
+        assert "DS34" in text
+        assert "<svg " in text
+
+
+def test_lab04_freezes_clock_reset_and_constraint_layers():
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "04_clock_reset_io.ipynb"))
+        assert "pl_clk0" in text
+        assert "pl_resetn0" in text
+        assert "proc_sys_reset" in text
+        assert "peripheral_aresetn" in text
+        assert "PACKAGE_PIN J11" in text
+        assert "IOSTANDARD LVCMOS33" in text
+        assert "SW2" in text
+        assert "T-HW-004" in text
+        assert text.count("<svg ") >= 2
+
+
+def test_bank45_xdc_matches_frozen_k26_package_mapping():
+    xdc = (ROOT / "boards" / "kv260" / "constraints" / "bank45_gpio.xdc").read_text(
+        encoding="utf-8"
+    )
+    expected = {
+        0: "J11",
+        1: "J10",
+        2: "K13",
+        3: "F11",
+        4: "A12",
+    }
+    for bit, pin in expected.items():
+        assert f"PACKAGE_PIN {pin} [get_ports {{bank45_gpio[{bit}]}}]" in xdc
+        assert f"IOSTANDARD LVCMOS33 [get_ports {{bank45_gpio[{bit}]}}]" in xdc
+
+
+def test_first_stage_board_sources_and_helpers_exist():
+    expected_paths = [
+        "boards/kv260/rtl/kv260_marker_top.sv",
+        "boards/kv260/rtl/kv260_blink_core.sv",
+        "boards/kv260/tb/kv260_marker_top_tb.sv",
+        "boards/kv260/tb/kv260_blink_core_tb.sv",
+        "boards/kv260/constraints/bank45_gpio.xdc",
+        "boards/kv260/scripts/build_lab03_marker.tcl",
+        "boards/kv260/scripts/build_lab04_blink.tcl",
+        "boards/kv260/scripts/program_bitstream.tcl",
+    ]
+    for relative in expected_paths:
+        assert (ROOT / relative).is_file(), relative

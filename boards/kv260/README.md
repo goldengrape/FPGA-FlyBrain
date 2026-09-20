@@ -6,13 +6,17 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-This first batch supports LAB-HW-00~02 only:
+The board-support layer now implements **LAB-HW-00~04**:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
-- `evidence/manifest.example.json` — T-HW-011 evidence checklist/template; generated local evidence is ignored by Git by default.
+- `rtl/kv260_marker_top.sv` + `scripts/build_lab03_marker.tcl` — LAB-HW-03 first bitstream;
+- `rtl/kv260_blink_core.sv` + `scripts/build_lab04_blink.tcl` — LAB-HW-04 clock/reset/I/O proof;
+- `constraints/bank45_gpio.xdc` — reviewed Bank 45 logical-port → K26 package-pin mapping;
+- `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
+- `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-There is intentionally no XDC, PL design, PS/Linux runtime code, or DDR/AXI implementation in this batch. Those belong to later labs after their prose/oracles are approved.
+PS/Linux runtime, host↔PL transport, BRAM network state, DDR, and AXI belong to LAB-HW-05~10 and are not implemented by this stage.
 
 ## Authoring baseline
 
@@ -54,3 +58,51 @@ The script exits non-zero when the local hardware server cannot be reached, no h
 ## Evidence boundary
 
 These scripts print machine-searchable `KEY=VALUE` lines so saved logs can later feed an evidence manifest. They do not claim algorithm correctness, bitstream correctness, or a board pass by themselves.
+
+
+## LAB-HW-03
+
+Build:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-03-build.log \
+  -source boards/kv260/scripts/build_lab03_marker.tcl
+```
+
+Program:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-03-program.log \
+  -source boards/kv260/scripts/program_bitstream.tcl \
+  -tclargs build/kv260/lab-hw-03/kv260_marker_top.bit
+```
+
+The marker is deliberately clockless: `bank45_gpio[4:0] = 5'b10101`.
+
+## LAB-HW-04
+
+Build:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-04-build.log \
+  -source boards/kv260/scripts/build_lab04_blink.tcl
+```
+
+Program:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-04-program.log \
+  -source boards/kv260/scripts/program_bitstream.tcl \
+  -tclargs build/kv260/lab-hw-04/kv260_blink.bit
+```
+
+Clock/reset contract:
+
+- clock: PS `pl_clk0` (nominal 100 MHz);
+- platform reset source: PS `pl_resetn0`;
+- design-local reset: `proc_sys_reset/peripheral_aresetn` → `kv260_blink_core.resetn`;
+- SW2 remains a SOM-level hard reset and is not the module reset wire.
