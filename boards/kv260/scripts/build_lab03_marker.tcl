@@ -31,14 +31,30 @@ route_design
 
 set timing_report [file join $build_dir timing_summary.rpt]
 set util_report [file join $build_dir utilization.rpt]
+set drc_report [file join $build_dir drc.rpt]
 set bit_file [file join $build_dir kv260_marker_top.bit]
 
 report_timing_summary -file $timing_report
 report_utilization -file $util_report
+report_drc -file $drc_report
+
+# LAB-HW-03 is intentionally clockless. Make that boundary explicit instead
+# of printing a misleading "timing passed" message.
+set clocks [get_clocks -quiet]
+puts "CLOCK_COUNT=[llength $clocks]"
+if {[llength $clocks] != 0} {
+    puts stderr "STATUS=FAIL"
+    puts stderr "ERROR=UNEXPECTED_CLOCK_IN_CLOCKLESS_MARKER"
+    puts stderr "DETAIL=LAB-HW-03 must remain clockless; investigate the project/source set."
+    exit 2
+}
+puts "TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS"
+
 write_bitstream -force $bit_file
 
 puts "BITSTREAM=$bit_file"
 puts "TIMING_REPORT=$timing_report"
 puts "UTILIZATION_REPORT=$util_report"
+puts "DRC_REPORT=$drc_report"
 puts "STATUS=PASS"
 exit 0
