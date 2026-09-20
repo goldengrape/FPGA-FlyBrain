@@ -148,7 +148,7 @@ Current status:
 - Yosys synthesis sanity: **implemented**
 - lint/format: **partially implemented**; there is no unified Python format/lint gate yet
 - trace-consistency check: **not yet automated**
-- bilingual-ID consistency check: **partially automated**; Exercise Notebooks and LAB-HW-00~02 enforce bilingual cell-structure/ID consistency
-- KV260 Physical Lab contract checks: **implemented for LAB-HW-00~02**; CI executes notebook structure checks and Tcl helper success/failure paths using a Tcl stub environment, but does not claim physical-board verification
+- bilingual-ID consistency check: **partially automated**; Exercise Notebooks and LAB-HW-00~04 enforce bilingual cell-structure/ID consistency
+- KV260 Physical Lab contract checks: **implemented for LAB-HW-00~04**; CI checks bilingual Notebook structure, frozen XDC/board-helper contracts, LAB-HW-03/04 open-source RTL behavior, and Tcl helper paths where they can be exercised without Vivado. It does not claim physical-board verification or a real Vivado full build.
 
 A full FPGA build does not need to run on every CI invocation; it can be reserved for checkpoints or nightly builds. Physical KV260 `T-HW-*` results must also follow the physical-evidence boundary in Section 3.2.
