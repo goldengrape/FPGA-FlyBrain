@@ -148,7 +148,7 @@ Oracle：Python fixed-point vectors 或直接构造 expected values。
 - Yosys synthesis sanity：**已实现**
 - lint/format：**部分实现**，尚无统一 Python format/lint gate
 - trace consistency check：**未实现自动化**
-- bilingual ID consistency check：**部分自动化**；作业 Notebook 与 LAB-HW-00~02 已检查双语 cell structure/ID 一致性
-- KV260 Physical Lab contract checks：**LAB-HW-00~02 已实现**；CI 检查 Notebook structure，并用 Tcl stub 跑 helper script 的 success/failure path，但不宣称真实板卡验证通过
+- bilingual ID consistency check：**部分自动化**；作业 Notebook 与 LAB-HW-00~04 已检查双语 cell structure/ID 一致性
+- KV260 Physical Lab contract checks：**LAB-HW-00~04 已实现**；CI 检查双语 Notebook structure、冻结的 XDC/board-helper contract、LAB-HW-03/04 open-source RTL behavior，以及无需 Vivado 即可执行的 Tcl helper path；不宣称真实板卡验证或真实 Vivado full build 已通过
 
 FPGA full build 不要求每次 CI 都跑，可按 checkpoint/nightly 处理。实体 KV260 的 `T-HW-*` 还必须遵守 3.2 的 physical-evidence 边界。
