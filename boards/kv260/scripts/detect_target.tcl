@@ -1,4 +1,4 @@
-# LAB-HW-02: discover a real JTAG device through the local Vivado hardware server.
+# LAB-HW-02: discover the real K26 FPGA device through the local Vivado hardware server.
 # Prerequisites: LAB-HW-00 passed; KV260 powered from J12; J4 USB data connected.
 
 puts "FPGA_FLYBRAIN_LAB=LAB-HW-02"
@@ -32,6 +32,7 @@ if {[llength $targets] == 0} {
 }
 
 set discovered_devices {}
+set kv260_fpga_devices {}
 
 foreach target $targets {
     puts "HW_TARGET=$target"
@@ -46,20 +47,27 @@ foreach target $targets {
     foreach device $devices {
         lappend discovered_devices $device
         puts "HW_DEVICE=$device"
+
+        set normalized [string tolower $device]
+        if {[string match "xck26*" $normalized]} {
+            lappend kv260_fpga_devices $device
+            puts "KV260_FPGA_DEVICE=$device"
+        }
     }
 
     catch {close_hw_target $target}
 }
 
 puts "HW_DEVICE_COUNT=[llength $discovered_devices]"
+puts "KV260_FPGA_DEVICE_COUNT=[llength $kv260_fpga_devices]"
 
 catch {disconnect_hw_server}
 catch {close_hw_manager}
 
-if {[llength $discovered_devices] == 0} {
+if {[llength $kv260_fpga_devices] == 0} {
     puts stderr "STATUS=FAIL"
-    puts stderr "ERROR=NO_HW_DEVICE"
-    puts stderr "DETAIL=Check J12 power, J4 data cable, cable driver, and target ownership."
+    puts stderr "ERROR=NO_KV260_FPGA_DEVICE"
+    puts stderr "DETAIL=Expected an XCK26 device. Check J12 power, J4 data cable, cable driver, and target ownership."
     exit 5
 }
 
