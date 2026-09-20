@@ -6,17 +6,20 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-The board-support layer now implements **LAB-HW-00~04**:
+The board-support layer now implements the authored **LAB-HW-00~06** teaching slice:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
 - `rtl/kv260_marker_top.sv` + `scripts/build_lab03_marker.tcl` — LAB-HW-03 first bitstream;
 - `rtl/kv260_blink_core.sv` + `scripts/build_lab04_blink.tcl` — LAB-HW-04 clock/reset/I/O proof;
 - `constraints/bank45_gpio.xdc` — reviewed Bank 45 logical-port → K26 package-pin mapping;
+- `runtime/ubuntu24_image.json`, `hash_image.py`, and `collect_boot_info.sh` — LAB-HW-05 image/UART evidence helpers;
+- `rtl/kv260_loopback_transform.sv` + `scripts/build_lab06_loopback.tcl` — LAB-HW-06 PS↔PL MMIO loopback design;
+- `runtime/loopback_mmio.py` — LAB-HW-06 self-checking runtime-host script;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-PS/Linux runtime, host↔PL transport, BRAM network state, DDR, and AXI belong to LAB-HW-05~10 and are not implemented by this stage.
+BRAM network state, small-network replay, DDR, and AXI/burst measurement belong to LAB-HW-07~10 and are not implemented by this stage.
 
 ## Authoring baseline
 
@@ -24,7 +27,7 @@ The current lab prose selects **Vivado 2026.1** as the **authoring candidate bas
 
 This is not yet a declaration that Vivado 2026.1 is the physically validated course-support baseline. That promotion requires a real-KV260 dry run and retained evidence.
 
-This repository has not yet recorded a real-KV260 physical pass for this batch. Cloud CI validates notebook/script contracts only and must not be interpreted as `T-HW-002` board evidence.
+This repository has not yet recorded a real-KV260 physical pass for these authored Labs. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as T-HW physical-board evidence.
 
 ## LAB-HW-00
 
