@@ -22,7 +22,7 @@ def evaluate(check_sampled_trace, language: str = "zh"):
     def first_mismatch():
         return (
             check_sampled_trace(
-                [(2, False), (5, True), (0, True)],
+                [(2, False), (5, True), (9, False)],
                 [(2, False), (5, False), (0, True)],
             ) == (False, 1)
             and check_sampled_trace(
