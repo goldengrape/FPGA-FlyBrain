@@ -10,8 +10,8 @@ puts "EXPECTED_VIVADO_VERSION=$expected_vivado_prefix"
 
 if {![string match "${expected_vivado_prefix}*" $vivado_version]} {
     puts stderr "STATUS=FAIL"
-    puts stderr "ERROR=UNSUPPORTED_VIVADO_VERSION"
-    puts stderr "DETAIL=Expected Vivado ${expected_vivado_prefix}.x authoring baseline."
+    puts stderr "ERROR=AUTHORING_BASELINE_MISMATCH"
+    puts stderr "DETAIL=This draft batch targets Vivado ${expected_vivado_prefix}.x; tested-support status still requires real-KV260 dry run."
     exit 2
 }
 
