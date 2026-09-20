@@ -213,34 +213,92 @@ Teach only the constraints needed here:
 
 **Primary new operation:** boot the KV260 PS/runtime host independently, without simultaneously learning the PS↔PL transport.
 
-The learner:
+The Stage-2 authoring image is frozen to the current AMD/Canonical Kria K26 Ubuntu Server image:
 
-- obtains and verifies the course-frozen starter Linux image;
-- writes the image to microSD;
-- uses the course-specified UART-console path;
-- boots the KV260;
-- observes the boot log and completes first login / shell check;
-- distinguishes the development host from the KV260 PS/Linux runtime host.
+- distribution: **Ubuntu Server 24.04 LTS**;
+- image archive: `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`;
+- source page: Canonical **Install Ubuntu on AMD** / Kria K26;
+- target: KV260/KR260/KD240 unified Kria image;
+- microSD guidance: 16 GB UHS-1 or larger;
+- flashing tool for the beginner path: **Raspberry Pi Imager**, matching the current AMD Kria guide.
 
-This lab does not require host↔PL register readback and does not teach full AXI.
+The exact download identity is versioned in `boards/kv260/runtime/ubuntu24_image.json`. The repository records the image filename/source now, but does **not** invent an upstream SHA-256 value that the visible Canonical download index does not publish. The learner computes the downloaded archive SHA-256 with the course helper and records it. Until a controlled course download promotes an expected SHA-256 into that manifest, T-HW-005 may be exercised but must not be labeled a fully frozen image-hash PASS.
 
-**Pass evidence:** image/version/checksum, UART boot log, kernel/OS identification, and one simple shell-command result are saved. The learner can explain why “JTAG programs PL” and “PS/Linux boots” are different paths.
+The physical boot path is:
+
+- microSD in J11;
+- J4 FTDI USB for the UART console;
+- J12 12 V / 3 A power;
+- UART: **115200 baud, 8 data bits, no parity, 1 stop bit, no flow control**;
+- initial Ubuntu login: `ubuntu` / `ubuntu`, followed by the required first-login password change.
+
+The learner retains the complete UART transcript from power-on through login, then records:
+
+```bash
+uname -a
+cat /etc/os-release
+cat /proc/device-tree/model; echo
+sudo xmutil boardid
+sudo xmutil bootfw_status
+```
+
+A successful Linux boot does not prove that custom PL is loaded. Likewise, Vivado/JTAG programming PL does not prove that Linux booted. These are separate paths.
+
+Boot firmware is **observed first, not casually rewritten as part of the main exercise**. If current firmware prevents the supported Ubuntu image from booting, follow the AMD boot-firmware update/recovery instructions as a troubleshooting branch and retain that evidence.
+
+Before removing power, run:
+
+```bash
+sudo shutdown -h now
+```
+
+**Pass evidence:** exact image filename, computed archive SHA-256, flashing method, UART settings/port, UART boot log, kernel/OS/model output, boot-firmware status, current Git commit, board/carrier revision, and a clean shutdown record. Formal image-hash PASS remains blocked while the course expected SHA-256 field is null.
 
 ### LAB-HW-06 — Real host↔PL loopback
 
 **Prerequisites:** LSN-015 and LAB-HW-05.
 
-**Primary new operation:** after PS/Linux boot is understood, let the KV260 runtime host control PL.
+**Primary new operation:** after PS/Linux boot is understood, let the KV260 runtime host control a real PL register path without turning this first roundtrip into a full AXI course.
 
-The minimum semantics remain those introduced in Lesson 15:
+The Stage-2 authoring transport is frozen to the smallest inspectable path:
 
 ```text
-write value → PL stores/processes → read back result
+Ubuntu/Python on PS
+  → /dev/mem MMIO
+  → PS M_AXI_HPM0_FPD
+  → AXI SmartConnect
+  → dual-channel AXI GPIO @ 0xA0010000
+  → kv260_loopback_transform
 ```
 
-The semantic contract is frozen first; RMD-012B then selects the smallest stable KV260 runtime transport. Full AXI is not made a prerequisite merely to get the first loopback working.
+AXI GPIO is used as a teaching adapter rather than asking the learner to write an AXI slave. The only register-map facts required here are taken from AMD PG144:
 
-**Pass evidence:** write, PL-state change, and readback ordering match the contract; a self-checking script detects wrong values/order and distinguishes Linux/transport failures from core-behavior failures.
+- Channel 1 `GPIO_DATA`: base + `0x0000`; configured as 32-bit output;
+- Channel 2 `GPIO2_DATA`: base + `0x0008`; configured as 32-bit input.
+
+The frozen PL behavior is:
+
+```text
+write_value = host writes GPIO_DATA
+read_value  = (write_value + 1) mod 2^32
+host reads GPIO2_DATA
+```
+
+The Vivado address is frozen to **0xA0010000**, matching the address region used by AMD/Xilinx's K26 starter-kit `base_gpio_bram` reference for AXI GPIO. Full AXI channel/ordering details remain deferred to Lesson 18/LAB-HW-10.
+
+The Stage-2 deployment sequence deliberately keeps the two execution domains visible:
+
+1. PS/Linux is already booted from LAB-HW-05.
+2. On the runtime host, unload an active Kria application firmware if one is present: `sudo xmutil unloadapp`.
+3. On the development host, build and direct-JTAG program the dedicated LAB-HW-06 bitstream.
+4. Without power-cycling the board, run `boards/kv260/runtime/loopback_mmio.py` on the PS/Linux side as root.
+5. The self-checking script writes a fixed vector set, reads the transformed result, and fails on any mismatch.
+
+The initial runtime access implementation uses Python `mmap` over `/dev/mem` because it keeps the software side small and exposes the MMIO boundary directly. This is an **authoring-candidate transport until the real Ubuntu 24.04 dry run passes**. If the supported image blocks this MMIO path by policy, that is a transport failure to record and revise (for example to UIO); learners must not weaken system security merely to force a PASS.
+
+**Pass evidence:** LAB-HW-06 bitstream SHA-256, build/timing reports, JTAG program log, fixed base address/register offsets, runtime script version/hash, every write/expected/read triple, final `STATUS=PASS`, Git commit, OS/image identity, and board/carrier revision. A failure before the first MMIO read is classified separately from a wrong PL result.
+
+
 
 ### LAB-HW-07 — BRAM neuron state
 
