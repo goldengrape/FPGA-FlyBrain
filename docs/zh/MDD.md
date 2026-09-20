@@ -185,8 +185,8 @@ boards/
 边界规则：
 
 - `rtl/neuron/`、`rtl/event/`、`rtl/memory/` 不得出现 KV260 connector/pin 名称；
-- JTAG/UART、PS/Linux、DDR controller、Vivado board flow、pin constraints 都属于 platform layer；
-- `MOD-010 host_if` 的**逻辑语义**是装载参数/刺激与读取 spike/telemetry；KV260 上到底通过 AXI-Lite、UIO、XRT 或其他受支持 transport 实现，在 RMD-012B / LAB-HW-04 的文档与 oracle 审批后冻结；
+- JTAG/UART、PS/Linux boot/runtime、DDR controller、Vivado board flow、pin constraints 都属于 platform layer；
+- `MOD-010 host_if` 的**逻辑语义**是装载参数/刺激与读取 spike/telemetry；KV260 上到底通过 AXI-Lite、UIO、XRT 或其他受支持 transport 实现，在 RMD-012B / LAB-HW-06 的文档与 oracle 审批后冻结；
 - board-specific convenience 不得反向改变 `IF-NEURON-UPDATE`、`IF-SPIKE-QUEUE`、`IF-SYNAPSE-STREAM`；
 - Physical Lab 需要的板卡事实以 `KV260_REFERENCE_PLATFORM.md` 与 AMD 官方 board docs 为依据。
 
