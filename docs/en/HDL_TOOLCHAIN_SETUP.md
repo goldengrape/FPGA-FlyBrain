@@ -124,7 +124,7 @@ Lesson 13 does not require a full FPGA-vendor board toolchain. Its goal is an op
 
 ## KV260 Physical Labs use a second tool layer
 
-Starting with `LAB-HW-00~08`, the course enters the **AMD KV260 physical platform**:
+Starting with `LAB-HW-00~10`, the course enters the **AMD KV260 physical platform**:
 
 - reference board: AMD Kria KV260 Vision AI Starter Kit;
 - board-specific build/program uses AMD's supported **Vivado Board Flow**;
@@ -138,9 +138,9 @@ Lessons 6–13
   OSS CAD Suite
   → generic RTL compile/sim/lint/synthesis
 
-LAB-HW-00~08
+LAB-HW-00~10
   AMD KV260 + Vivado/platform tools
   → target-specific implementation/timing/bitstream/program/runtime
 ```
 
-This documentation-first revision **does not yet freeze an exact Vivado version**. The supported version is written into LAB-HW-01/02 only after a complete real-KV260 dry run; do not guess compatibility from third-party tutorials.
+This documentation-first revision **does not yet freeze an exact Vivado version**. The supported version is written into LAB-HW-00 only after a complete real-KV260 dry run; do not guess compatibility from third-party tutorials.
