@@ -1,6 +1,10 @@
 # HDL 工具链安装与 Jupyter 启动
 
-这份说明服务于第 6–8 课的 SystemVerilog/RTL 实验，以及第 13 课的 Yosys synthesis dry run。
+这份说明服务于第 6–8 课的 SystemVerilog/RTL 实验，以及第 13 课的 Yosys synthesis dry run。**它不是 KV260 实体上板工具链说明。**
+
+实体板课程已经冻结参考板卡为 **AMD Kria KV260 Vision AI Starter Kit**。进入 `LAB-HW-*` 前先阅读：
+- [KV260 参考硬件平台](KV260_REFERENCE_PLATFORM.md)
+- [实体 FPGA 实验教学规范](PHYSICAL_FPGA_LABS.md)
 
 Python 环境仍由 `uv` 管理；Icarus Verilog、Verilator、Yosys 等 HDL 工具是独立的系统工具。
 
@@ -116,4 +120,27 @@ uv run python -c "import shutil; print(shutil.which('yosys'))"
 4. 修改环境后，是否关闭旧的 Jupyter server 并重新启动；
 5. Notebook 是否选择了项目的 **FPGA FlyBrain** kernel。
 
-本课不要求安装 FPGA 厂商的完整板卡工具链。Lesson 13 的目标只是做一次开源 generic synthesis dry run；具体板卡的 implementation、timing sign-off 与 bitstream 工具留到实体平台阶段。
+Lesson 13 不要求安装 FPGA 厂商的完整板卡工具链。它的目标只是做一次开源 generic synthesis dry run。
+
+## KV260 Physical Lab 使用另一套工具层
+
+从 `LAB-HW-00~08` 开始，课程进入 **AMD KV260 实体平台**：
+
+- reference board：AMD Kria KV260 Vision AI Starter Kit；
+- board-specific build/program 使用 AMD 官方支持的 **Vivado Board Flow**；
+- development host 通过 KV260 的 JTAG/UART 路径进行 target discovery / programming；
+- 后续 runtime host/PS 路径与 microSD/Linux 属于 Physical Lab，而不是 OSS CAD Suite 的职责。
+
+这两套工具不要混淆：
+
+```text
+Lessons 6–13
+  OSS CAD Suite
+  → generic RTL compile/sim/lint/synthesis
+
+LAB-HW-00~08
+  AMD KV260 + Vivado/platform tools
+  → target-specific implementation/timing/bitstream/program/runtime
+```
+
+本次 documentation-first 修订**尚未冻结具体 Vivado 版本**。具体支持版本要在写 LAB-HW-01/02 prose 时，用真实 KV260 完整 dry run 后再写入课程；在此之前不要根据网络教程猜测版本兼容性。
