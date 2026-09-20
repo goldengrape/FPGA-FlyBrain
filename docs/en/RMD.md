@@ -139,13 +139,15 @@ The reference board is frozen to the **AMD Kria KV260 Vision AI Starter Kit**. P
 
 Physical Labs:
 
-- **LAB-HW-00**: board orientation; identify the K26 SOM, carrier, J12 power, J4 UART/JTAG, microSD, Ethernet, reset, and carrier revision;
-- **LAB-HW-01**: correct power-up and target enumeration; isolate power/cable/JTAG/driver/tool failures from RTL failures.
+- **LAB-HW-00**: vendor-toolchain preflight; before connecting a board, freeze/verify Vivado version, JTAG cable driver, and KV260 board files / board flow;
+- **LAB-HW-01**: board orientation; identify K26 SOM, carrier, J12 power, J4 UART/JTAG, microSD, Ethernet, SW2 SOM reset, and carrier revision;
+- **LAB-HW-02**: correct power-up and target enumeration; isolate power/cable/JTAG failures from RTL failures.
 
 Pass criteria:
+- vendor-toolchain preflight has textual evidence;
 - learner can connect the KV260 correctly from a powered-off state;
 - development host can discover the target reliably;
-- board revision, tool version, and target identification are recorded;
+- board revision, tool version, board-file/platform version, and target identification are recorded;
 - the planned `boards/kv260/` platform-shell boundary is clear and board pins/platform IP do not leak into core RTL.
 
 ### RMD-012A First physical proof
@@ -154,24 +156,38 @@ Major new concept: **a bitstream turns RTL into a real implementation, and a log
 
 Physical Labs:
 
-- **LAB-HW-02**: minimal RTL through synthesis → implementation → timing → bitstream → program;
-- **LAB-HW-03**: constraints and physical behavior for clock/reset/one safe board-visible I/O.
+- **LAB-HW-03**: minimal RTL through synthesis → implementation → timing → bitstream → program;
+- **LAB-HW-04**: constraints and physical behavior for clock/design-local reset/one safe board-visible I/O.
 
 Pass evidence includes:
 - no blocking build/implementation error;
 - bitstream/build-artifact hash;
 - programming success;
-- KV260 PL-configuration-status evidence;
+- configuration evidence appropriate to the actual programming path;
 - at least one observable result proving that the learner's design is active rather than merely board power;
-- real reset/input produces the specified output behavior.
+- real/readable input or local-reset source produces the specified output behavior;
+- learner distinguishes SW2 SOM-level hard reset from the FlyBrain design-local reset.
+
+**DS34 is not a universal JTAG-programming oracle.** Use DS34 with its PS-done meaning only when the PS actually loads PL; Vivado/JTAG direct programming uses device programming status plus the design's own observable output as primary evidence.
 
 The first physical proof does not simultaneously teach AXI, DDR, or the FlyBrain network.
 
-### RMD-012B Host ↔ FPGA minimal loopback
+### RMD-012B PS/Linux runtime-host bridge → Host ↔ FPGA minimal loopback
 
-Major new concept: **the development PC build/program path and the KV260 PS/runtime-host control path are different paths.**
+Insert a separate bridge before host↔PL so Linux boot, serial-console use, and the runtime transport do not all arrive for the first time together.
 
-This maps to **LAB-HW-04**. Freeze the semantic contract first:
+Physical Labs:
+
+- **LAB-HW-05**: starter Linux image → microSD → UART console → PS boot/login; prove only that the KV260 PS/Linux runtime host can boot;
+- **LAB-HW-06**: after LAB-HW-05 passes, perform the real PS/runtime-host ↔ PL minimal loopback.
+
+LAB-HW-05 pass criteria:
+- starter Linux image version/checksum recorded;
+- UART boot log retained;
+- shell reached with kernel/OS identification;
+- learner distinguishes development host from runtime host/PS.
+
+LAB-HW-06 freezes the semantic contract first:
 
 ```text
 write value → PL stores/processes → read back result
@@ -179,18 +195,18 @@ write value → PL stores/processes → read back result
 
 The exact runtime transport (for example AXI-Lite/UIO/XRT or another supported path) is selected only after the Lab prose and TDD oracle are reviewed. Prefer the smallest stable path rather than using the first loopback to teach full AXI.
 
-Pass criteria:
+LAB-HW-06 pass criteria:
 - write/readback is repeatable;
 - PL state/operation ordering matches the contract;
-- a self-checking host script can distinguish transport failure from core-behavior failure.
+- a self-checking host script distinguishes Linux/transport failure from core-behavior failure.
 
 ### RMD-013 Run small network on FPGA
 
-Use **LAB-HW-05** first to map Lesson 9's abstract neuron-state memory onto real on-chip BRAM resources, then use **LAB-HW-06** to move the already-verified Platform 3 network onto hardware.
+Use **LAB-HW-07** first to map Lesson 9's abstract neuron-state memory onto real on-chip BRAM resources, then use **LAB-HW-08** to move the already-verified Platform 3 network onto hardware.
 
-LAB-HW-05 teaches only the address/read/write/synchronous-read behavior and resource-report interpretation needed by this design; it does not teach every BRAM primitive parameter.
+LAB-HW-07 teaches only the address/read/write/synchronous-read behavior and resource-report interpretation needed by this design; it does not teach every BRAM primitive parameter.
 
-LAB-HW-06 uses the same fixed input/seed and compares KV260 output against the Python fixed-point reference for L5 replay.
+LAB-HW-08 uses the same fixed input/seed and compares KV260 output against the Python fixed-point reference for L5 replay.
 
 Pass criteria:
 - multi-address neuron-state read/write is correct;
@@ -202,13 +218,13 @@ Pass criteria:
 
 ### RMD-013A Memory hierarchy & bandwidth bridge
 Major new concept: **moving data can cost more than arithmetic**.  
-First compare sequential, random, and batched/burst-like access and distinguish latency from throughput. Concept lessons may start with models; real measurements are produced by LAB-HW-07/08.
+First compare sequential, random, and batched/burst-like access and distinguish latency from throughput. Concept lessons may start with models; real measurements are produced by LAB-HW-09/10.
 
 ### RMD-014 DDR hello-world
 
 Major new concept: **external memory has its own latency and control path**.
 
-This maps to **LAB-HW-07** using KV260 platform-provided controllers/IP:
+This maps to **LAB-HW-09** using KV260 platform-provided controllers/IP:
 
 ```text
 known payload → DDR write → DDR read → byte/checksum compare → measurement
@@ -225,11 +241,18 @@ Pass criteria:
 
 Major new concept: **move contiguous data efficiently through standardized bus transactions**.
 
-This maps to **LAB-HW-08**. Learn only the project-required AXI subset and compare small/scattered versus burst-oriented transfers on a real KV260. The required objective is “use + measure”; implementing a complete AXI master from scratch is optional.
+This maps to **LAB-HW-10**. Learn only the project-required AXI subset and compare small/scattered versus burst-oriented transfers on a real KV260. The required objective is “use + measure”; implementing a complete AXI master from scratch is optional.
+
+Default measurement protocol:
+- same bitstream, data volume, payload, and measurement boundary;
+- 5 warm-up runs excluded from statistics;
+- at least 20 measured repetitions per access pattern;
+- median as the primary result, retaining all raw samples plus min/max;
+- repeat a second batch in the same session; the two medians must differ by ≤10% to call the measurement reproducible, otherwise label it `measurement unstable`;
+- state whether host/software overhead is inside the timer.
 
 Pass criteria:
-- same data volume and explicit measurement window;
-- repeatable latency/effective-bandwidth results for at least two access patterns;
+- at least two access patterns satisfy the reproducible-measurement protocol;
 - workload contract is explicit and no single measurement is generalized into “AXI/FPGA is faster.”
 
 ### RMD-015 Move synapse store to DDR
@@ -239,7 +262,7 @@ Test: identical network results with on-chip versus DDR storage.
 ### RMD-016 Throughput baseline
 Measure the currently available subset of P-001~P-008.
 
-**Platform 4 completion:** the learner can start from an unconfigured KV260 and independently complete target discovery, bitstream build/program, physical I/O, host↔PL loopback, BRAM state, small-network replay, DDR integrity, and real bandwidth measurement. The FPGA network uses external memory, and the learner can explain and measure the memory bottleneck.
+**Platform 4 completion:** the learner can start from a development host whose vendor toolchain is not yet configured and a powered-off KV260, then independently complete toolchain preflight, board orientation, target discovery, bitstream build/program, physical I/O, PS/Linux first boot, host↔PL loopback, BRAM state, small-network replay, DDR integrity, and real bandwidth measurement. The FPGA network uses external memory, and the learner can explain and measure the memory bottleneck.
 
 # Platform 5 — I can run real neural-system data
 
@@ -288,8 +311,8 @@ Use the same model, data, and inputs to compare latency, throughput, memory traf
 |---|---|---|
 | Python → RTL | clock/register/HDL/waveform/bit width arrive together | RMD-003A three micro hardware experiments |
 | Multi-neuron → event-driven | sparse graph/FIFO/router arrive together | RMD-007A four-neuron event walkthrough |
-| Simulation → FPGA | power/cable/JTAG, bitstream, constraints, and host I/O arrive together | RMD-011A + LAB-HW-00~06 split target discovery, first bitstream, physical I/O, loopback, BRAM, and small replay |
-| FPGA → DDR/AXI | memory hierarchy/DDR/AXI/bandwidth arrive together | RMD-013A + LAB-HW-07/08 split integrity from measurement |
+| Simulation → FPGA | vendor toolchain, power/cable/JTAG, bitstream, constraints, PS/Linux, and host I/O arrive together | RMD-011A + LAB-HW-00~08 split toolchain preflight, board orientation, target discovery, first bitstream, physical I/O, PS boot, loopback, BRAM, and small replay |
+| FPGA → DDR/AXI | memory hierarchy/DDR/AXI/bandwidth arrive together | RMD-013A + LAB-HW-09/10 split integrity from measurement |
 
 ## 4. Current first execution batch
 1. RMD-001 Python LIF float reference
