@@ -218,6 +218,7 @@ FPGA-FlyBrain/
     kv260/
       README.md
       scripts/      # LAB-HW-00~02 的 preflight + target discovery
+      evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
   tb/
@@ -243,14 +244,13 @@ boards/
   kv260/
     rtl/            # 后续 platform shell
     constraints/    # 经 Lab 审批的 board/XDC glue
-    evidence/       # 生成的实体 evidence，不是设计 source
 tests/
 data/
 okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/scripts/` 只实现 LAB-HW-00~02 的教学/support slice，不代表 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
+当前 `labs/`、`boards/kv260/scripts/` 与 `boards/kv260/evidence/` template 只实现 LAB-HW-00~02 的教学/support slice，不代表 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
