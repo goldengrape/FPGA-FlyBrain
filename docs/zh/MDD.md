@@ -186,7 +186,7 @@ boards/
 
 - `rtl/neuron/`、`rtl/event/`、`rtl/memory/` 不得出现 KV260 connector/pin 名称；
 - JTAG/UART、PS/Linux boot/runtime、DDR controller、Vivado board flow、pin constraints 都属于 platform layer；
-- `MOD-010 host_if` 的**逻辑语义**是装载参数/刺激与读取 spike/telemetry；KV260 上到底通过 AXI-Lite、UIO、XRT 或其他受支持 transport 实现，在 RMD-012B / LAB-HW-06 的文档与 oracle 审批后冻结；
+- `MOD-010 host_if` 的**逻辑语义**是装载参数/刺激与读取 spike/telemetry；LAB-HW-06 现在只冻结一条**教学 transport**：PS `M_AXI_HPM0_FPD` → SmartConnect → `0xA0010000` dual-channel AXI GPIO，并由 fixed-address、root-only 的 `/dev/mem` helper 访问。这不冻结后续正式 MOD-010 software stack；driver/UIO/XRT 或其他受支持路径可以替换教学 transport，而不改变逻辑 contract；
 - board-specific convenience 不得反向改变 `IF-NEURON-UPDATE`、`IF-SPIKE-QUEUE`、`IF-SYNAPSE-STREAM`；
 - Physical Lab 需要的板卡事实以 `KV260_REFERENCE_PLATFORM.md` 与 AMD 官方 board docs 为依据。
 
@@ -211,17 +211,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~05 已实现
+    en/             # LAB-HW-00~06 已实现
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbench
       constraints/  # 冻结的 Bank 45 XDC mapping
       scripts/      # preflight、discovery、build、program helper
-      runtime/      # LAB-HW-05 Ubuntu identity 与 boot-evidence helper
+      runtime/      # LAB-HW-05/06 Ubuntu identity、boot evidence 与 MMIO checker
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -253,7 +253,7 @@ okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~05 的教学/support slice，其中包括首批 board-specific marker/blink RTL、冻结的 Bank 45 physical mapping，以及独立的 PS/Linux image/UART/boot-evidence helper，不代表 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~06 的教学/support slice，其中包括 marker/blink RTL、冻结的 Bank 45 physical mapping、PS/Linux image/UART/boot-evidence helper，以及第一条 PS↔PL MMIO loopback 教学路径。LAB-HW-06 包含 `kv260_loopback_transform`、testbench、Vivado build helper 与 runtime checker；这不代表正式 MOD-010、通用 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
