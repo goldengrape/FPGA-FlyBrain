@@ -47,7 +47,7 @@
 瓶颈在哪里？
 ```
 
-他/她应该已经亲手接触 register、RAM/BRAM、FIFO、pipeline、fixed point、DDR bandwidth、sparse/event-driven computation、FPGA accelerator 和 neuromorphic hardware 的基本概念；并且能在 **AMD Kria KV260 Vision AI Starter Kit** 上完成从 target discovery、first bitstream、physical I/O、host↔PL loopback 到 small FlyBrain replay 的基础上板路径。
+他/她应该已经亲手接触 register、RAM/BRAM、FIFO、pipeline、fixed point、DDR bandwidth、sparse/event-driven computation、FPGA accelerator 和 neuromorphic hardware 的基本概念；并且能在 **AMD Kria KV260 Vision AI Starter Kit** 上完成从 vendor toolchain preflight、target discovery、first bitstream、physical I/O、PS/Linux first boot、host↔PL loopback 到 small FlyBrain replay 的基础上板路径。
 
 ## 4. 三层翻译
 重要概念尽量同时用三种语言描述：
@@ -110,7 +110,7 @@ FlyBrain 产品系统当前被整理为严格下三角的 decoupled design。验
 - Python → RTL 的 Digital Hardware Bridge；
 - 多神经元 → event-driven 的 4-neuron bridge；
 - simulation → FPGA 的 synthesis/first-bitstream/loopback bridge；
-- **KV260 Physical Lab Track**：board orientation → target detection → first bitstream → constraints/I/O → host loopback → BRAM → small network replay；
+- **KV260 Physical Lab Track**：toolchain preflight → board orientation → target detection → first bitstream → constraints/I/O → PS/Linux first boot → host loopback → BRAM → small network replay；
 - FPGA → DDR/AXI 的 memory hierarchy/bandwidth bridge。
 
 桥接章节不是“补课附录”，而是正式课程内容。
