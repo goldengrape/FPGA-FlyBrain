@@ -2,9 +2,9 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r1
-- Date: 2026-09-16
-- Purpose of this revision: separate the FlyBrain product system from the learning/engineering process, verify a lower-triangular decoupled product matrix, and apply Axiomatic Design to the learning curve itself.
+- Revision: v0.3-r2
+- Date: 2026-09-19
+- Purpose of this revision: separate the FlyBrain product system from the learning/engineering process, verify a lower-triangular decoupled product matrix, apply Axiomatic Design to the learning curve, freeze KV260 as the reference board, and decompose zero-experience physical bring-up into a Physical Lab Track.
 
 ## 1. Design principles
 1. **Independence Axiom**: preserve the independence of Functional Requirements (FRs) as far as practical.
