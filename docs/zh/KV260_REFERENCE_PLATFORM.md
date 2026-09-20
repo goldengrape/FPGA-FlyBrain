@@ -44,8 +44,8 @@ platform shell isolation
 - **J3** 是绕过 FTDI 的 direct JTAG 接口；
 - **J11** 是 microSD card interface；
 - **J10** 是 1 Gb/s Ethernet；
-- **SW2** 是 SOM reset；
-- SOM 上的 **DS34** 是 PS done LED，点亮表示 PS 已成功加载 PL design；
+- **SW2** 是 SOM-level reset；它用于复位整个 SOM，**不能自动等同于 FlyBrain 某个 RTL module 的 local `rst_n`**；
+- SOM 上的 **DS34** 是 PS done LED，点亮表示 **PS 已成功加载 PL design**；它不是所有 programming path 的通用“FPGA 已配置”指示灯；
 - KV260 carrier card 至少存在 Rev. 1.0 与 Rev. 2.0 两个版本，部分接口/功能有版本差异；
 - Vivado 提供 **KV260 Starter Kit** board flow；该 board flow 能利用 SOM/companion-card 元数据处理固定平台资源与相关约束；
 - AMD 的软件入门路径使用 microSD 上的 starter Linux image；本课程后续 host↔PL lab 会把“开发电脑”和“KV260 上的 PS/Linux runtime host”明确区分。
@@ -60,7 +60,7 @@ platform shell isolation
 
 ## 3. 学生需要准备什么
 
-实体 Lab 的最低硬件清单在对应 Lab 编写时再次核对。当前文档阶段冻结下面这些类别：
+实体 Lab 的最低硬件清单在对应 Lab 编写时再次核对。进入实体板前，先完成 **LAB-HW-00 vendor toolchain preflight**，把开发电脑上的 Vivado、JTAG cable driver 和 KV260 board files 与真实板卡问题分开。当前文档阶段冻结下面这些类别：
 
 - KV260 Vision AI Starter Kit；
 - 符合官方要求的 12 V / 3 A 电源；
@@ -95,6 +95,8 @@ K26 上的 Arm processing system（PS），后续通常运行 Linux，负责：
 - 后续数据装载与 telemetry。
 
 因此 Physical Lab 不把“电脑通过 JTAG program FPGA”和“runtime software 通过 PS↔PL 接口控制 PL”混成同一个动作。
+
+两者之间还必须有独立的 **PS/Linux first-boot bridge**：starter Linux image → microSD → UART console → boot/login。学生先证明 PS/Linux runtime host 本身能启动，再进入 PS↔PL loopback；不能把 Linux boot、serial console 和 host transport 第一次同时引入。
 
 ## 5. 平台抽象边界
 
@@ -148,9 +150,13 @@ boards/kv260/
 - 具体 XDC pin assignment；
 - host↔PL 最终使用 AXI-Lite、UIO、XRT 或其他 runtime transport 的实现细节；
 - DDR access software stack；
-- Vivado 的精确支持版本。
+- Vivado 的精确支持版本；
+- starter Linux image 的精确版本/checksum；
+- design-local reset 最终采用哪个 platform/local source。
 
-这些将在对应 `LAB-HW-*` prose 与 TDD oracle 先审完后，再进入 board-specific implementation。选择时优先采用 AMD 官方 board flow，且不得因为某个 demo 方便而改变 FlyBrain core contract。
+这些将在对应 `LAB-HW-*` prose 与 TDD oracle 先审完、并在真实 KV260 上完成对应 dry run 后，再进入 board-specific implementation。LAB-HW-00 冻结 vendor toolchain version/board files；LAB-HW-05 冻结 starter Linux image/UART first-boot path；LAB-HW-04 冻结 design-local reset source；LAB-HW-06 冻结 runtime transport。选择时优先采用 AMD 官方支持路径，且不得因为某个 demo 方便而改变 FlyBrain core contract。
+
+**证据语义也必须与路径一致：** 如果使用 Vivado/JTAG 直接 program PL，以 Vivado/device status 和设计自身 observable output 为主要证据；只有 PS 实际负责加载 PL 时，DS34 的 PS-done 语义才能用于该路径的证据。
 
 ## 8. 参考板卡决策
 
