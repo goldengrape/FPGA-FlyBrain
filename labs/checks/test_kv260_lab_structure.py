@@ -310,4 +310,7 @@ def test_lab06_freezes_minimal_ps_pl_roundtrip_without_turning_into_axi_course()
         assert "read = (write + 1) mod 2^32" in text
         assert "--base 0xA0010000" not in text
         assert "DDR" in text
-        assert "performance" in text.lower()
+        if language == "en":
+            assert "performance" in text.lower()
+        else:
+            assert "性能" in text
