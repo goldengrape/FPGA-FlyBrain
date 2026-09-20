@@ -143,4 +143,4 @@ LAB-HW-00~10
   → target-specific implementation/timing/bitstream/program/runtime
 ```
 
-本次 documentation-first 修订**尚未冻结具体 Vivado 版本**。具体支持版本要在写 LAB-HW-00 prose 时，用真实 KV260 完整 dry run 后再写入课程；在此之前不要根据网络教程猜测版本兼容性。
+LAB-HW-00 可以先指定一个 Vivado **authoring candidate**，用于让教材和 helper script 保持可复现；但这个 candidate **还不是已测试的课程支持 baseline**。只有在真实 KV260 上完成完整 dry run 并留下 physical evidence 后，才能升级为 supported/tested 状态；不要根据第三方教程猜测兼容性。
