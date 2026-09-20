@@ -31,7 +31,7 @@ Scenario: small networks of roughly 10–1000 neurons.
 Compare spike sequences event-by-event or step-by-step; compare neuron-state checksums where useful.
 
 ### L5 FPGA board verification
-The reference board is KV260. Complete target-discovery / programming / physical-I/O / host-loopback `T-HW-*` checkpoints first, then replay fixed seeds and input events, capture outputs, and compare against RTL simulation and Python references.
+The reference board is KV260. Complete vendor-toolchain preflight / target-discovery / programming / physical-I/O / PS/Linux-boot / host-loopback `T-HW-*` checkpoints first, then replay fixed seeds and input events, capture outputs, and compare against RTL simulation and Python references.
 
 ### L6 Connectome subset verification
 Choose a real subgraph of roughly 1K neurons. The exact same binary image is consumed by software and FPGA implementations.
@@ -64,31 +64,49 @@ Choose a real subgraph of roughly 1K neurons. The exact same binary image is con
 
 These `T-HW-*` items are physical-lab oracles. They do not replace T-001~T-016 model/algorithm correctness tests. Ordinary cloud CI without a real KV260 must never mark them as passed.
 
-- **T-HW-001 Target discovery**: with the KV260 correctly powered, the development host reliably enumerates the target through the course-specified JTAG path; record board/carrier revision, tool version, and target identification.
-- **T-HW-002 First bitstream program**: the approved minimal design completes implementation/timing, produces a bitstream, and programs successfully; retain the artifact hash and PL-configuration-status evidence.
-- **T-HW-003 Physical clock/reset/I/O**: real clock/reset and one course-approved physical I/O behave according to contract; wrong constraints or a held reset must be detectable.
-- **T-HW-004 Host↔PL loopback**: the runtime host writes PL state/operations and reads results back in a fixed sequence; a self-checking script detects wrong values/order.
-- **T-HW-005 BRAM neuron-state store**: state read/write is correct across multiple addresses, and synthesis/resource reports show the intended on-chip-memory mapping.
-- **T-HW-006 Small FlyBrain replay**: for a fixed network image / seed / input, KV260 spike/state traces match the Python fixed-point reference under the frozen contract.
-- **T-HW-007 DDR integrity**: a known payload reads back byte-for-byte or with the approved checksum; any integrity failure blocks performance claims.
-- **T-HW-008 AXI/burst measurement**: with the same data volume and explicit measurement window, at least two access patterns produce repeatable latency/effective-bandwidth measurements.
-- **T-HW-009 Hardware evidence manifest**: every physical checkpoint records Git commit, board model/revision, tool version, board/platform version when known, bitstream/build hash, test input, output summary, and date.
+- **T-HW-001 Vendor toolchain preflight**: the course-frozen Vivado version, JTAG cable driver, and KV260 board files/board flow work on the development host; retain OS, tool version, board-file/platform version, and preflight output.
+- **T-HW-002 Target discovery**: with the KV260 correctly powered, the development host reliably enumerates the target through the course-specified JTAG path; record board/carrier revision and target identification.
+- **T-HW-003 First bitstream program**: the approved minimal design completes implementation/timing, produces a bitstream, and programs successfully; retain artifact hash, configuration evidence appropriate to the actual programming path, and the design's own observable output. Use DS34 only with its PS-done meaning when the PS actually loads PL.
+- **T-HW-004 Physical clock/reset/I/O**: real clock, the course-frozen design-local reset source, and one approved physical/readable I/O behave according to contract; wrong constraints or a held reset must be detectable. SW2 proves only SOM-level hard reset and is not automatically a module reset.
+- **T-HW-005 PS/Linux first boot**: the course-frozen starter Linux image is version/checksum verified and written to microSD; KV260 boots through the course-specified UART console, produces a boot log, and reaches a shell; the learner distinguishes the development host from the runtime host/PS.
+- **T-HW-006 Host↔PL loopback**: after T-HW-005 passes, the runtime host writes PL state/operations and reads results back in a fixed sequence; a self-checking script detects wrong values/order and distinguishes Linux/transport failure from core-behavior failure.
+- **T-HW-007 BRAM neuron-state store**: state read/write is correct across multiple addresses, and synthesis/resource reports show the intended on-chip-memory mapping.
+- **T-HW-008 Small FlyBrain replay**: for a fixed network image / seed / input, KV260 spike/state traces match the Python fixed-point reference under the frozen contract.
+- **T-HW-009 DDR integrity**: a known payload reads back byte-for-byte or with the approved checksum; any integrity failure blocks performance claims.
+- **T-HW-010 AXI/burst measurement**: with the same bitstream, data volume, payload, and measurement boundary, each access pattern gets 5 warm-up runs followed by at least 20 measured repetitions; use the median as the primary result and retain all raw samples plus min/max. A second batch in the same session should differ from the first batch median by ≤10%; otherwise label the result `measurement unstable` and make no performance conclusion.
+- **T-HW-011 Hardware evidence manifest**: every physical checkpoint records Git commit, board model/revision, tool version, board/platform version when known, Linux-image/version when PS boot is involved, bitstream/build hash, test input, output summary, and date.
 
 ### 3.1 Minimum physical evidence
 
 “No tool error” is not a pass criterion. A board test needs at least one direct evidence source:
 
+- toolchain/version preflight log;
 - target/program log;
+- UART boot log;
 - physical/readable I/O observation;
 - host readback;
 - hardware trace;
 - resource/timing report;
 - differential replay report;
-- DDR integrity/bandwidth measurement.
+- DDR integrity/bandwidth raw samples + summary.
 
 A photo may supplement evidence that a real board visibly changed, but it never replaces a machine-readable oracle.
 
-### 3.2 Hardware runner / CI boundary
+### 3.2 Default performance-measurement protocol
+
+Unless a lab justifies a stricter protocol with real evidence, board-level performance comparisons default to:
+
+1. pass correctness / integrity first;
+2. fix bitstream, data volume, payload, and timer boundaries;
+3. exclude 5 warm-up runs from statistics;
+4. measure each access pattern at least 20 times;
+5. report the median as the primary value and retain raw samples plus min/max;
+6. repeat a second measurement batch in the same session; the two batch medians must differ by ≤10% to call the result reproducible;
+7. state whether host/software overhead is included in the timer.
+
+If item 6 fails, the result may be reported only as an unstable observation, not as evidence for a “faster/slower” engineering conclusion.
+
+### 3.3 Hardware runner / CI boundary
 
 - A full Vivado + physical-board run is not required on every normal CI commit.
 - Automatable HDL, report parsers, and host self-check scripts belong in ordinary CI.
