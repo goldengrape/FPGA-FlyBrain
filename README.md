@@ -130,7 +130,7 @@ This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanit
 
 The physical teaching path now freezes the **AMD Kria KV260 Vision AI Starter Kit** as the first complete reference board. Concept lessons remain board-neutral where practical, while the zero-experience Physical Lab track will give explicit KV260 steps for vendor-toolchain preflight, power, JTAG/UART, target discovery, first bitstream, constraints/I/O, PS/Linux first boot, host↔PL, BRAM, DDR, and AXI/burst measurement.
 
-The documentation-first design is now being implemented. **LAB-HW-00~05** have bilingual student Notebooks and board-support/runtime artifacts under `boards/kv260/`; LAB-HW-05 adds the PS/Linux first-boot and UART evidence path. Real-KV260 physical verification and a real Vivado full-build dry run are still pending.
+The documentation-first design is now being implemented. **LAB-HW-00~06** have bilingual student Notebooks and board-support/runtime artifacts under `boards/kv260/`; LAB-HW-05 adds PS/Linux first boot, and LAB-HW-06 adds the first PS↔PL MMIO loopback teaching path. Real-KV260 T-HW evidence and a real Vivado LAB-HW-06 full-build dry run are still pending.
 
 Read:
 
@@ -238,7 +238,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 
 ## Current status
 
-Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen.** LAB-HW-00~05 now have bilingual Notebooks and CI contracts. LAB-HW-03/04 also include board-specific RTL, the frozen Bank 45 XDC mapping, Vivado build/program helpers, and open-source RTL simulations; LAB-HW-05 adds the Ubuntu image-identity/UART/boot-evidence helpers. LAB-HW-06~10 and all real-board evidence remain pending. The first formal implementation slice has not yet been declared complete.
+Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen.** LAB-HW-00~06 now have bilingual Notebooks and CI contracts. LAB-HW-03/04 include board-specific RTL, Bank 45 XDC, Vivado build/program helpers, and open-source simulations; LAB-HW-05 adds Ubuntu image/UART/boot-evidence helpers; LAB-HW-06 adds the frozen PS→PL AXI-GPIO path, transform RTL/testbench, Vivado build contract, and self-checking MMIO helper. LAB-HW-07~10 and all real-board evidence remain pending. The first formal implementation slice has not yet been declared complete.
 
 Current first implementation batch:
 

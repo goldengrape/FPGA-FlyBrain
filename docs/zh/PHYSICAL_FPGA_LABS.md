@@ -258,17 +258,47 @@ sudo shutdown -h now
 
 **前置：** LSN-015、LAB-HW-05。
 
-**主要新操作：** 在已经会启动 PS/Linux 的前提下，让 KV260 runtime host 控制 PL。
+**主要新操作：** 在已经会启动 PS/Linux 的前提下，让 KV260 runtime host 控制真实 PL register path，但不把第一次 roundtrip 变成完整 AXI 课程。
 
-最小语义保持与 L15 一致：
+LAB-HW-06 的教学 transport 冻结为最小、可检查的路径：
 
 ```text
-write value → PL stores/processes → read back result
+Ubuntu/Python on PS
+  → /dev/mem MMIO
+  → PS M_AXI_HPM0_FPD
+  → AXI SmartConnect
+  → dual-channel AXI GPIO @ 0xA0010000
+  → kv260_loopback_transform
 ```
 
-本 Lab 先冻结 semantic contract，再在 RMD-012B 选择 KV260 的最小稳定 runtime transport；不为了“先跑起来”提前要求学生理解完整 AXI。
+AXI GPIO 只作为 teaching adapter，不要求学生第一次 loopback 就手写 AXI slave。本 Lab 只需要 AMD PG144 的两个 register-map 事实：
 
-**通过证据：** 写入、PL 状态变化、读回顺序均与预期一致，self-checking script 能检测错误值/错误顺序，并能区分 Linux/transport failure 与 core behavior failure。
+- Channel 1 `GPIO_DATA`：base + `0x0000`，配置为 32-bit output；
+- Channel 2 `GPIO2_DATA`：base + `0x0008`，配置为 32-bit input。
+
+冻结的 PL behavior：
+
+```text
+write_value = host 写 GPIO_DATA
+read_value  = (write_value + 1) mod 2^32
+host 从 GPIO2_DATA 读回
+```
+
+Vivado address 冻结为 **0xA0010000**；AMD/Xilinx K26 starter-kit `base_gpio_bram` reference 也把 AXI GPIO 放在这一 address region。完整 AXI channel/ordering 细节继续推迟到 Lesson 18 / LAB-HW-10。
+
+第二阶段 deployment sequence 刻意让两个执行域保持可见：
+
+1. PS/Linux 已通过 LAB-HW-05 启动；
+2. runtime host 上如果已有 Kria application firmware active，执行 `sudo xmutil unloadapp`；
+3. development host 上 build 并通过 direct JTAG program 专用 LAB-HW-06 bitstream；
+4. **不要 power-cycle**，回到 PS/Linux，以 root 身份运行 `boards/kv260/runtime/loopback_mmio.py`；
+5. self-checking script 对固定 vector 逐个 write/read，任何 mismatch 都 FAIL。
+
+runtime access 使用 Python `mmap` 访问固定的 `/dev/mem` MMIO region，因为它让 software side 最小并直接暴露 MMIO boundary。这条 fixed-address path 冻结为 **LAB-HW-06 的教学 transport**，不代表后续 MOD-010 一定继续使用 `/dev/mem`；helper 不开放任意 base address。如果受支持 image 的系统策略阻止这条 MMIO path，应保存 transport failure、保持 T-HW-006 阻塞并在后续仓库修订 transport；**不能为了强行 PASS 去降低系统安全策略**。
+
+**通过证据：** LAB-HW-06 bitstream SHA-256、build/timing reports、JTAG program log、固定 base address/register offsets、runtime script version/hash、每个 write/expected/read triple、最终 `STATUS=PASS`、Git commit、OS/image identity、board/carrier revision。第一次 MMIO read 之前的失败必须与“PL 算错了”分开分类。
+
+
 
 ### LAB-HW-07 — BRAM neuron state / 第一次使用真实片上 RAM resource
 

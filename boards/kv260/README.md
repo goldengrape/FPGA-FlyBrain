@@ -6,7 +6,7 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-The board-support layer now implements **LAB-HW-00~05**:
+The board-support layer now implements **LAB-HW-00~06**:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
@@ -14,10 +14,12 @@ The board-support layer now implements **LAB-HW-00~05**:
 - `rtl/kv260_blink_core.sv` + `scripts/build_lab04_blink.tcl` — LAB-HW-04 clock/reset/I/O proof;
 - `constraints/bank45_gpio.xdc` — reviewed Bank 45 logical-port → K26 package-pin mapping;
 - `runtime/ubuntu24_image.json`, `hash_image.py`, and `collect_boot_info.sh` — LAB-HW-05 image/UART evidence helpers;
+- `rtl/kv260_loopback_transform.sv` + `scripts/build_lab06_loopback.tcl` — LAB-HW-06 PS↔PL MMIO loopback design;
+- `runtime/loopback_mmio.py` — LAB-HW-06 self-checking runtime-host helper;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-Host↔PL transport, BRAM network state, DDR, and AXI belong to LAB-HW-06~10 and are not implemented by this stage. LAB-HW-05 implements only the independent PS/Linux first-boot and UART evidence path.
+BRAM network state, small-network replay, DDR, and AXI/burst measurement belong to LAB-HW-07~10 and are not implemented by this stage. LAB-HW-06 implements only the first fixed-address PS↔PL teaching roundtrip; it does not freeze the later production MOD-010 software stack.
 
 ## Authoring baseline
 
@@ -25,7 +27,7 @@ The current lab prose selects **Vivado 2026.1** as the **authoring candidate bas
 
 This is not yet a declaration that Vivado 2026.1 is the physically validated course-support baseline. That promotion requires a real-KV260 dry run and retained evidence.
 
-This repository has not yet recorded a real-KV260 physical pass for this batch. Cloud CI validates notebook/script contracts only and must not be interpreted as `T-HW-002` board evidence.
+This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~06. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence or as a real Vivado LAB-HW-06 full-build pass.
 
 ## LAB-HW-00
 
@@ -129,3 +131,53 @@ bash boards/kv260/runtime/collect_boot_info.sh
 ```
 
 The main Lab path observes boot firmware first; firmware update/recovery is a documented troubleshooting branch, not an unrecorded default action.
+
+## LAB-HW-06
+
+Build the dedicated loopback bitstream on the development host:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-06-build.log \
+  -source boards/kv260/scripts/build_lab06_loopback.tcl
+```
+
+With LAB-HW-05 Linux already running, unload an active Kria application firmware if one is present:
+
+```bash
+sudo xmutil unloadapp
+```
+
+Then direct-JTAG program the LAB-HW-06 bitstream from the development host:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-06-program.log \
+  -source boards/kv260/scripts/program_bitstream.tcl \
+  -tclargs build/kv260/lab-hw-06/kv260_loopback.bit
+```
+
+Frozen hardware path:
+
+- PS `M_AXI_HPM0_FPD` → AXI SmartConnect → dual-channel AXI GPIO;
+- AXI GPIO base: `0xA0010000`;
+- Channel 1 `GPIO_DATA`: `+0x0000`, 32-bit host write;
+- Channel 2 `GPIO2_DATA`: `+0x0008`, 32-bit host read;
+- PL operation: `read = (write + 1) mod 2^32`.
+
+The address follows AMD/Xilinx's K26 `base_gpio_bram` reference design. AXI GPIO is a teaching adapter; learners are not asked to implement an AXI slave in this Lab.
+
+Host-side oracle without hardware:
+
+```bash
+python boards/kv260/runtime/loopback_mmio.py --dry-run
+```
+
+Physical runtime-host check on PS/Linux:
+
+```bash
+sudo python3 /tmp/loopback_mmio.py \
+  --json-out /tmp/lab-hw-06-trace.json
+```
+
+The physical helper maps only the frozen `0xA0010000` region and intentionally has no arbitrary `--base` option. If Ubuntu policy rejects the `/dev/mem` mapping, retain the failure evidence and keep T-HW-006 blocked; do not weaken system security to force a PASS. The long-term MOD-010 software stack may later use UIO, XRT, a driver, or another supported transport without changing the semantic contract.
