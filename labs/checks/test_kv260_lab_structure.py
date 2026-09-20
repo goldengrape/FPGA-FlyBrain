@@ -1,4 +1,4 @@
-"""Structural regression tests for the first KV260 Physical Lab batch."""
+"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-05."""
 
 from __future__ import annotations
 
@@ -141,7 +141,7 @@ def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
         assert "LAB-HW-06~10" in text
 
 
-def test_trace_register_points_to_implemented_first_batch():
+def test_trace_register_points_to_implemented_labs():
     expected = {
         "en": [
             "labs/en/00_vendor_toolchain_preflight.ipynb",
