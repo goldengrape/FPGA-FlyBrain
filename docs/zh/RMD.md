@@ -193,12 +193,26 @@ LAB-HW-06 冻结最小 semantic contract：
 write value → PL stores/processes → read back result
 ```
 
-具体 runtime transport（如 AXI-Lite/UIO/XRT 等）在 Lab prose 与 TDD oracle 审批后选择；选择标准是最小稳定路径，而不是提前教授完整 AXI。
+教学 transport 现在冻结为最小、可检查的 KV260 路径：
+
+```text
+Ubuntu/Python on PS
+  → fixed /dev/mem MMIO
+  → PS M_AXI_HPM0_FPD
+  → AXI SmartConnect
+  → dual-channel AXI GPIO @ 0xA0010000
+  → kv260_loopback_transform
+```
+
+AXI GPIO 只承担 adapter：Channel 1 `GPIO_DATA`（`+0x0`）保存 32-bit host write，PL 教学 core 计算 `(write + 1) mod 2^32`，Channel 2 `GPIO2_DATA`（`+0x8`）暴露结果。hardware address 与 AMD/Xilinx K26 `base_gpio_bram` reference 一致。课程 helper 不允许指定任意 physical address。
+
+这条 `/dev/mem` path 只冻结为 **LAB-HW-06 的教学 transport**，不定义后续 MOD-010 的最终 software stack。如果受支持的 Ubuntu image 按 policy 阻止访问，不降低系统安全设置；保存 evidence、保持 T-HW-006 阻塞，并在后续仓库修订 transport。
 
 LAB-HW-06 通过标准：
-- write/readback 可重复；
-- PL state/operation 与顺序 contract 一致；
-- host script 自检失败时能区分 Linux/transport failure 与 core behavior failure。
+- 保存 build/DRC/timing 与 direct-JTAG programming evidence；
+- 固定 vector set 连续运行两轮，`write → expected → read` 全部一致，包括 32-bit wraparound；
+- self-checking host script 能区分 Linux/transport failure 与 core-behavior mismatch；
+- 保存 runtime trace、bitstream/script hash、Git commit、OS/image identity 与 board/carrier revision。
 
 ### RMD-013 Run small network on FPGA
 
