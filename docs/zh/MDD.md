@@ -149,12 +149,46 @@ Host / Python
 任何位宽决策必须先进入 TDD 做误差实验，再固化 RTL。
 
 ## 6. 硬件平台抽象
-核心 RTL 不绑定单一板卡。平台相关内容放在 `boards/<board>/`：
-- clock/reset
-- DDR controller / PS configuration
-- AXI interconnect
-- pin constraints
-- build scripts
+
+第一套完整实体教学 reference board 冻结为 **AMD Kria KV260 Vision AI Starter Kit**，但 core RTL 仍不得绑定单一板卡。
+
+平台边界：
+
+```text
+core RTL / stable FlyBrain interfaces
+              │
+              ▼
+        platform shell
+  ├─ clock/reset adaptation
+  ├─ board-visible I/O
+  ├─ PS↔PL runtime control path
+  ├─ on-chip memory mapping
+  └─ DDR/platform integration
+              │
+              ▼
+   KV260 board files / constraints
+   build/program/runtime scripts
+```
+
+平台相关内容放在 `boards/<board>/`。KV260 第一版规划：
+
+```text
+boards/
+  kv260/
+    README.md
+    rtl/            # board/platform shell only
+    constraints/    # XDC / board-flow glue as approved by the Lab
+    scripts/        # build/program/runtime helpers
+    evidence/       # ignored/generated evidence manifests, not source of truth
+```
+
+边界规则：
+
+- `rtl/neuron/`、`rtl/event/`、`rtl/memory/` 不得出现 KV260 connector/pin 名称；
+- JTAG/UART、PS/Linux、DDR controller、Vivado board flow、pin constraints 都属于 platform layer；
+- `MOD-010 host_if` 的**逻辑语义**是装载参数/刺激与读取 spike/telemetry；KV260 上到底通过 AXI-Lite、UIO、XRT 或其他受支持 transport 实现，在 RMD-012B / LAB-HW-04 的文档与 oracle 审批后冻结；
+- board-specific convenience 不得反向改变 `IF-NEURON-UPDATE`、`IF-SPIKE-QUEUE`、`IF-SYNAPSE-STREAM`；
+- Physical Lab 需要的板卡事实以 `KV260_REFERENCE_PLATFORM.md` 与 AMD 官方 board docs 为依据。
 
 ## 7. 双语仓库结构
 
@@ -197,6 +231,7 @@ rtl/
   memory/
   top/
 boards/
+  kv260/          # planned reference-board platform shell
 tests/
 data/
 okf/
