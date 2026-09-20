@@ -127,7 +127,7 @@ PFR4        .    .    .    X
 - Learn clock/register behavior with tiny circuits before writing LIF RTL.
 - Understand event queuing in a tiny network before introducing CSR and large-scale propagation.
 - Do not learn AXI during the first FPGA bring-up.
-- Split first physical bring-up into board orientation → power/target detection → first bitstream → constraints/I/O → host loopback.
+- Split first physical bring-up into vendor-toolchain preflight → board orientation → power/target detection → first bitstream → constraints/I/O → PS/Linux first boot → host loopback.
 - Build memory-hierarchy and bandwidth intuition before DDR/AXI.
 
 ### LI-2 Insert a bridge slice when
@@ -171,7 +171,7 @@ D-007 AI may write substantial implementation and test code but may not bypass F
 D-008 Product ADD and learning/engineering-process ADD are maintained as separate layers.  
 D-009 The teaching route follows the Learning Independence Axiom.  
 D-010 First complete physical-FPGA teaching reference board: AMD Kria KV260 Vision AI Starter Kit.  
-D-011 Concept Lessons and Physical Labs are separate layers: Lessons teach concepts; `LAB-HW-*` owns real connection, build/program/run, troubleshooting, and evidence.
+D-011 Concept Lessons and Physical Labs are separate layers: Lessons teach concepts; `LAB-HW-*` owns real toolchain setup, connection, build/program/boot/run, troubleshooting, and evidence.
 
 ## 9. Current conclusion
 - FlyBrain product matrix: **passes lower-triangular / decoupled check**.
