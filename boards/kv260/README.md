@@ -112,3 +112,66 @@ Clock/reset contract:
 - the build stops at routed implementation, requires real setup/hold timing paths, and rejects negative setup or hold slack before writing the bitstream.
 
 The shared `program_bitstream.tcl` enumerates hardware targets first and requires **exactly one** XCK26 target/device pair. If multiple KV260/XCK26 targets are attached, it fails with `AMBIGUOUS_KV260_FPGA_DEVICE` instead of guessing which board to program.
+
+
+## LAB-HW-05
+
+Image identity:
+
+```bash
+python boards/kv260/runtime/hash_image.py \
+  /path/to/iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz
+```
+
+The current manifest intentionally has `expected_sha256: null`. A local hash is recorded, but formal image-hash PASS remains blocked until a controlled course download freezes the expected hash.
+
+After Ubuntu boots on the PS, collect evidence with:
+
+```bash
+bash boards/kv260/runtime/collect_boot_info.sh
+```
+
+The main Lab path observes boot firmware first; firmware update/recovery is a documented troubleshooting branch, not an unrecorded default action.
+
+## LAB-HW-06
+
+Build the dedicated loopback bitstream:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-06-build.log \
+  -source boards/kv260/scripts/build_lab06_loopback.tcl
+```
+
+Program it while LAB-HW-05 Linux remains running:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-06-program.log \
+  -source boards/kv260/scripts/program_bitstream.tcl \
+  -tclargs build/kv260/lab-hw-06/kv260_loopback.bit
+```
+
+Runtime semantic check without hardware:
+
+```bash
+python boards/kv260/runtime/loopback_mmio.py --dry-run
+```
+
+Physical runtime-host check on the PS:
+
+```bash
+sudo python3 /tmp/loopback_mmio.py \
+  --base 0xA0010000 \
+  --json-out /tmp/lab-hw-06-trace.json
+```
+
+Frozen authoring path:
+
+- PS `M_AXI_HPM0_FPD` → AXI SmartConnect → dual-channel AXI GPIO;
+- AXI GPIO base: `0xA0010000`;
+- Channel 1 `GPIO_DATA`: `+0x0000`, 32-bit host write;
+- Channel 2 `GPIO2_DATA`: `+0x0008`, 32-bit host read;
+- PL operation: `read = (write + 1) mod 2^32`.
+
+The Python `/dev/mem` MMIO transport remains an **authoring candidate** until a real Ubuntu 24.04 KV260 dry run succeeds. If the supported OS blocks this access by policy, preserve that evidence and revise the transport instead of weakening system security.
