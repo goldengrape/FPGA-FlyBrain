@@ -85,9 +85,11 @@ uv run jupyter lab
 
 When doing exercises, open your personal copy under `exercises/work/en/`; `exercises/en/` contains the official course starters.
 
-### 4. Register the Dedicated Kernel (Recommended)
+### 4. Register the Dedicated Kernel (Required)
 
-To avoid kernel confusion inside Jupyter, install a named kernel spec:
+The course and exercise notebooks declare the `fpga-flybrain` kernel spec. Register it before opening or executing the notebooks. JupyterLab can sometimes recover interactively by asking you to choose another kernel, but headless execution such as `nbconvert --execute` will fail with `NoSuchKernel` if this kernel is missing.
+
+Register the named kernel with:
 
 ```bash
 uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA FlyBrain"

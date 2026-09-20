@@ -219,3 +219,18 @@ def test_platform5_diagrams_use_inline_svg_not_mermaid():
             assert "<svg " in text and "</svg>" in text
             assert aria_label in text
             assert 'fill="#e6f4ea"' in text
+
+def test_lesson23_gpu_is_new_supporting_term_not_already_known():
+    zh = _read("zh", LESSONS[4])
+    en = _read("en", LESSONS[4])
+    zh_ledger = "".join(zh["cells"][1].get("source", []))
+    en_ledger = "".join(en["cells"][1].get("source", []))
+
+    zh_already = next(line for line in zh_ledger.splitlines() if line.startswith("**已经知道：**"))
+    en_already = next(line for line in en_ledger.splitlines() if line.startswith("**Already known:**"))
+
+    assert "Graphics Processing Unit" not in zh_already
+    assert "Graphics Processing Unit" not in en_already
+    assert "**今天新增的支持术语：**" in zh_ledger
+    assert "**New supporting term today:**" in en_ledger
+

@@ -85,9 +85,11 @@ uv run jupyter lab
 
 做作业时打开 `exercises/work/zh/` 下的个人副本；`exercises/zh/` 是课程发布的官方 starter。
 
-### 4. 注册课程专属内核（推荐）
+### 4. 注册课程专属内核（必须）
 
-为了避免在 Jupyter 中混淆不同环境的 Python 内核，建议注册一个显式内核：
+课程与作业 Notebook 的元数据指定了 `fpga-flybrain` 内核，因此第一次使用前需要先注册它。JupyterLab 在交互界面里有时可以通过手动选择其他内核恢复，但 `nbconvert --execute` 这类无交互执行会在缺少该内核时直接报 `NoSuchKernel`。
+
+执行：
 
 ```bash
 uv run ipython kernel install --user --name fpga-flybrain --display-name "FPGA FlyBrain"
