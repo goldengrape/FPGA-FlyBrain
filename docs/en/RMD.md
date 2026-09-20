@@ -2,8 +2,8 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r1
-- Date: 2026-09-16
+- Revision: v0.3-r2
+- Date: 2026-09-19
 - Purpose: flatten the learning curve according to the Learning Independence Axiom while preserving existing RMD numbering. Bridge slices use letter suffixes so earlier trace links do not break.
 
 ## 1. General rules
@@ -288,8 +288,8 @@ Use the same model, data, and inputs to compare latency, throughput, memory traf
 |---|---|---|
 | Python → RTL | clock/register/HDL/waveform/bit width arrive together | RMD-003A three micro hardware experiments |
 | Multi-neuron → event-driven | sparse graph/FIFO/router arrive together | RMD-007A four-neuron event walkthrough |
-| Simulation → FPGA | toolchain/bitstream/host I/O arrive together | RMD-011A, 012A, 012B separated |
-| FPGA → DDR/AXI | memory hierarchy/DDR/AXI/bandwidth arrive together | RMD-013A, 014, 014A layered |
+| Simulation → FPGA | power/cable/JTAG, bitstream, constraints, and host I/O arrive together | RMD-011A + LAB-HW-00~06 split target discovery, first bitstream, physical I/O, loopback, BRAM, and small replay |
+| FPGA → DDR/AXI | memory hierarchy/DDR/AXI/bandwidth arrive together | RMD-013A + LAB-HW-07/08 split integrity from measurement |
 
 ## 4. Current first execution batch
 1. RMD-001 Python LIF float reference
