@@ -73,15 +73,17 @@ spike(source)
 
 参考板卡冻结为 **AMD Kria KV260 Vision AI Starter Kit**。在买板前仍先做 synthesis dry run；买板后不把“上板”压缩成一句话，而是按零经验 Physical Lab 顺序推进：
 
-1. **LAB-HW-00**：认识 KV260 实物、接口和 carrier revision；
-2. **LAB-HW-01**：正确供电，区分 J12 power 与 J4 USB/JTAG/UART，让开发工具枚举真实 target；
-3. **LAB-HW-02**：第一次 synthesis → implementation → bitstream → program；
-4. **LAB-HW-03**：把 logical port、clock/reset 与真实 board resource/constraint 联系起来；
-5. **LAB-HW-04**：完成真实 KV260 PS/runtime host ↔ PL minimal loopback；
-6. **LAB-HW-05**：把 neuron state RAM 映射到真实片上 BRAM resource；
-7. **LAB-HW-06**：把已验证的小 FlyBrain network 迁移到 KV260，并与 Python fixed reference replay 比较。
+1. **LAB-HW-00**：先完成 vendor toolchain preflight，冻结/验证 Vivado、JTAG driver 与 KV260 board files；
+2. **LAB-HW-01**：认识 KV260 实物、接口、SW2 SOM reset 和 carrier revision；
+3. **LAB-HW-02**：正确供电，区分 J12 power 与 J4 USB/JTAG/UART，让开发工具枚举真实 target；
+4. **LAB-HW-03**：第一次 synthesis → implementation → bitstream → program；
+5. **LAB-HW-04**：把 logical port、clock/design-local reset 与真实 board resource/constraint 联系起来；
+6. **LAB-HW-05**：用 microSD + UART 独立完成 PS/Linux first boot，不同时学习 host transport；
+7. **LAB-HW-06**：完成真实 KV260 PS/runtime host ↔ PL minimal loopback；
+8. **LAB-HW-07**：把 neuron state RAM 映射到真实片上 BRAM resource；
+9. **LAB-HW-08**：把已验证的小 FlyBrain network 迁移到 KV260，并与 Python fixed reference replay 比较。
 
-完成感：不仅“知道 bitstream 是什么”，而是能从板子未配置的状态开始，独立连接、发现 target、build/program、观察实体结果、host readback，并证明一个小 FlyBrain 网络真的在 FPGA 上运行。
+完成感：不仅“知道 bitstream 是什么”，而是能从开发环境未配置、板子未上电的状态开始，独立完成 toolchain preflight、连接、发现 target、build/program、PS/Linux boot、观察实体结果、host readback，并证明一个小 FlyBrain 网络真的在 FPGA 上运行。
 
 详细教学规范见 `KV260_REFERENCE_PLATFORM.md` 与 `PHYSICAL_FPGA_LABS.md`。
 
@@ -90,8 +92,8 @@ spike(source)
 
 Physical Lab：
 
-1. **LAB-HW-07**：通过 KV260 已有平台基础设施做 DDR write → read → integrity compare，再测 sequential/random-like access；
-2. **LAB-HW-08**：在同一 workload 下比较 small/scattered 与 burst-oriented transfer 的 latency / effective bandwidth；
+1. **LAB-HW-09**：通过 KV260 已有平台基础设施做 DDR write → read → integrity compare，再测 sequential/random-like access；
+2. **LAB-HW-10**：在同一 workload 下比较 small/scattered 与 burst-oriented transfer 的 latency / effective bandwidth；
 3. integrity 与 measurement 稳定后，才把 synapse store 从片上搬到 DDR；
 4. 再测 bandwidth、latency、synaptic events/s。
 
