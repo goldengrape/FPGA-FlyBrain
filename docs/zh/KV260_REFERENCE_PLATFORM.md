@@ -142,21 +142,32 @@ boards/kv260/
 
 如果某个步骤只在特定 carrier revision 上成立，Lab 必须明确写出，不能让学生从失败现象反推板卡版本差异。
 
-## 7. 这份文档现在不冻结什么
+## 7. 第一阶段现在冻结了什么——什么仍然只是 provisional
 
-本次是 **documentation-first** 修订，还不写板卡代码，因此暂不冻结：
+documentation-first 决策已经进入 **LAB-HW-00~04** 的实际实现阶段。
 
-- 具体 PL user-output pin；
-- 具体 XDC pin assignment；
-- host↔PL 最终使用 AXI-Lite、UIO、XRT 或其他 runtime transport 的实现细节；
-- DDR access software stack；
-- Vivado 的精确 **tested/supported** 版本；LAB-HW-00 可以先写 authoring candidate，但在真实 KV260 dry run 通过前不得把它称为已支持版本；
+第一阶段现在冻结：
+
+- reference target part：`xck26-sfvc784-2LV-c`；
+- LAB-HW-03 board-visible logical output：`bank45_gpio[4:0]`；
+- 这 5 个 logical bit 的 Bank 45 XDC mapping；
+- LAB-HW-04 platform clock source：PS `pl_clk0`，教学口径为 nominal 100 MHz；
+- LAB-HW-04 platform reset source：PS `pl_resetn0`；
+- LAB-HW-04 design-local active-low reset：`proc_sys_reset/peripheral_aresetn`，再送入教学 RTL；
+- LAB-HW-03/04 采用 direct Vivado/JTAG programming；
+- direct-JTAG 的主要 evidence 必须是 Vivado/device status + 设计自身 observable output，不能只看 DS34。
+
+以下内容**还不能升级成已验证的实体事实**：
+
+- 每个 Bank 45 bit 在真实板上对应的具体丝印 LED designator 与肉眼可见 polarity；
+- Vivado 2026.1 是否可从 authoring candidate 升级为 tested/supported course baseline；
 - starter Linux image 的精确版本/checksum；
-- design-local reset 最终采用哪个 platform/local source。
+- LAB-HW-06 最终 runtime transport（AXI-Lite/UIO/XRT/其他）；
+- 后续 DDR access software stack。
 
-这些将在对应 `LAB-HW-*` prose 与 TDD oracle 先审完、并在真实 KV260 上完成对应 dry run 后，再进入 board-specific implementation。LAB-HW-00 冻结 vendor toolchain version/board files；LAB-HW-05 冻结 starter Linux image/UART first-boot path；LAB-HW-04 冻结 design-local reset source；LAB-HW-06 冻结 runtime transport。选择时优先采用 AMD 官方支持路径，且不得因为某个 demo 方便而改变 FlyBrain core contract。
+这些事实只有在真实 KV260 dry run 针对具体 Git commit 与 artifact 留下 T-HW evidence 后，才能升级为 tested fact。
 
-**证据语义也必须与路径一致：** 如果使用 Vivado/JTAG 直接 program PL，以 Vivado/device status 和设计自身 observable output 为主要证据；只有 PS 实际负责加载 PL 时，DS34 的 PS-done 语义才能用于该路径的证据。
+已实现的 board-support code 位于 `boards/kv260/`。FlyBrain core RTL 仍然不得依赖 KV260 connector 名、package pin、Vivado project layout 或 Linux device path。
 
 ## 8. 参考板卡决策
 

@@ -79,7 +79,7 @@ vivado -mode batch -nojournal \
   -tclargs build/kv260/lab-hw-03/kv260_marker_top.bit
 ```
 
-The marker is deliberately clockless: `bank45_gpio[4:0] = 5'b10101`.
+The marker is deliberately clockless: `bank45_gpio[4:0] = 5'b10101`. The build writes DRC/timing/resource reports and must print `TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS`; it does not claim timing closure for a design with no clocked timing path.
 
 ## LAB-HW-04
 
@@ -105,4 +105,7 @@ Clock/reset contract:
 - clock: PS `pl_clk0` (nominal 100 MHz);
 - platform reset source: PS `pl_resetn0`;
 - design-local reset: `proc_sys_reset/peripheral_aresetn` → `kv260_blink_core.resetn`;
-- SW2 remains a SOM-level hard reset and is not the module reset wire.
+- SW2 remains a SOM-level hard reset and is not the module reset wire;
+- the build stops at routed implementation, requires real setup/hold timing paths, and rejects negative setup or hold slack before writing the bitstream.
+
+The shared `program_bitstream.tcl` enumerates hardware targets first and requires **exactly one** XCK26 target/device pair. If multiple KV260/XCK26 targets are attached, it fails with `AMBIGUOUS_KV260_FPGA_DEVICE` instead of guessing which board to program.

@@ -31,6 +31,7 @@ add_files -norecurse $rtl_file
 add_files -fileset constrs_1 -norecurse $xdc_file
 
 create_bd_design system
+update_compile_order -fileset sources_1
 
 set ps_defs [get_ipdefs -all xilinx.com:ip:zynq_ultra_ps_e:*]
 if {[llength $ps_defs] == 0} {
@@ -69,26 +70,77 @@ set_property top system_wrapper [current_fileset]
 
 launch_runs synth_1 -jobs 4
 wait_on_run synth_1
-if {[get_property PROGRESS [get_runs synth_1]] ne "100%"} {
+set synth_status [get_property STATUS [get_runs synth_1]]
+puts "SYNTH_RUN_STATUS=$synth_status"
+if {![string match "*Complete*" $synth_status]} {
     puts stderr "STATUS=FAIL"
-    puts stderr "ERROR=SYNTHESIS_INCOMPLETE"
+    puts stderr "ERROR=SYNTHESIS_RUN_FAILED"
     exit 5
 }
 
-launch_runs impl_1 -to_step write_bitstream -jobs 4
+# Stop at routed implementation. Timing is an oracle: do not create the
+# bitstream until the routed design has real clocked paths and non-negative
+# setup/hold slack.
+launch_runs impl_1 -to_step route_design -jobs 4
 wait_on_run impl_1
-if {[get_property PROGRESS [get_runs impl_1]] ne "100%"} {
+set impl_status [get_property STATUS [get_runs impl_1]]
+puts "IMPL_RUN_STATUS=$impl_status"
+if {![string match "*Complete*" $impl_status]} {
     puts stderr "STATUS=FAIL"
-    puts stderr "ERROR=IMPLEMENTATION_INCOMPLETE"
+    puts stderr "ERROR=IMPLEMENTATION_RUN_FAILED"
     exit 6
 }
 
 open_run impl_1
+
 set timing_report [file join $build_dir timing_summary.rpt]
 set util_report [file join $build_dir utilization.rpt]
+set drc_report [file join $build_dir drc.rpt]
 set bit_file [file join $build_dir kv260_blink.bit]
+
 report_timing_summary -file $timing_report
 report_utilization -file $util_report
+report_drc -file $drc_report
+
+set clocks [get_clocks -quiet]
+puts "CLOCK_COUNT=[llength $clocks]"
+if {[llength $clocks] == 0} {
+    puts stderr "STATUS=FAIL"
+    puts stderr "ERROR=NO_IMPLEMENTED_CLOCK"
+    exit 7
+}
+
+set setup_paths [get_timing_paths -quiet -setup -max_paths 1 -nworst 1]
+if {[llength $setup_paths] == 0} {
+    puts stderr "STATUS=FAIL"
+    puts stderr "ERROR=NO_SETUP_TIMING_PATH"
+    exit 8
+}
+set hold_paths [get_timing_paths -quiet -hold -max_paths 1 -nworst 1]
+if {[llength $hold_paths] == 0} {
+    puts stderr "STATUS=FAIL"
+    puts stderr "ERROR=NO_HOLD_TIMING_PATH"
+    exit 9
+}
+
+set setup_slack [get_property SLACK [lindex $setup_paths 0]]
+set hold_slack [get_property SLACK [lindex $hold_paths 0]]
+puts "TIMING_SETUP_WORST_SLACK_NS=$setup_slack"
+puts "TIMING_HOLD_WORST_SLACK_NS=$hold_slack"
+
+if {[expr {double($setup_slack) < 0.0}]} {
+    puts stderr "STATUS=FAIL"
+    puts stderr "ERROR=NEGATIVE_SETUP_SLACK"
+    puts stderr "DETAIL=$setup_slack"
+    exit 10
+}
+if {[expr {double($hold_slack) < 0.0}]} {
+    puts stderr "STATUS=FAIL"
+    puts stderr "ERROR=NEGATIVE_HOLD_SLACK"
+    puts stderr "DETAIL=$hold_slack"
+    exit 11
+}
+
 write_bitstream -force $bit_file
 
 puts "CLOCK_SOURCE=ps/pl_clk0"
@@ -97,5 +149,6 @@ puts "DESIGN_LOCAL_RESET=blink_core/resetn(active-low)"
 puts "BITSTREAM=$bit_file"
 puts "TIMING_REPORT=$timing_report"
 puts "UTILIZATION_REPORT=$util_report"
+puts "DRC_REPORT=$drc_report"
 puts "STATUS=PASS"
 exit 0

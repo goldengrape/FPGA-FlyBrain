@@ -157,7 +157,7 @@ build helper 输出固定目录下的 bitstream、utilization report、timing su
 
 **通过证据至少包括：**
 
-- implementation/timing 没有阻断性错误；
+- synthesis/implementation/DRC 完成；因为这个 marker 故意是 clockless，build 必须明确报告 `TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS` 并保存 timing summary，而不是宣称 timing closure；
 - bitstream SHA-256；
 - Vivado/JTAG programming success；
 - `xck26*` target identification；
@@ -198,7 +198,7 @@ build helper 输出固定目录下的 bitstream、utilization report、timing su
 
 **通过证据：**
 
-- synthesis/implementation/timing 完成；
+- synthesis/implementation 完成，implemented design 中真实存在 clock 与 setup/hold timing path，且 worst setup/hold slack 都非负；
 - blink bitstream hash 与 program log；
 - `bank45_gpio[0]` 出现周期变化、其他 marker bits 保持稳定；
 - 学生能指出 XDC 中至少一个 logical bit → package pin 的 mapping；
