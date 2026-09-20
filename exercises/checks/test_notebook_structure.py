@@ -217,6 +217,15 @@ def test_exercise_registry_matches_structural_test_inventory():
     assert set(NOTEBOOKS) == set(EXERCISE_FILES.values())
 
 
+def test_exercise_registry_covers_every_lesson_01_through_23():
+    expected_lessons = {f"{number:02d}" for number in range(1, 24)}
+    assert set(EXERCISE_FILES) == expected_lessons
+
+    for lesson in expected_lessons:
+        grader = ROOT / "exercises" / "grader" / f"lesson{lesson}.py"
+        assert grader.is_file(), f"Lesson {lesson} is missing its external grader"
+
+
 def test_platform4_and5_todos_have_explicit_inputs_outputs_and_return_order():
     input_markers = {
         "zh": "### 输入",
