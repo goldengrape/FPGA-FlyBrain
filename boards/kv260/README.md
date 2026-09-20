@@ -9,7 +9,8 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 This first batch supports LAB-HW-00~02 only:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
-- `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery.
+- `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
+- `evidence/manifest.example.json` — T-HW-011 evidence checklist/template; generated local evidence is ignored by Git by default.
 
 There is intentionally no XDC, PL design, PS/Linux runtime code, or DDR/AXI implementation in this batch. Those belong to later labs after their prose/oracles are approved.
 
