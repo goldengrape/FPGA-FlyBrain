@@ -95,6 +95,8 @@ def test_lab00_freezes_vivado_preflight_without_claiming_board_pass():
         assert "LAB-HW-02" in text
         assert "T-HW-001" in text
         assert "vivado -version" in text
+        assert "install_drivers_wrapper.bat" in text
+        assert "sudo ./install_drivers" in text
 
 
 def test_lab01_inventory_teaches_the_actual_connector_and_reset_boundaries():
