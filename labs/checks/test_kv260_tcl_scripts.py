@@ -205,6 +205,7 @@ def test_lab04_build_script_freezes_ps_clock_and_design_local_reset_path():
     assert 'set board_part_name "xilinx.com:kv260_som:part0:1.4"' in text
     assert "xilinx.com:ip:zynq_ultra_ps_e:" in text
     assert "xilinx.com:ip:proc_sys_reset:" in text
+    assert "update_compile_order -fileset sources_1" in text
     assert "ps/pl_clk0" in text
     assert "ps/pl_resetn0" in text
     assert "rst/peripheral_aresetn" in text
