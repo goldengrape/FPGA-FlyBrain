@@ -67,8 +67,8 @@ def test_lab_notebooks_are_clean_sources_without_saved_execution_output():
 
 def test_every_lab_has_evidence_human_check_trace_and_official_basis():
     required = {
-        "zh": ("Expected Evidence", "Human Check", "Project Trace", "官方依据"),
-        "en": ("Expected Evidence", "Human Check", "Project Trace", "Official basis"),
+        "zh": ("Expected Evidence", "Save Evidence", "Human Check", "Project Trace", "官方依据"),
+        "en": ("Expected Evidence", "Save Evidence", "Human Check", "Project Trace", "Official basis"),
     }
     for language in ("zh", "en"):
         for name in LABS:
@@ -156,3 +156,15 @@ def test_trace_register_points_to_implemented_first_batch():
         for path in paths:
             assert f"`{path}`" in trace
             assert (ROOT / path).exists()
+
+
+def test_physical_evidence_template_is_versioned_but_generated_evidence_is_ignored():
+    evidence = ROOT / "boards" / "kv260" / "evidence"
+    template = json.loads((evidence / "manifest.example.json").read_text(encoding="utf-8"))
+    assert template["lab_id"] == "LAB-HW-XX"
+    assert template["board_model"] == "AMD Kria KV260 Vision AI Starter Kit"
+    assert "git_commit" in template
+    assert "vivado_version" in template
+    ignore = (evidence / ".gitignore").read_text(encoding="utf-8")
+    assert "!manifest.example.json" in ignore
+    assert "!README.md" in ignore
