@@ -206,4 +206,12 @@ uv run pytest \
 
 GitHub Actions 的 Python exercise infrastructure workflow 会自动运行作业基础设施测试。
 
+默认情况下，学生可见 grader 会把学生函数内部抛出的异常转换为“该概念组未通过”，不会显示 traceback。维护/调试 grader 时可启用：
+
+```bash
+FPGA_FLYBRAIN_GRADER_DEBUG=1 uv run pytest exercises/checks/test_graders.py -q
+```
+
+启用后，`evaluate_group` 会保留异常 traceback，`report` 会在失败组下打印它。学生 Notebook 中不要开启这个开关，以免暴露隐藏判题逻辑和具体失败细节。
+
 当前不使用 nbgrader，也不使用 testbook。只有出现明确的新需求时再评估。

@@ -2,7 +2,7 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r5
+- 修订：v0.3-r7
 - 日期：2026-09-19
 - 目的：同步 ADD 的产品/过程 FR 分层、RMD bridge slices，以及新的 Learning Architecture / Notebook 教学层。
 
@@ -15,7 +15,7 @@
 | U1 理解最小神经元 | FR1 | DP1 | LSN-001/002 + MOD-001/002 | T-001~006 | 001~003 |
 | U2 AI辅助实现且可理解 | PFR1/PFR2 | PDP1/PDP2 | Notebook AI Task/Human Check + bridge slices | explanation checkpoints + module tests | all relevant |
 | U3 多神经元与事件网络 | FR3/FR4/FR5 | DP3/DP4/DP5 | MOD-004~009 | T-007~013 | 006~011 + 007A |
-| U4 FPGA 上运行 | FR2/FR3/FR5/FR6 | DP2/DP3/DP5/DP6 | MOD-003/010/014 | L3~L5 + board replay | 011A~016 |
+| U4 FPGA 上运行 | FR2/FR3/FR5/FR6 | DP2/DP3/DP5/DP6 | MOD-003/004/005/010/014 + KV260 platform shell | L3~L5 + T-HW-001~011 + board replay | 011A~016 |
 | U5 导入真实 MaleCNS | FR7 | DP7 | MOD-011 | T-014/015 | 017~021 |
 | U6 建立验证链 | PFR4 | PDP4 | LSN-002/003 + float/fixed/RTL/FPGA oracle chain | L0~L7 | all relevant |
 | U7 公理设计与追踪 | PFR2/PFR3 | PDP2/PDP3 | docs/ + lessons/ + exercises/ + CI checks | trace checks + checkpoints | all |
@@ -48,6 +48,28 @@
 | LSN-022 | 建立 closed-loop feedback，并把 sensory/output mapping 的人工假设显式化 | FR8/DP8 + PFR4 | `exercises/zh/22_closed_loop_world.ipynb`（grader: `exercises/grader/lesson22.py`）；T-016 教学前置 | RMD-023~025 | `lessons/zh/22_closed_loop_world.ipynb` |
 | LSN-023 | 冻结 CPU/GPU/FPGA benchmark comparability contract，再计算 throughput/energy metric | FR2~FR8 + PFR4 | `exercises/zh/23_cpu_gpu_fpga_benchmark.ipynb`（grader: `exercises/grader/lesson23.py`）；P-001~008 教学前置 | RMD-028 | `lessons/zh/23_cpu_gpu_fpga_benchmark.ipynb` |
 
+### 3.1 KV260 Physical Lab 追踪
+
+`LAB-HW-*` 不替代 LSN；它们把 Platform 4 的概念落实为真实 KV260 操作与 evidence。
+
+| Lab | 目标 | 主要 Test | RMD | Artifact |
+|---|---|---|---|---|
+| LAB-HW-00 | vendor toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | planned `labs/zh/00_*` |
+| LAB-HW-01 | 认识 KV260 实体、接口、SW2 SOM reset、carrier revision | T-HW-011（inventory/evidence） | RMD-012 | planned `labs/zh/01_*` |
+| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | planned `labs/zh/02_*` |
+| LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | planned `labs/zh/03_*` |
+| LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | planned `labs/zh/04_*` |
+| LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | planned `labs/zh/05_*` |
+| LAB-HW-06 | real host↔PL loopback | T-HW-006/T-HW-011 | RMD-012B | planned `labs/zh/06_*` |
+| LAB-HW-07 | BRAM neuron-state store | T-HW-007/T-HW-011 | RMD-013 | planned `labs/zh/07_*` |
+| LAB-HW-08 | small FlyBrain FPGA replay | T-HW-008/T-HW-011 | RMD-013 | planned `labs/zh/08_*` |
+| LAB-HW-09 | DDR integrity + real measurement | T-HW-009/T-HW-011 | RMD-014 | planned `labs/zh/09_*` |
+| LAB-HW-10 | AXI/burst measurement | T-HW-010/T-HW-011 | RMD-014A | planned `labs/zh/10_*` |
+
+Physical Lab 规范来源：
+- `docs/zh/KV260_REFERENCE_PLATFORM.md`
+- `docs/zh/PHYSICAL_FPGA_LABS.md`
+
 原则：Notebook 可以 prototype/展示，但正式算法、RTL、接口与 oracle 的事实来源仍在 `python/`、`rtl/`、MDD、TDD 等正式工程位置。
 
 ## 4. 关键需求追踪示例
@@ -69,11 +91,12 @@ DP：DP4/DP5
 任务：RMD-007A, 008~011
 
 ### TRACE-H-001 — 首次真实 FPGA
-需求：已在仿真验证的小网络能迁移到真实 FPGA，且 host 可输入/读取结果。  
+需求：零 FPGA 经验学习者能在 KV260 上从 vendor toolchain preflight、正确连接/target discovery 走到 first bitstream、physical I/O、PS/Linux first boot、host↔PL loopback，并把已在仿真验证的小网络迁移到真实 FPGA。  
 FR：FR2/FR3/FR5  
 DP：DP2/DP3/DP5  
-模块：MOD-003/004/005/010  
-测试：synthesis report + loopback + L5 replay  
+模块：MOD-003/004/005/010 + KV260 platform shell  
+教学：LAB-HW-00~08  
+测试：T-HW-001~008 + T-HW-011 + L5 replay  
 任务：RMD-011A, 012, 012A, 012B, 013
 
 ### TRACE-M-001 — 外部突触内存
@@ -81,7 +104,8 @@ DP：DP2/DP3/DP5
 FR：FR6  
 DP：DP6  
 模块：MOD-010/014  
-测试：integrity + on-chip/DDR differential + bandwidth benchmark  
+教学：LAB-HW-09/10  
+测试：T-HW-009/010/011 + integrity + on-chip/DDR differential + bandwidth benchmark  
 任务：RMD-013A, 014, 014A, 015, 016
 
 ### TRACE-C-001 — MaleCNS 导入
@@ -161,7 +185,9 @@ DP：PDP1
 - LSN-001~004：第一组双语可执行 Notebook 已建立
 - LSN-005~008：第二组双语课程已建立；`rtl/learning/` 与 `tb/learning/` 不代表 MOD-003 已完成
 - LSN-009~012：第三组双语课程已建立；Python teaching models 不代表 MOD-004~009 已完成
-- LSN-013~018：第四组双语课程已建立；synthesis/board/host/DDR/AXI 教学实验不代表对应正式 MOD 或实体平台实现已完成
+- LSN-013~018：第四组双语课程已建立；概念 Notebook 不代表实体平台实现已完成
+- Reference board：**AMD Kria KV260 Vision AI Starter Kit** 已冻结
+- LAB-HW-00~10：Physical Lab 教学结构、RMD 映射与 T-HW oracle 已在文档层冻结；Lab Notebook 与 board-specific implementation 尚未开始
 - LSN-019~023：第五组双语课程已建立；connectome teaching fixture、synthetic scale/benchmark 与 toy closed loop 不代表 RMD-017~028 的正式数据 artifact、全系统实现或真实性能结论已完成
 - TRACE：已同步工程路径与教学路径至 LSN-023
 - First formal implementation slice：not started
@@ -170,6 +196,6 @@ DP：PDP1
 - 第一次冻结 `IF-NEURON-*` 接口；
 - LSN-001~004 从 prototype 切换为 import 正式 `python/`/`rtl/` 模块时；
 - 第一次新增或删除 MOD / LSN 编号；
-- 选择最终 FPGA 板卡后；
+- reference board、carrier-revision policy 或支持的 physical tool flow 发生变化时；
 - MaleCNS binary image schema 冻结后；
 - 任意 RMD 编号发生重排时。

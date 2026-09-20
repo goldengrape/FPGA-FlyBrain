@@ -2,9 +2,9 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r1
-- Date: 2026-09-16
-- Purpose of this revision: separate the FlyBrain product system from the learning/engineering process, verify a lower-triangular decoupled product matrix, and apply Axiomatic Design to the learning curve itself.
+- Revision: v0.3-r2
+- Date: 2026-09-19
+- Purpose of this revision: separate the FlyBrain product system from the learning/engineering process, verify a lower-triangular decoupled product matrix, apply Axiomatic Design to the learning curve, freeze KV260 as the reference board, and decompose zero-experience physical bring-up into a Physical Lab Track.
 
 ## 1. Design principles
 1. **Independence Axiom**: preserve the independence of Functional Requirements (FRs) as far as practical.
@@ -106,7 +106,7 @@ These FRs do not belong to the FlyBrain product itself and are therefore exclude
 
 | ID | Process Functional Requirement | Process Design Parameter |
 |---|---|---|
-| PFR1 | Let a beginner progress without being hit by multiple unfamiliar concepts at once | PDP1 bridge-first learning slices + one-major-concept rule |
+| PFR1 | Let a beginner, including someone holding an FPGA board for the first time, progress without being hit by multiple unfamiliar concepts/operations at once | PDP1 bridge-first learning slices + one-major-concept rule + KV260 Physical Lab decomposition |
 | PFR2 | Use AI/vibe coding aggressively while keeping human ownership of requirements, models, architecture, and acceptance criteria | PDP2 AI collaboration contract + guarded CHECKPOINTs |
 | PFR3 | Keep requirements, design, code, and tests traceable over long iterations | PDP3 URD/ADD/MDD/TDD/RMD/TRACE + Git checkpoints + OKF-derived context |
 | PFR4 | Preserve correctness across Python, fixed point, RTL, and hardware | PDP4 layered oracle: float → fixed-point → RTL simulation → FPGA replay |
@@ -127,13 +127,15 @@ PFR4        .    .    .    X
 - Learn clock/register behavior with tiny circuits before writing LIF RTL.
 - Understand event queuing in a tiny network before introducing CSR and large-scale propagation.
 - Do not learn AXI during the first FPGA bring-up.
+- Split first physical bring-up into vendor-toolchain preflight → board orientation → power/target detection → first bitstream → constraints/I/O → PS/Linux first boot → host loopback.
 - Build memory-hierarchy and bandwidth intuition before DDR/AXI.
 
 ### LI-2 Insert a bridge slice when
 - success requires two or more still-unmastered concepts at the same time;
 - the learner can copy AI-generated code but cannot explain state, input, output, or timing;
 - a test failure cannot be localized to one layer;
-- toolchain complexity hides the algorithm/hardware concept being learned.
+- toolchain complexity hides the algorithm/hardware concept being learned;
+- power/cable/JTAG/driver/board-selection failures appear at the same time as a new RTL/architecture concept, making the failure layer ambiguous.
 
 ### LI-3 Each learning platform must have a visible completion point
 1. Computational neuron — membrane voltage and spikes are visible on screen.
@@ -153,7 +155,10 @@ Memory layout and event-pipeline performance cannot be fully independent. Contro
 The project explicitly accepts “understandability before premature performance optimization.” Performance work starts after correctness is frozen.
 
 ### AC-004 Host/FPGA boundary depends on platform capabilities
-Different SoC FPGAs expose different ARM, DDR, and transport paths. DP8 therefore targets a stable host/FPGA message contract rather than a board-specific API.
+Different SoC FPGAs expose different ARM, DDR, and transport paths. The first physical teaching path is frozen to KV260, but DP8 still targets a stable host/FPGA message contract. KV260 PS/PL, JTAG, DDR, and toolchain details belong in the platform shell and Physical Labs, not in the FlyBrain core API.
+
+### AC-005 Beginner board teaching necessarily depends on a concrete board/tool flow
+A zero-experience board course cannot stay completely board-neutral and still provide executable power, connection, target-discovery, constraint, and programming steps. Control: freeze KV260 as the teaching reference board; concentrate board-specific facts in `KV260_REFERENCE_PLATFORM.md`, `PHYSICAL_FPGA_LABS.md`, and the planned `boards/kv260/`. Concept Lessons remain board-neutral.
 
 ## 8. Current design decisions
 D-001 Baseline neuron: LIF.  
@@ -164,9 +169,12 @@ D-005 Large connectivity store: external DDR.
 D-006 Host handles conversion, environment, and visualization; FPGA handles the neural-compute core.  
 D-007 AI may write substantial implementation and test code but may not bypass FR/DP, interface, oracle, or CHECKPOINT decisions.  
 D-008 Product ADD and learning/engineering-process ADD are maintained as separate layers.  
-D-009 The teaching route follows the Learning Independence Axiom.
+D-009 The teaching route follows the Learning Independence Axiom.  
+D-010 First complete physical-FPGA teaching reference board: AMD Kria KV260 Vision AI Starter Kit.  
+D-011 Concept Lessons and Physical Labs are separate layers: Lessons teach concepts; `LAB-HW-*` owns real toolchain setup, connection, build/program/boot/run, troubleshooting, and evidence.
 
 ## 9. Current conclusion
 - FlyBrain product matrix: **passes lower-triangular / decoupled check**.
 - Process matrix: **diagonal / uncoupled**.
 - Remaining performance/platform coupling is explicitly recorded and guarded by contracts and benchmarks.
+- Reference-board/tool-flow teaching coupling is accepted and isolated through the KV260 platform shell and Physical Lab layer without changing the product matrix.

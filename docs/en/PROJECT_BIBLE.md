@@ -47,7 +47,7 @@ How is correctness verified?
 Where is the bottleneck?
 ```
 
-They should have hands-on intuition for registers, RAM, FIFO, pipelines, fixed point, DDR bandwidth, sparse/event-driven computation, FPGA accelerators, and neuromorphic hardware.
+They should have hands-on intuition for registers, RAM/BRAM, FIFO, pipelines, fixed point, DDR bandwidth, sparse/event-driven computation, FPGA accelerators, and neuromorphic hardware; and they should be able to complete the basic bring-up path on the **AMD Kria KV260 Vision AI Starter Kit**, from vendor-toolchain preflight and target discovery through first bitstream, physical I/O, PS/Linux first boot, host↔PL loopback, and small FlyBrain replay.
 
 ## 4. Three-layer translation
 Important ideas should be described in three languages at once:
@@ -110,6 +110,7 @@ The route therefore includes explicit bridges for:
 - Python → RTL: Digital Hardware Bridge;
 - multi-neuron → event-driven: four-neuron event walkthrough;
 - simulation → FPGA: synthesis, first bitstream, host/FPGA loopback;
+- **KV260 Physical Lab Track**: toolchain preflight → board orientation → target detection → first bitstream → constraints/I/O → PS/Linux first boot → host loopback → BRAM → small-network replay;
 - FPGA → DDR/AXI: memory hierarchy and bandwidth bridge.
 
 Bridge chapters are first-class course material, not remedial appendices.
@@ -126,7 +127,7 @@ Bridge chapters are first-class course material, not remedial appendices.
 
 Future `okf/` content is an AI retrieval layer, while `.vibe/` stores machine-readable trace state. Neither may silently invent requirements. Design changes start in `docs/`.
 
-**Diagram specification**: All architecture diagrams, timing/state graphs, and workflows must be written in declarative diagram code (such as Mermaid code blocks) rather than fragile, unmaintainable ASCII art. Declarative diagrams render natively as vector graphics in JupyterLab and GitHub, keeping version diffs precise.
+**Diagram specification**: Architecture diagrams, timing/state graphs, and teaching workflows should use Markdown **inline SVG**; do not add new Mermaid or hand-aligned ASCII diagrams. SVG remains reviewable text, works with Git diff, and can be checked in PDF visual CI. Physical Labs may use official board photos/screenshots to help locate connectors, but critical connections, commands, and pass criteria must also exist in searchable text/structural diagrams.
 
 ## 9. Standard chapter pattern
 Each chapter should begin from an actual problem and answer, in order:

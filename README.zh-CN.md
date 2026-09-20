@@ -126,6 +126,19 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 
 它会运行 Icarus self-checking simulation、Verilator lint、Yosys synthesis sanity check，并确认 Lesson 8 的 VCD 波形确实生成。第 13 课 Notebook 还会单独调用 Yosys 综合 `rtl/learning/clocked_accumulator.sv`，让学生直接阅读一次真实 synthesis 输出。
 
+### 7. 实体 FPGA 参考板：AMD Kria KV260
+
+实体上板教学已冻结 **AMD Kria KV260 Vision AI Starter Kit** 为第一套完整 reference board。概念课仍尽量板卡无关，但零基础 Physical Lab 会给出 KV260 的 vendor toolchain preflight、供电、JTAG/UART、target discovery、first bitstream、constraints/I/O、PS/Linux first boot、host↔PL、BRAM、DDR 与 AXI/burst 实操路径。
+
+当前先完成 documentation-first 规范；Physical Lab Notebook 与 `boards/kv260/` 实现随后进入下一阶段。
+
+先看：
+
+- [KV260 参考硬件平台](docs/zh/KV260_REFERENCE_PLATFORM.md)
+- [实体 FPGA 实验教学规范](docs/zh/PHYSICAL_FPGA_LABS.md)
+
+注意：第 6–13 课的 OSS CAD Suite 与后续 KV260 的 AMD Vivado/platform toolchain 是两层不同工具链。
+
 ## 从这里开始学
 
 当前可执行课程位于 [`lessons/`](lessons/README.md)：
@@ -204,6 +217,8 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 | [初学者术语表](docs/zh/GLOSSARY.md) | [Beginner Glossary](docs/en/GLOSSARY.md) |
 | [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) | [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) |
 | [HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md) | [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md) |
+| [KV260 参考硬件平台](docs/zh/KV260_REFERENCE_PLATFORM.md) | [KV260 Reference Hardware Platform](docs/en/KV260_REFERENCE_PLATFORM.md) |
+| [实体 FPGA 实验教学规范](docs/zh/PHYSICAL_FPGA_LABS.md) | [Physical FPGA Lab Teaching Standard](docs/en/PHYSICAL_FPGA_LABS.md) |
 
 ### 工程事实文档
 | 中文 | English |
@@ -222,7 +237,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 
 ## 当前状态
 
-项目规划、系统架构和第一次课程审计已经完成；第一段正式工程实现尚未声明完成。
+项目规划、系统架构和第一次课程审计已经完成；**KV260 reference board 与 LAB-HW-00~10 的实体教学/验收规范已在文档层冻结**，对应 Lab Notebook 与板卡代码尚未实现。第一段正式工程实现尚未声明完成。
 
 当前第一批工程任务：
 

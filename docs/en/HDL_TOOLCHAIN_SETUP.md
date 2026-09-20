@@ -1,6 +1,10 @@
 # HDL Toolchain Setup and Jupyter Launch
 
-This guide supports the SystemVerilog/RTL labs in Lessons 6–8 and the Yosys synthesis dry run in Lesson 13.
+This guide supports the SystemVerilog/RTL labs in Lessons 6–8 and the Yosys synthesis dry run in Lesson 13. **It is not the KV260 physical-board toolchain guide.**
+
+The physical track now freezes the **AMD Kria KV260 Vision AI Starter Kit** as the reference board. Before `LAB-HW-*`, read:
+- [KV260 Reference Hardware Platform](KV260_REFERENCE_PLATFORM.md)
+- [Physical FPGA Lab Teaching Standard](PHYSICAL_FPGA_LABS.md)
 
 The Python environment remains managed by `uv`. Icarus Verilog, Verilator, Yosys, and other HDL tools are separate system tools.
 
@@ -116,4 +120,27 @@ Check these in order:
 4. After changing the environment, did you stop the old Jupyter server and restart it?
 5. Is the Notebook using the project's **FPGA FlyBrain** kernel?
 
-Lesson 13 does not require a full FPGA-vendor board toolchain. Its goal is an open-source generic synthesis dry run; target-device implementation, timing sign-off, and bitstream tooling are deferred until the physical-platform stage.
+Lesson 13 does not require a full FPGA-vendor board toolchain. Its goal is an open-source generic synthesis dry run.
+
+## KV260 Physical Labs use a second tool layer
+
+Starting with `LAB-HW-00~10`, the course enters the **AMD KV260 physical platform**:
+
+- reference board: AMD Kria KV260 Vision AI Starter Kit;
+- board-specific build/program uses AMD's supported **Vivado Board Flow**;
+- the development host uses the KV260 JTAG/UART path for target discovery/programming;
+- later runtime-host/PS and microSD/Linux steps belong to the Physical Labs rather than OSS CAD Suite.
+
+Keep the two tool layers distinct:
+
+```text
+Lessons 6–13
+  OSS CAD Suite
+  → generic RTL compile/sim/lint/synthesis
+
+LAB-HW-00~10
+  AMD KV260 + Vivado/platform tools
+  → target-specific implementation/timing/bitstream/program/runtime
+```
+
+This documentation-first revision **does not yet freeze an exact Vivado version**. The supported version is written into LAB-HW-00 only after a complete real-KV260 dry run; do not guess compatibility from third-party tutorials.

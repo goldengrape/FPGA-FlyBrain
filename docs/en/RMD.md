@@ -2,8 +2,8 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r1
-- Date: 2026-09-16
+- Revision: v0.3-r2
+- Date: 2026-09-19
 - Purpose: flatten the learning curve according to the Learning Independence Axiom while preserving existing RMD numbering. Bridge slices use letter suffixes so earlier trace links do not break.
 
 ## 1. General rules
@@ -133,33 +133,127 @@ Scale: roughly 100–1000 neurons.
 Major new concept: **synthesis and simulation answer different questions**.  
 Synthesize a counter/accumulator and read basic resource and timing reports. Do not learn AXI or DDR yet.
 
-### RMD-012 Select board and create platform shell
-Only now purchase hardware. Default candidate: a KV260-class SoC FPGA; keep the platform interface replaceable.
+### RMD-012 Select reference board and create platform shell
+
+The reference board is frozen to the **AMD Kria KV260 Vision AI Starter Kit**. Physical teaching becomes board-specific here, while FlyBrain core RTL remains board-independent.
+
+Physical Labs:
+
+- **LAB-HW-00**: vendor-toolchain preflight; before connecting a board, freeze/verify Vivado version, JTAG cable driver, and KV260 board files / board flow;
+- **LAB-HW-01**: board orientation; identify K26 SOM, carrier, J12 power, J4 UART/JTAG, microSD, Ethernet, SW2 SOM reset, and carrier revision;
+- **LAB-HW-02**: correct power-up and target enumeration; isolate power/cable/JTAG failures from RTL failures.
+
+Pass criteria:
+- vendor-toolchain preflight has textual evidence;
+- learner can connect the KV260 correctly from a powered-off state;
+- development host can discover the target reliably;
+- board revision, tool version, board-file/platform version, and target identification are recorded;
+- the planned `boards/kv260/` platform-shell boundary is clear and board pins/platform IP do not leak into core RTL.
 
 ### RMD-012A First physical proof
-Major new concept: **a bitstream turns RTL into a real implementation inside the chip**.  
-Use a counter / LED or another observable register.
 
-### RMD-012B Host ↔ FPGA minimal loopback
-Major new concept: **the host and programmable logic are separate execution domains**.  
-Minimal experiment: host writes a value → FPGA accumulator/register → host reads it back. Do not dive deeply into AXI yet.
+Major new concept: **a bitstream turns RTL into a real implementation, and a logical port needs board/constraint mapping before it has physical meaning.**
+
+Physical Labs:
+
+- **LAB-HW-03**: minimal RTL through synthesis → implementation → timing → bitstream → program;
+- **LAB-HW-04**: constraints and physical behavior for clock/design-local reset/one safe board-visible I/O.
+
+Pass evidence includes:
+- no blocking build/implementation error;
+- bitstream/build-artifact hash;
+- programming success;
+- configuration evidence appropriate to the actual programming path;
+- at least one observable result proving that the learner's design is active rather than merely board power;
+- real/readable input or local-reset source produces the specified output behavior;
+- learner distinguishes SW2 SOM-level hard reset from the FlyBrain design-local reset.
+
+**DS34 is not a universal JTAG-programming oracle.** Use DS34 with its PS-done meaning only when the PS actually loads PL; Vivado/JTAG direct programming uses device programming status plus the design's own observable output as primary evidence.
+
+The first physical proof does not simultaneously teach AXI, DDR, or the FlyBrain network.
+
+### RMD-012B PS/Linux runtime-host bridge → Host ↔ FPGA minimal loopback
+
+Insert a separate bridge before host↔PL so Linux boot, serial-console use, and the runtime transport do not all arrive for the first time together.
+
+Physical Labs:
+
+- **LAB-HW-05**: starter Linux image → microSD → UART console → PS boot/login; prove only that the KV260 PS/Linux runtime host can boot;
+- **LAB-HW-06**: after LAB-HW-05 passes, perform the real PS/runtime-host ↔ PL minimal loopback.
+
+LAB-HW-05 pass criteria:
+- starter Linux image version/checksum recorded;
+- UART boot log retained;
+- shell reached with kernel/OS identification;
+- learner distinguishes development host from runtime host/PS.
+
+LAB-HW-06 freezes the semantic contract first:
+
+```text
+write value → PL stores/processes → read back result
+```
+
+The exact runtime transport (for example AXI-Lite/UIO/XRT or another supported path) is selected only after the Lab prose and TDD oracle are reviewed. Prefer the smallest stable path rather than using the first loopback to teach full AXI.
+
+LAB-HW-06 pass criteria:
+- write/readback is repeatable;
+- PL state/operation ordering matches the contract;
+- a self-checking host script distinguishes Linux/transport failure from core-behavior failure.
 
 ### RMD-013 Run small network on FPGA
-Move the already-verified Platform 3 network onto hardware and perform L5 replay.
+
+Use **LAB-HW-07** first to map Lesson 9's abstract neuron-state memory onto real on-chip BRAM resources, then use **LAB-HW-08** to move the already-verified Platform 3 network onto hardware.
+
+LAB-HW-07 teaches only the address/read/write/synchronous-read behavior and resource-report interpretation needed by this design; it does not teach every BRAM primitive parameter.
+
+LAB-HW-08 uses the same fixed input/seed and compares KV260 output against the Python fixed-point reference for L5 replay.
+
+Pass criteria:
+- multi-address neuron-state read/write is correct;
+- synthesis/resource report confirms the intended on-chip memory resource;
+- small-network spike/state trace matches the frozen reference contract;
+- bitstream, network fixture, input fixture, output hash/trace, and Git commit are recorded.
 
 # Bridge 4 — Memory is not “one very large RAM”
 
 ### RMD-013A Memory hierarchy & bandwidth bridge
 Major new concept: **moving data can cost more than arithmetic**.  
-First compare sequential, random, and batched/burst-like access and distinguish latency from throughput.
+First compare sequential, random, and batched/burst-like access and distinguish latency from throughput. Concept lessons may start with models; real measurements are produced by LAB-HW-09/10.
 
 ### RMD-014 DDR hello-world
-Major new concept: **external memory has its own latency and control path**.  
-Use platform-provided controllers/IP for stable read/write + integrity tests. Do not hand-build a DDR PHY/controller.
+
+Major new concept: **external memory has its own latency and control path**.
+
+This maps to **LAB-HW-09** using KV260 platform-provided controllers/IP:
+
+```text
+known payload → DDR write → DDR read → byte/checksum compare → measurement
+```
+
+Do not implement a DDR PHY/controller.
+
+Pass criteria:
+- integrity PASS;
+- transfer size, elapsed time, access pattern, and effective bandwidth are recorded;
+- corrupted data must fail integrity before any performance result is accepted.
 
 ### RMD-014A AXI burst practical bridge
-Major new concept: **moving contiguous data efficiently through standardized bus transactions**.  
-Learn only the AXI mental model/subset needed by this project. Compare small/random transactions with bursts.
+
+Major new concept: **move contiguous data efficiently through standardized bus transactions**.
+
+This maps to **LAB-HW-10**. Learn only the project-required AXI subset and compare small/scattered versus burst-oriented transfers on a real KV260. The required objective is “use + measure”; implementing a complete AXI master from scratch is optional.
+
+Default measurement protocol:
+- same bitstream, data volume, payload, and measurement boundary;
+- 5 warm-up runs excluded from statistics;
+- at least 20 measured repetitions per access pattern;
+- median as the primary result, retaining all raw samples plus min/max;
+- repeat a second batch in the same session; the two medians must differ by ≤10% to call the measurement reproducible, otherwise label it `measurement unstable`;
+- state whether host/software overhead is inside the timer.
+
+Pass criteria:
+- at least two access patterns satisfy the reproducible-measurement protocol;
+- workload contract is explicit and no single measurement is generalized into “AXI/FPGA is faster.”
 
 ### RMD-015 Move synapse store to DDR
 Replace the storage backend without changing `IF-SYNAPSE-STREAM`.  
@@ -168,7 +262,7 @@ Test: identical network results with on-chip versus DDR storage.
 ### RMD-016 Throughput baseline
 Measure the currently available subset of P-001~P-008.
 
-**Platform 4 completion:** the FPGA network uses external memory, and the learner can explain and measure how memory becomes a bottleneck.
+**Platform 4 completion:** the learner can start from a development host whose vendor toolchain is not yet configured and a powered-off KV260, then independently complete toolchain preflight, board orientation, target discovery, bitstream build/program, physical I/O, PS/Linux first boot, host↔PL loopback, BRAM state, small-network replay, DDR integrity, and real bandwidth measurement. The FPGA network uses external memory, and the learner can explain and measure the memory bottleneck.
 
 # Platform 5 — I can run real neural-system data
 
@@ -217,8 +311,8 @@ Use the same model, data, and inputs to compare latency, throughput, memory traf
 |---|---|---|
 | Python → RTL | clock/register/HDL/waveform/bit width arrive together | RMD-003A three micro hardware experiments |
 | Multi-neuron → event-driven | sparse graph/FIFO/router arrive together | RMD-007A four-neuron event walkthrough |
-| Simulation → FPGA | toolchain/bitstream/host I/O arrive together | RMD-011A, 012A, 012B separated |
-| FPGA → DDR/AXI | memory hierarchy/DDR/AXI/bandwidth arrive together | RMD-013A, 014, 014A layered |
+| Simulation → FPGA | vendor toolchain, power/cable/JTAG, bitstream, constraints, PS/Linux, and host I/O arrive together | RMD-011A + LAB-HW-00~08 split toolchain preflight, board orientation, target discovery, first bitstream, physical I/O, PS boot, loopback, BRAM, and small replay |
+| FPGA → DDR/AXI | memory hierarchy/DDR/AXI/bandwidth arrive together | RMD-013A + LAB-HW-09/10 split integrity from measurement |
 
 ## 4. Current first execution batch
 1. RMD-001 Python LIF float reference

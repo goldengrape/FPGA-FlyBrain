@@ -2,9 +2,9 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r1
-- 日期：2026-09-16
-- 本次修订目的：严格区分 FlyBrain 产品系统与学习/工程过程；验证系统矩阵为下三角（decoupled）；把学习曲线本身纳入公理设计约束。
+- 修订：v0.3-r2
+- 日期：2026-09-19
+- 本次修订目的：严格区分 FlyBrain 产品系统与学习/工程过程；验证系统矩阵为下三角（decoupled）；把学习曲线本身纳入公理设计约束；冻结 KV260 reference board，并把零基础实体上板拆成 Physical Lab Track。
 
 ## 1. 设计原则
 1. **Independence Axiom**：尽量保持 Functional Requirements（FR）独立。
@@ -106,7 +106,7 @@ DP-M4 banking/cache/arbitration
 
 | ID | Process Functional Requirement | Process Design Parameter |
 |---|---|---|
-| PFR1 | 初学者能在不同时遭遇多个陌生概念的情况下前进 | PDP1 bridge-first learning slices + one-major-concept rule |
+| PFR1 | 初学者（包括第一次拿到 FPGA 开发板的人）能在不同时遭遇多个陌生概念/操作的情况下前进 | PDP1 bridge-first learning slices + one-major-concept rule + KV260 Physical Lab decomposition |
 | PFR2 | 充分利用 AI/vibe coding，同时由人保持需求、模型、架构与验收标准所有权 | PDP2 AI collaboration contract + guarded CHECKPOINTs |
 | PFR3 | 长期迭代中保持需求、设计、代码、测试可追踪 | PDP3 URD/ADD/MDD/TDD/RMD/TRACE + Git checkpoints + OKF derived context |
 | PFR4 | 跨 Python、fixed-point、RTL、板上实现保持正确性 | PDP4 layered oracle: float → fixed-point → RTL simulation → FPGA replay |
@@ -127,13 +127,15 @@ PFR4        .    .    .    X
 - clock/register 先通过微型电路掌握，再写 LIF RTL；
 - FIFO 先在极小网络中看懂，再引入 CSR/大规模传播；
 - 第一次上板不同时学习 AXI；
+- 第一次实体上板按 vendor toolchain preflight → board orientation → power/target detection → first bitstream → constraints/I/O → PS/Linux first boot → host loopback 顺序拆开；
 - DDR/AXI 前先建立 memory hierarchy 与 bandwidth 直觉。
 
 ### LI-2 以下情况必须插入 bridge slice
 - 成功需要同时理解两个以上尚未掌握的新概念；
 - 学生只能复制 AI 代码，不能解释状态、输入、输出或时序；
 - test failure 无法归因到单一层级；
-- 新工具链问题掩盖正在学习的算法/硬件概念。
+- 新工具链问题掩盖正在学习的算法/硬件概念；
+- power/cable/JTAG/driver/board-selection 问题与正在学习的 RTL/architecture 问题同时出现，导致失败层级不可归因。
 
 ### LI-3 五个平台都必须有可见完成感
 1. 计算神经元：屏幕上看到膜电位与 spike。
@@ -153,7 +155,10 @@ PFR4        .    .    .    X
 教学项目接受“可理解性优先于过早性能最优”；性能优化在正确性冻结后进行。
 
 ### AC-004 Host/FPGA boundary depends on platform capabilities
-不同 SoC FPGA 的 ARM、DDR、transport 路径不同。控制：DP8 面向稳定 host/FPGA message contract，不把核心绑定到特定板卡 API。
+不同 SoC FPGA 的 ARM、DDR、transport 路径不同。第一套实体教学冻结 KV260，但 DP8 仍面向稳定 host/FPGA message contract；KV260 PS/PL、JTAG、DDR 与工具链细节进入 platform shell / Physical Lab，不进入 FlyBrain core API。
+
+### AC-005 Beginner board teaching necessarily depends on a concrete board/tool flow
+零基础上板如果完全板卡中立，就无法给出可执行的供电、连接、target discovery、constraint 与 programming 步骤。控制：教学 reference board 冻结为 KV260；板卡专有事实集中在 `KV260_REFERENCE_PLATFORM.md`、`PHYSICAL_FPGA_LABS.md` 与规划中的 `boards/kv260/`。Concept Lesson 继续保持板卡无关。
 
 ## 8. 当前设计决策
 D-001 基础神经元：LIF。  
@@ -164,9 +169,12 @@ D-005 大连接表：外部 DDR。
 D-006 主机负责数据转换、环境与可视化；FPGA 负责神经计算核心。  
 D-007 AI 可写大量实现与测试代码，但不能绕过 FR/DP、接口、oracle 与 CHECKPOINT。  
 D-008 产品系统 ADD 与学习/工程过程 ADD 分层维护。  
-D-009 教学路线遵守 Learning Independence Axiom。
+D-009 教学路线遵守 Learning Independence Axiom。  
+D-010 第一套完整实体 FPGA 教学 reference board：AMD Kria KV260 Vision AI Starter Kit。  
+D-011 Concept Lesson 与 Physical Lab 分层：Lesson 负责概念，`LAB-HW-*` 负责真实 toolchain setup、连接、build/program/boot/run、故障定位与 evidence。
 
 ## 9. 本轮结论
 - FlyBrain 产品系统矩阵：**通过下三角 / decoupled 检查**。
 - 过程矩阵：**对角 / uncoupled**。
 - 性能与平台耦合：已记录为 Accepted Coupling，并由 benchmark/contract 守护。
+- reference board/tool-flow 教学耦合：已接受；通过 KV260 platform shell 与独立 Physical Lab 层隔离，不改变产品矩阵。
