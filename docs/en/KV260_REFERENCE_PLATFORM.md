@@ -142,21 +142,32 @@ Every physical lab must record:
 
 If a step is revision-specific, the lab must state that explicitly.
 
-## 7. What this documentation pass does not freeze
+## 7. What Stage 1 now freezes — and what remains provisional
 
-This is a **documentation-first** revision. Board code is not written yet, so this pass does not freeze:
+The documentation-first decision has now advanced into the implemented **LAB-HW-00~04** teaching slice.
 
-- a specific PL user-output pin;
-- exact XDC pin assignments;
-- whether the final host↔PL implementation uses AXI-Lite, UIO, XRT, or another runtime transport;
-- the DDR access software stack;
-- the exact **tested/supported** Vivado version; an authoring candidate may be named in LAB-HW-00 before hardware validation, but it is not promoted to supported status until the real-KV260 dry run passes;
+Stage 1 now freezes:
+
+- reference target part: `xck26-sfvc784-2LV-c`;
+- LAB-HW-03 board-visible logical output: `bank45_gpio[4:0]`;
+- Bank 45 XDC mapping for those five logical bits;
+- LAB-HW-04 platform clock source: PS `pl_clk0`, taught as nominal 100 MHz;
+- LAB-HW-04 platform reset source: PS `pl_resetn0`;
+- LAB-HW-04 design-local active-low reset: `proc_sys_reset/peripheral_aresetn` delivered to the teaching RTL;
+- direct Vivado/JTAG as the LAB-HW-03/04 programming path;
+- the evidence rule that direct-JTAG programming is proven by Vivado/device status plus the design's own observable output, not by DS34 alone.
+
+The following are **not yet promoted to tested physical facts**:
+
+- the exact physically observed silkscreen LED designator and visible polarity for each Bank 45 bit;
+- Vivado 2026.1 as the tested/supported course baseline rather than the current authoring candidate;
 - the exact starter-Linux image version/checksum;
-- the final source of the design-local reset.
+- the final LAB-HW-06 runtime transport (AXI-Lite/UIO/XRT/other);
+- the later DDR access software stack.
 
-Those decisions are made only after the matching `LAB-HW-*` prose and TDD oracle are reviewed and the corresponding path is dry-run on a real KV260. LAB-HW-00 freezes the vendor-toolchain version/board files; LAB-HW-05 freezes the starter-Linux image/UART first-boot path; LAB-HW-04 freezes the design-local reset source; LAB-HW-06 freezes the runtime transport. Implementations should prefer AMD-supported paths and must not change the FlyBrain core contract merely because one demo path is convenient.
+Those remaining facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit and artifact.
 
-**Evidence semantics must match the actual path:** if PL is programmed directly through Vivado/JTAG, use Vivado/device status and the design's own observable output as primary evidence. DS34's PS-done meaning is evidence only when the PS actually loads the PL design.
+The implemented board-support code lives under `boards/kv260/`. FlyBrain core RTL still must not depend on KV260 connector names, package pins, Vivado project layout, or Linux device paths.
 
 ## 8. Reference-board decision
 
