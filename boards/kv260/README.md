@@ -48,7 +48,7 @@ vivado -mode batch -nolog -nojournal \
   | tee lab-hw-02-target-detection.txt
 ```
 
-The script exits non-zero when the local hardware server cannot be reached, no hardware target can be opened, or no hardware device is discovered.
+The script exits non-zero when the local hardware server cannot be reached, no hardware target can be opened, or no XCK26 FPGA device is discovered. A PS debug object such as `arm_dap_1` does not satisfy the KV260 FPGA-device oracle by itself.
 
 ## Evidence boundary
 
