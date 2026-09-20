@@ -34,7 +34,7 @@ def test_preflight_script_has_machine_searchable_contract():
     assert 'set expected_vivado_prefix "2026.1"' in text
     assert "version -short" in text
     assert "get_board_parts -quiet *kv260*" in text
-    assert "UNSUPPORTED_VIVADO_VERSION" in text
+    assert "AUTHORING_BASELINE_MISMATCH" in text
     assert "NO_KV260_BOARD_PART" in text
     assert "STATUS=PASS" in text
 
