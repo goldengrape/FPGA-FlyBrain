@@ -4,7 +4,7 @@
 
 A Concept Lesson answers why a hardware concept is needed and what it means. A Physical Lab answers how a learner performs it on a real KV260 and leaves reviewable evidence.
 
-Physical Labs target a learner with **zero previous FPGA experience**. They must not assume that vendor UI, cables, power, JTAG, board files, programming, or constraints are already familiar.
+Physical Labs target a learner with **zero previous FPGA, embedded-Linux, or vendor-FPGA-toolchain experience**. They must not assume that Vivado, cable drivers, board files, cables, power, JTAG, UART, microSD, Linux boot, programming, or constraints are already familiar.
 
 See [KV260_REFERENCE_PLATFORM.md](KV260_REFERENCE_PLATFORM.md).
 
@@ -14,9 +14,9 @@ See [KV260_REFERENCE_PLATFORM.md](KV260_REFERENCE_PLATFORM.md).
 Concept Lesson
     ↓ establish model, terms, expectation
 Physical Lab
-    ↓ real connection / build / program / observe
+    ↓ real setup / connection / build / program / boot / run / observe
 Evidence
-    ↓ report / readback / photo / hash / measurement
+    ↓ report / readback / serial log / photo / hash / measurement
 Human Check
     ↓ learner explains what happened
 Engineering Handoff
@@ -29,10 +29,10 @@ A Physical Lab is not a copy of the concept lesson with screenshots added. It ow
 Each Physical Lab includes at least:
 
 1. **What should be on the desk**: board, power supply, cables, SD card/peripherals;
-2. **Preflight check**: power state, correct connector, voltage and safety boundaries;
+2. **Preflight check**: power state, correct connector, voltage/safety boundaries, required software versions;
 3. **One primary new physical operation**;
 4. **Connection Map**: inline SVG plus official connector names for the path used in this lab;
-5. **Build / Program / Run**: explicitly separated stages;
+5. **Build / Program / Boot / Run**: explicitly separated when applicable;
 6. **Expected Evidence**: what success looks like, not merely “no error”;
 7. **If it does not work**: a layered troubleshooting tree;
 8. **Human Check**: what the current evidence proves and does not prove;
@@ -45,13 +45,13 @@ Screenshots may help locate UI elements, but they are never the only specificati
 Physical labs debug in this order instead of immediately editing RTL:
 
 ```text
+vendor toolchain / driver / board files
+  ↓
 power
   ↓
 physical connection / cable
   ↓
-target enumeration / driver / JTAG
-  ↓
-board selection / toolchain
+target enumeration / JTAG
   ↓
 synthesis / implementation
   ↓
@@ -59,16 +59,44 @@ constraints / timing
   ↓
 programming
   ↓
+PS boot / UART / Linux
+  ↓
 runtime I/O / host transport
   ↓
 FlyBrain core behavior
 ```
 
-Evidence proves only the relevant layer and explicitly connected contracts. For example, “program succeeded” does not prove the neuron algorithm is correct.
+Evidence proves only the relevant layer and explicitly connected contracts. “Program succeeded” does not prove the neuron algorithm is correct, and “Linux booted” does not prove that the PS↔PL transport is correct.
 
-## 4. KV260 Physical Lab path
+## 4. Reset layers must stay distinct
 
-### LAB-HW-00 — Board orientation
+KV260 exposes reset mechanisms at different levels. The course must distinguish:
+
+- **SW2 / SOM reset**: a board/SOM-level hard reset; it resets the SOM and is not automatically the same thing as a SystemVerilog module's `rst_n`;
+- **PS/platform reset**: reset generated/distributed by platform infrastructure;
+- **FlyBrain design-local reset**: the logical reset contract of a specific RTL block.
+
+Before LAB-HW-04 freezes the design-local reset source, course material must not say or imply that pressing SW2 is equivalent to asserting a neuron's RTL `rst_n`. If a lab uses SW2, it proves only SOM-level reset. A local PL-design reset must name its actual source and polarity.
+
+## 5. KV260 Physical Lab path
+
+### LAB-HW-00 — Vendor toolchain preflight
+
+**Primary new operation:** verify the vendor toolchain on the development host without powering a board or writing RTL.
+
+The learner only handles development-host setup:
+
+- install the course-frozen AMD Vivado version;
+- install/verify the JTAG cable driver;
+- install/verify the course-frozen KV260 board files / board flow;
+- record OS, Vivado version, and board-file/platform version;
+- run course-provided version and board-definition checks.
+
+This lab does not connect the board, generate a bitstream, or teach AXI.
+
+**Pass evidence:** tool/version/board-definition preflight passes and textual output is saved. The exact Vivado version and commands are frozen in this lab's prose only after a real-KV260 dry run.
+
+### LAB-HW-01 — Board orientation
 
 **Primary new operation:** identify the real interfaces without powering the board or writing RTL.
 
@@ -79,15 +107,15 @@ The learner identifies:
 - J4 FTDI USB UART/JTAG;
 - J11 microSD;
 - J10 Ethernet;
-- SW2 reset;
+- SW2 SOM-level reset;
 - at least one later I/O/expansion path;
 - carrier revision marking according to the real board and official interface figure.
 
-**Pass evidence:** a completed board inventory recording the actual carrier revision.
+**Pass evidence:** a completed board inventory recording the actual carrier revision and a correct explanation that SW2 is a SOM reset, not the default FlyBrain local RTL reset.
 
-### LAB-HW-01 — Power + target detection
+### LAB-HW-02 — Power + target detection
 
-**Primary new operation:** power the board correctly and let the development tools enumerate a real target.
+**Primary new operation:** power the board correctly and let the LAB-HW-00-verified tools enumerate a real target.
 
 This lab does not change FlyBrain RTL and does not teach AXI.
 
@@ -98,9 +126,9 @@ The learner separates:
 - development host;
 - target device.
 
-**Pass evidence:** stable target enumeration plus recorded tool version and target identification. Detection failures are debugged through power → USB/JTAG → driver/tool first.
+**Pass evidence:** stable target enumeration plus target identification. Detection failures are debugged through power → USB/JTAG → driver/tool instead of editing RTL.
 
-### LAB-HW-02 — First bitstream
+### LAB-HW-03 — First bitstream
 
 **Primary new operation:** take minimal RTL through synthesis → implementation → bitstream → program.
 
@@ -111,27 +139,50 @@ The first implementation uses a PL proof that is observable and supported by the
 - no blocking implementation/timing error;
 - bitstream hash;
 - programming success;
-- KV260 PL configuration-status evidence;
+- **configuration evidence appropriate to the actual programming path**;
 - at least one observable result demonstrating that the learner's design, not merely board power, is active.
 
-### LAB-HW-03 — Constraints + clock/reset/I/O
+**DS34 is not a universal JTAG-programming oracle.** AMD defines DS34 as the PS done indication that the PS successfully loaded a PL design. It may be evidence only when the lab's actual configuration path matches that meaning. If LAB-HW-03 configures PL directly through Vivado/JTAG, use Vivado/device programming status plus the design's own observable output as the primary evidence.
+
+### LAB-HW-04 — Constraints + clock/reset/I/O
 
 **Primary new operation:** connect logical RTL ports to physical board resources through board/constraint mapping.
 
 Teach only what this lab needs:
 
 - clock source / period;
-- reset semantics;
+- design-local reset semantics;
 - one safe board-visible I/O;
 - I/O-standard / voltage boundary.
 
-**Pass evidence:** physical input/reset changes a physical/readable output as specified, and the learner can explain why an RTL port name has no intrinsic physical-pin meaning.
+This lab must freeze the source and polarity of the local reset used by this design and repeat that SW2 is a SOM-level hard reset, not automatically a module reset.
 
-### LAB-HW-04 — Real host↔PL loopback
+**Pass evidence:** the course-frozen physical/readable input or local-reset source changes the output as specified; the learner can explain why an RTL port name has no intrinsic physical-pin meaning and can distinguish SOM reset from design-local reset.
 
-**Prerequisite:** LSN-015.
+### LAB-HW-05 — PS/Linux first boot + UART console
 
-**Primary new operation:** distinguish JTAG programming from runtime control of PL by the KV260 PS/runtime host.
+**Prerequisite:** LAB-HW-00~04.
+
+**Primary new operation:** boot the KV260 PS/runtime host independently, without simultaneously learning the PS↔PL transport.
+
+The learner:
+
+- obtains and verifies the course-frozen starter Linux image;
+- writes the image to microSD;
+- uses the course-specified UART-console path;
+- boots the KV260;
+- observes the boot log and completes first login / shell check;
+- distinguishes the development host from the KV260 PS/Linux runtime host.
+
+This lab does not require host↔PL register readback and does not teach full AXI.
+
+**Pass evidence:** image/version/checksum, UART boot log, kernel/OS identification, and one simple shell-command result are saved. The learner can explain why “JTAG programs PL” and “PS/Linux boots” are different paths.
+
+### LAB-HW-06 — Real host↔PL loopback
+
+**Prerequisites:** LSN-015 and LAB-HW-05.
+
+**Primary new operation:** after PS/Linux boot is understood, let the KV260 runtime host control PL.
 
 The minimum semantics remain those introduced in Lesson 15:
 
@@ -141,9 +192,9 @@ write value → PL stores/processes → read back result
 
 The semantic contract is frozen first; RMD-012B then selects the smallest stable KV260 runtime transport. Full AXI is not made a prerequisite merely to get the first loopback working.
 
-**Pass evidence:** write, PL-state change, and readback ordering match the contract and can be repeated with self-checking error paths.
+**Pass evidence:** write, PL-state change, and readback ordering match the contract; a self-checking script detects wrong values/order and distinguishes Linux/transport failures from core-behavior failures.
 
-### LAB-HW-05 — BRAM neuron state
+### LAB-HW-07 — BRAM neuron state
 
 **Primary new operation:** map Lesson 9's abstract `state[address]` onto real FPGA on-chip memory.
 
@@ -159,7 +210,7 @@ Primitive parameters, ECC, and complex multi-port arbitration are deferred.
 
 **Pass evidence:** multi-address state read/write is correct and the resource report matches the intended mapping.
 
-### LAB-HW-06 — Small FlyBrain replay
+### LAB-HW-08 — Small FlyBrain replay
 
 **Primary new operation:** move an already verified small network onto KV260 without redefining the algorithm.
 
@@ -173,7 +224,7 @@ KV260 FlyBrain small network
 
 **Pass evidence:** spike/state replay matches the frozen reference contract, with bitstream, network fixture, input fixture, and output hash/trace recorded.
 
-### LAB-HW-07 — DDR integrity
+### LAB-HW-09 — DDR integrity
 
 **Prerequisites:** LSN-016 and LSN-017.
 
@@ -189,38 +240,50 @@ known payload
 → only then measure
 ```
 
-**Pass evidence:** integrity PASS + transfer size + elapsed time + effective bandwidth, with access pattern recorded.
+**Pass evidence:** integrity PASS + transfer size + elapsed time + effective bandwidth, with access pattern recorded. Any integrity failure blocks performance conclusions.
 
-### LAB-HW-08 — AXI/burst measurement
+### LAB-HW-10 — AXI/burst measurement
 
-**Prerequisites:** LSN-018 and LAB-HW-07.
+**Prerequisites:** LSN-018 and LAB-HW-09.
 
 **Primary new operation:** compare effective bandwidth/latency for small/scattered versus contiguous/burst-oriented paths on real hardware.
 
 Using and measuring the platform path is mandatory. Writing a full AXI master from scratch is optional.
 
-**Pass evidence:** a reproducible benchmark with the same data volume, explicit measurement window, and at least two access patterns; results must not claim “AXI/FPGA is faster” without a workload contract.
+Default measurement protocol (lab prose may be stricter with evidence, but not vaguer):
 
-## 5. Content intentionally not taught in the first physical track
+- same bitstream, data volume, payload, and measurement boundary;
+- perform **5 warm-up runs**, excluded from statistics;
+- at least **20 measured repetitions** for each access pattern;
+- use the **median** as the primary result and retain min/max plus all raw samples;
+- repeat another measurement batch in the same session; the two batch medians should differ by **≤10%**. If they differ by more than 10%, report “measurement unstable” and make no performance conclusion;
+- state the workload contract, timer boundaries, and whether host/software overhead is included.
+
+**Pass evidence:** at least two access patterns satisfy the reproducible-benchmark protocol; results must not claim “AXI/FPGA is faster” without a workload contract.
+
+## 6. Content intentionally not taught in the first physical track
 
 The first Physical Lab track does not systematically teach:
 
 - internal JTAG protocol state machines;
+- boot-firmware internals;
+- Linux kernel/driver development;
 - DDR PHY training;
 - full AXI channel/ordering/outstanding/coherency behavior;
 - all Vivado IP Integrator features;
-- boot-firmware internals;
 - advanced floorplanning/timing closure;
 - a complete clock-domain-crossing curriculum.
 
 Add a bridge lab only when FlyBrain actually requires one and the existing abstraction no longer suffices.
 
-## 6. Assessment and evidence
+## 7. Assessment and evidence
 
 Physical Labs do not force every task into a Python grader. Formal evidence may include:
 
+- toolchain/version preflight logs;
 - parsed Vivado reports;
 - programming/target logs;
+- UART boot logs;
 - terminal readback;
 - self-checking host scripts;
 - hardware output traces;
@@ -228,11 +291,11 @@ Physical Labs do not force every task into a Python grader. Formal evidence may 
 - resource/timing summaries;
 - bitstream/build manifests;
 - differential replay reports;
-- bandwidth measurements.
+- bandwidth raw samples + summaries.
 
 Automatable pieces remain in CI. Steps requiring a real KV260 belong in a physical checkpoint/hardware runner; ordinary CI must not pretend that board verification occurred.
 
-## 7. Documentation-first implementation order
+## 8. Documentation-first implementation order
 
 This revision first completes:
 
@@ -243,7 +306,7 @@ This revision first completes:
 Only then may the project:
 
 4. author `labs/zh/` and `labs/en/`;
-5. freeze the exact Vivado flow, board pins/constraints, and host transport;
+5. freeze the exact Vivado version, board files, pins/constraints, starter Linux image, and host transport in LAB-HW-00/02/03/05/06 prose;
 6. implement `boards/kv260/`, RTL/platform scripts;
 7. dry-run every lab on a real KV260;
 8. add automatable pieces to CI.
