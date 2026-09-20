@@ -181,10 +181,13 @@ host↔PL 前先拆出一个独立 bridge，避免 Linux boot、serial console �
 - **LAB-HW-05**：starter Linux image → microSD → UART console → PS boot/login；只证明 KV260 PS/Linux runtime host 自己能启动；
 - **LAB-HW-06**：在 LAB-HW-05 已通过后，再做真实 PS/runtime host ↔ PL minimal loopback。
 
-LAB-HW-05 通过标准：
-- starter Linux image 的 version/checksum 有记录；
-- UART boot log 可保存；
-- 能进入 shell 并记录 kernel/OS identification；
+LAB-HW-05 authoring contract：
+- 选择 Kria K26 的 Ubuntu Server 24.04 LTS，当前文件为 `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`；
+- 记录实际下载 archive 的 filename 与本地计算 SHA-256；course expected hash 只有在一次受控下载后才能升级冻结，不伪造数值；
+- 使用 AMD 当前建议的初学者路径 Raspberry Pi Imager 写 microSD；
+- J4 UART 使用 115200 8N1、no flow control；
+- 从上电到 login/password change 保留 UART boot log；
+- shell 记录 kernel/OS/model、`xmutil boardid`、`xmutil bootfw_status`；
 - 学生能解释 development host 与 runtime host/PS 的区别。
 
 LAB-HW-06 冻结最小 semantic contract：
@@ -193,12 +196,14 @@ LAB-HW-06 冻结最小 semantic contract：
 write value → PL stores/processes → read back result
 ```
 
-具体 runtime transport（如 AXI-Lite/UIO/XRT 等）在 Lab prose 与 TDD oracle 审批后选择；选择标准是最小稳定路径，而不是提前教授完整 AXI。
+第二阶段 authoring transport 现在冻结为：PS/Linux Python 通过 `/dev/mem` 映射 `0xA0010000` 的 dual-channel AXI GPIO；Channel 1 是 32-bit host-write output，Channel 2 是 32-bit PL-result input，极小 PL transform 返回 `(value + 1) mod 2^32`。PS `M_AXI_HPM0_FPD` + AXI SmartConnect 构成 memory-mapped path。这样用 AXI GPIO 当 teaching adapter，不要求学生第一次 loopback 就手写 AXI slave。真实 Ubuntu 24.04 dry run 通过前，`/dev/mem` 仍是 provisional；若受支持 image 的 policy 阻止 device-MMIO，应修订 transport（例如 UIO），而不是绕开安全策略。
 
 LAB-HW-06 通过标准：
-- write/readback 可重复；
-- PL state/operation 与顺序 contract 一致；
-- host script 自检失败时能区分 Linux/transport failure 与 core behavior failure。
+- 专用 bitstream timing closure 后 build 成功，并在 LAB-HW-05 Linux 保持 boot 的状态下 direct-JTAG program；
+- 固定 MMIO base/register offsets 有记录；
+- 固定 test vectors 每次都得到冻结的 `+1 mod 2^32` 结果；
+- self-checking host script 记录 write/expected/read triple，并区分 Linux/permission/policy/transport failure 与 core-behavior mismatch；
+- 保存 bitstream hash、runtime-script hash、OS/image identity、Git commit 与 board revision。
 
 ### RMD-013 Run small network on FPGA
 
