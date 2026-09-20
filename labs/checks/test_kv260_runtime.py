@@ -1,4 +1,4 @@
-"""Host-side contract tests for KV260 LAB-HW-05 runtime helpers."""
+"""Host-side contract tests for KV260 LAB-HW-05/06 runtime helpers."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ RUNTIME = ROOT / "boards" / "kv260" / "runtime"
 HASH_IMAGE = RUNTIME / "hash_image.py"
 IMAGE_MANIFEST = RUNTIME / "ubuntu24_image.json"
 COLLECT_BOOT_INFO = RUNTIME / "collect_boot_info.sh"
+LOOPBACK = RUNTIME / "loopback_mmio.py"
 
 
 def test_image_manifest_freezes_identity_without_inventing_checksum():
@@ -102,3 +103,66 @@ def test_collect_boot_info_shell_syntax_and_contract():
     assert "/proc/device-tree/model" in text
     assert "xmutil boardid" in text
     assert "xmutil bootfw_status" in text
+
+
+
+def test_loopback_dry_run_is_self_checking_and_writes_trace(tmp_path):
+    trace = tmp_path / "lab-hw-06-trace.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(LOOPBACK),
+            "--dry-run",
+            "--json-out",
+            str(trace),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "FPGA_FLYBRAIN_LAB=LAB-HW-06" in result.stdout
+    assert "MMIO_BASE=0xa0010000" in result.stdout.lower()
+    assert "TRANSPORT=DRY_RUN_MODEL" in result.stdout
+    assert "SAMPLE_COUNT=12" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+
+    payload = json.loads(trace.read_text(encoding="utf-8"))
+    assert payload["lab_id"] == "LAB-HW-06"
+    assert payload["base"] == 0xA0010000
+    assert payload["gpio_data_offset"] == 0
+    assert payload["gpio2_data_offset"] == 8
+    assert payload["rounds"] == 2
+    assert len(payload["trace"]) == 12
+    assert payload["trace"][-1]["write"] == 0xFFFFFFFF
+    assert payload["trace"][-1]["read"] == 0
+
+
+def test_loopback_rejects_invalid_round_count():
+    result = subprocess.run(
+        [sys.executable, str(LOOPBACK), "--dry-run", "--rounds", "0"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 2
+    assert "ERROR=INVALID_ROUND_COUNT" in result.stdout
+
+
+def test_loopback_reports_missing_transport_before_mapping(tmp_path):
+    missing = tmp_path / "no-dev-mem"
+    result = subprocess.run(
+        [sys.executable, str(LOOPBACK), "--device", str(missing)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 3
+    assert "ERROR=TRANSPORT_DEVICE_MISSING" in result.stdout
+
+
+def test_loopback_cli_does_not_expose_arbitrary_physical_base():
+    text = LOOPBACK.read_text(encoding="utf-8")
+    assert 'MMIO_BASE = 0xA0010000' in text
+    assert 'parser.add_argument("--base"' not in text
+    assert "TRANSPORT_REQUIRES_ROOT" in text
