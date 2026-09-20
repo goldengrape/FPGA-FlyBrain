@@ -193,12 +193,26 @@ LAB-HW-06 freezes the semantic contract first:
 write value → PL stores/processes → read back result
 ```
 
-The exact runtime transport (for example AXI-Lite/UIO/XRT or another supported path) is selected only after the Lab prose and TDD oracle are reviewed. Prefer the smallest stable path rather than using the first loopback to teach full AXI.
+The teaching transport is now frozen to the smallest inspectable KV260 path:
+
+```text
+Ubuntu/Python on PS
+  → fixed /dev/mem MMIO
+  → PS M_AXI_HPM0_FPD
+  → AXI SmartConnect
+  → dual-channel AXI GPIO @ 0xA0010000
+  → kv260_loopback_transform
+```
+
+AXI GPIO is the adapter: Channel 1 `GPIO_DATA` at `+0x0` stores the 32-bit host write, the PL teaching core computes `(write + 1) mod 2^32`, and Channel 2 `GPIO2_DATA` at `+0x8` exposes the result. The hardware address follows AMD/Xilinx's K26 `base_gpio_bram` reference. The course helper does not expose arbitrary physical addresses.
+
+This `/dev/mem` path is frozen for **LAB-HW-06 teaching only**; it does not define the final MOD-010 software stack. If the supported Ubuntu image blocks this access by policy, do not weaken security. Preserve the evidence, leave T-HW-006 blocked, and revise the repository transport in a later change.
 
 LAB-HW-06 pass criteria:
-- write/readback is repeatable;
-- PL state/operation ordering matches the contract;
-- a self-checking host script distinguishes Linux/transport failure from core-behavior failure.
+- build/DRC/timing and direct-JTAG programming evidence are retained;
+- two rounds of the fixed vector set produce the expected `write → expected → read` trace, including 32-bit wraparound;
+- the self-checking host script distinguishes Linux/transport failures from core-behavior mismatch;
+- runtime trace, bitstream/script hashes, Git commit, OS/image identity, and board/carrier revision are recorded.
 
 ### RMD-013 Run small network on FPGA
 
