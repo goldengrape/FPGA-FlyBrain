@@ -213,18 +213,46 @@ Teach only the constraints needed here:
 
 **Primary new operation:** boot the KV260 PS/runtime host independently, without simultaneously learning the PS↔PL transport.
 
-The learner:
+The Stage-2 authoring image is frozen to the current AMD/Canonical Kria K26 Ubuntu Server image:
 
-- obtains and verifies the course-frozen starter Linux image;
-- writes the image to microSD;
-- uses the course-specified UART-console path;
-- boots the KV260;
-- observes the boot log and completes first login / shell check;
-- distinguishes the development host from the KV260 PS/Linux runtime host.
+- distribution: **Ubuntu Server 24.04 LTS**;
+- image archive: `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`;
+- source page: Canonical **Install Ubuntu on AMD** / Kria K26;
+- target: KV260/KR260/KD240 unified Kria image;
+- microSD guidance: 16 GB UHS-1 or larger;
+- flashing tool for the beginner path: **Raspberry Pi Imager**, matching the current AMD Kria guide.
 
-This lab does not require host↔PL register readback and does not teach full AXI.
+The exact download identity is versioned in `boards/kv260/runtime/ubuntu24_image.json`. The repository records the image filename/source now, but does **not** invent an upstream SHA-256 value that the visible Canonical download index does not publish. The learner computes the downloaded archive SHA-256 with the course helper and records it. Until a controlled course download promotes an expected SHA-256 into that manifest, T-HW-005 may be exercised but must not be labeled a fully frozen image-hash PASS.
 
-**Pass evidence:** image/version/checksum, UART boot log, kernel/OS identification, and one simple shell-command result are saved. The learner can explain why “JTAG programs PL” and “PS/Linux boots” are different paths.
+The physical boot path is:
+
+- microSD in J11;
+- J4 FTDI USB for the UART console;
+- J12 12 V / 3 A power;
+- UART: **115200 baud, 8 data bits, no parity, 1 stop bit, no flow control**;
+- initial Ubuntu login: `ubuntu` / `ubuntu`, followed by the required first-login password change.
+
+The learner retains the complete UART transcript from power-on through login, then records:
+
+```bash
+uname -a
+cat /etc/os-release
+cat /proc/device-tree/model; echo
+sudo xmutil boardid
+sudo xmutil bootfw_status
+```
+
+A successful Linux boot does not prove that custom PL is loaded. Likewise, Vivado/JTAG programming PL does not prove that Linux booted. These are separate paths.
+
+Boot firmware is **observed first, not casually rewritten as part of the main exercise**. If current firmware prevents the supported Ubuntu image from booting, follow the AMD boot-firmware update/recovery instructions as a troubleshooting branch and retain that evidence.
+
+Before removing power, run:
+
+```bash
+sudo shutdown -h now
+```
+
+**Pass evidence:** exact image filename, computed archive SHA-256, flashing method, UART settings/port, UART boot log, kernel/OS/model output, boot-firmware status, current Git commit, board/carrier revision, and a clean shutdown record. Formal image-hash PASS remains blocked while the course expected SHA-256 field is null.
 
 ### LAB-HW-06 — Real host↔PL loopback
 

@@ -142,11 +142,11 @@ Every physical lab must record:
 
 If a step is revision-specific, the lab must state that explicitly.
 
-## 7. What Stage 1 now freezes — and what remains provisional
+## 7. What the implemented Physical-Lab slice now freezes — and what remains provisional
 
-The documentation-first decision has now advanced into the implemented **LAB-HW-00~04** teaching slice.
+The documentation-first decision has now advanced through the implemented **LAB-HW-00~05** teaching slice.
 
-Stage 1 now freezes:
+The repository now freezes:
 
 - reference target part: `xck26-sfvc784-2LV-c`;
 - LAB-HW-03 board-visible logical output: `bank45_gpio[4:0]`;
@@ -155,13 +155,18 @@ Stage 1 now freezes:
 - LAB-HW-04 platform reset source: PS `pl_resetn0`;
 - LAB-HW-04 design-local active-low reset: `proc_sys_reset/peripheral_aresetn` delivered to the teaching RTL;
 - direct Vivado/JTAG as the LAB-HW-03/04 programming path;
-- the evidence rule that direct-JTAG programming is proven by Vivado/device status plus the design's own observable output, not by DS34 alone.
+- the evidence rule that direct-JTAG programming is proven by Vivado/device status plus the design's own observable output, not by DS34 alone;
+- LAB-HW-05 distribution: **Ubuntu Server 24.04 LTS** for the AMD Kria K26 starter-kit path;
+- LAB-HW-05 authoring image identity: `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`;
+- LAB-HW-05 physical path: J11 microSD + J4 FTDI USB UART + J12 12 V / 3 A board power;
+- LAB-HW-05 UART contract: 115200 baud, 8 data bits, no parity, 1 stop bit, and no flow control;
+- LAB-HW-05 evidence contract: downloaded-image identity/local SHA-256, UART boot transcript, kernel/OS identification, device-tree model, board/boot-firmware observations, shell access, Git commit, board revision, date, and clean shutdown.
 
 The following are **not yet promoted to tested physical facts**:
 
 - the exact physically observed silkscreen LED designator and visible polarity for each Bank 45 bit;
 - Vivado 2026.1 as the tested/supported course baseline rather than the current authoring candidate;
-- the exact starter-Linux image version/checksum;
+- a trusted expected SHA-256 for the LAB-HW-05 Ubuntu archive. The visible upstream download directory used during authoring did not publish one, so `ubuntu24_image.json` intentionally keeps `expected_sha256: null`; local hashes are recorded as `RECORDED_UNVERIFIED`, and formal T-HW-005 image-hash PASS remains blocked;
 - the final LAB-HW-06 runtime transport (AXI-Lite/UIO/XRT/other);
 - the later DDR access software stack.
 

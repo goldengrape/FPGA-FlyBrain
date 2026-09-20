@@ -6,17 +6,18 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-The board-support layer now implements **LAB-HW-00~04**:
+The board-support layer now implements **LAB-HW-00~05**:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
 - `rtl/kv260_marker_top.sv` + `scripts/build_lab03_marker.tcl` — LAB-HW-03 first bitstream;
 - `rtl/kv260_blink_core.sv` + `scripts/build_lab04_blink.tcl` — LAB-HW-04 clock/reset/I/O proof;
 - `constraints/bank45_gpio.xdc` — reviewed Bank 45 logical-port → K26 package-pin mapping;
+- `runtime/ubuntu24_image.json`, `hash_image.py`, and `collect_boot_info.sh` — LAB-HW-05 image/UART evidence helpers;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-PS/Linux runtime, host↔PL transport, BRAM network state, DDR, and AXI belong to LAB-HW-05~10 and are not implemented by this stage.
+Host↔PL transport, BRAM network state, DDR, and AXI belong to LAB-HW-06~10 and are not implemented by this stage. LAB-HW-05 implements only the independent PS/Linux first-boot and UART evidence path.
 
 ## Authoring baseline
 
@@ -109,3 +110,22 @@ Clock/reset contract:
 - the build stops at routed implementation, requires real setup/hold timing paths, and rejects negative setup or hold slack before writing the bitstream.
 
 The shared `program_bitstream.tcl` enumerates hardware targets first and requires **exactly one** XCK26 target/device pair. If multiple KV260/XCK26 targets are attached, it fails with `AMBIGUOUS_KV260_FPGA_DEVICE` instead of guessing which board to program.
+
+## LAB-HW-05
+
+Image identity:
+
+```bash
+python boards/kv260/runtime/hash_image.py \
+  /path/to/iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz
+```
+
+The current manifest intentionally has `expected_sha256: null`. A local hash is recorded, but formal image-hash PASS remains blocked until a controlled course download freezes the expected hash.
+
+After Ubuntu boots on the PS, collect evidence with:
+
+```bash
+bash boards/kv260/runtime/collect_boot_info.sh
+```
+
+The main Lab path observes boot firmware first; firmware update/recovery is a documented troubleshooting branch, not an unrecorded default action.
