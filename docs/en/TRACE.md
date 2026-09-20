@@ -2,7 +2,7 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r8
+- Revision: v0.3-r9
 - Date: 2026-09-20
 - Purpose: synchronize ADD's product/process FR split, RMD bridge slices, and the new Learning Architecture / Notebook teaching layer.
 
@@ -59,8 +59,8 @@ Link user needs → functional requirements → design parameters → teaching a
 | LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | `labs/en/02_power_target_detection.ipynb` |
 | LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | `labs/en/03_first_bitstream.ipynb` + `boards/kv260/rtl/kv260_marker_top.sv` |
 | LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | `labs/en/04_clock_reset_io.ipynb` + `boards/kv260/rtl/kv260_blink_core.sv` |
-| LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | planned `labs/en/05_*` |
-| LAB-HW-06 | real host↔PL loopback | T-HW-006/T-HW-011 | RMD-012B | planned `labs/en/06_*` |
+| LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | `labs/en/05_ps_linux_first_boot.ipynb` + `boards/kv260/runtime/ubuntu24_image.json` |
+| LAB-HW-06 | real host↔PL loopback | T-HW-006/T-HW-011 | RMD-012B | `labs/en/06_host_pl_loopback.ipynb` + `boards/kv260/scripts/build_lab06_loopback.tcl` + `boards/kv260/runtime/loopback_mmio.py` |
 | LAB-HW-07 | BRAM neuron-state store | T-HW-007/T-HW-011 | RMD-013 | planned `labs/en/07_*` |
 | LAB-HW-08 | small FlyBrain FPGA replay | T-HW-008/T-HW-011 | RMD-013 | planned `labs/en/08_*` |
 | LAB-HW-09 | DDR integrity + real measurement | T-HW-009/T-HW-011 | RMD-014 | planned `labs/en/09_*` |
@@ -187,7 +187,7 @@ Change routing:
 - LSN-009~012: third bilingual lesson block established; Python teaching models do not declare MOD-004~009 complete
 - LSN-013~018: fourth bilingual lesson block established; concept Notebooks do not declare the physical-platform implementation complete
 - Reference board: **AMD Kria KV260 Vision AI Starter Kit** is frozen
-- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen; **LAB-HW-00~04** now have bilingual Notebooks and CI contract checks; LAB-HW-03/04 add board-specific RTL, Bank 45 XDC, build/program helpers, and open-source self-checking simulations. No real-KV260 pass or real Vivado full-build pass is claimed; LAB-HW-05~10 remain pending
+- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen; **LAB-HW-00~06** now have bilingual Notebooks and CI contract checks. LAB-HW-05 adds Ubuntu/UART evidence helpers; LAB-HW-06 adds the authoring-candidate PS/Linux `/dev/mem` MMIO ↔ dual-channel AXI GPIO transport, loopback RTL/build helper, and self-checking runtime script. No real-KV260 pass, frozen Ubuntu expected hash, `/dev/mem` policy compatibility, or real Vivado full-build pass is claimed; LAB-HW-07~10 remain pending
 - LSN-019~023: fifth bilingual lesson block established; connectome teaching fixtures, synthetic scale/benchmark numbers, and the toy closed loop do not declare RMD-017~028 formal data artifacts, full-system implementation, or real performance results complete
 - TRACE: synchronized across engineering and teaching paths through LSN-023
 - First formal implementation slice: not started
