@@ -227,23 +227,25 @@ Detailed standards:
 
 | Physical Lab | Primary new operation | Concept prerequisite | RMD |
 |---|---|---|---|
-| LAB-HW-00 | Identify KV260 power, JTAG/UART, microSD, reset, I/O, and carrier revision | LSN-014 | RMD-012 |
-| LAB-HW-01 | Power correctly and let the development tools discover a real target | LSN-014 | RMD-012 |
-| LAB-HW-02 | synthesis → implementation → bitstream → program | LSN-013/014 | RMD-012A |
-| LAB-HW-03 | clock/reset/I/O constraints and physical input/output | LSN-014 | RMD-012A |
-| LAB-HW-04 | real KV260 PS/runtime-host ↔ PL loopback | LSN-015 | RMD-012B |
-| LAB-HW-05 | map abstract neuron-state RAM onto real on-chip BRAM resources | LSN-009/016 | RMD-013 |
-| LAB-HW-06 | run a small FlyBrain network on hardware and compare replay with the Python fixed reference | LSN-012~016 | RMD-013 |
-| LAB-HW-07 | real DDR write/read integrity + bandwidth measurement | LSN-016/017 | RMD-014 |
-| LAB-HW-08 | compare small/scattered versus burst-oriented transfers on real hardware | LSN-018 | RMD-014A |
+| LAB-HW-00 | vendor-toolchain preflight: Vivado / JTAG driver / KV260 board files | LSN-013/014 | RMD-012 |
+| LAB-HW-01 | identify KV260 power, JTAG/UART, microSD, SW2 SOM reset, I/O, and carrier revision | LSN-014 | RMD-012 |
+| LAB-HW-02 | power correctly and let the verified development tools discover a real target | LSN-014 | RMD-012 |
+| LAB-HW-03 | synthesis → implementation → bitstream → program | LSN-013/014 | RMD-012A |
+| LAB-HW-04 | clock / design-local reset / I/O constraints and physical input/output | LSN-014 | RMD-012A |
+| LAB-HW-05 | starter Linux image → microSD → UART console → PS boot/login | physical bridge before LSN-015 runtime work | RMD-012B |
+| LAB-HW-06 | real KV260 PS/runtime-host ↔ PL loopback | LSN-015 + LAB-HW-05 | RMD-012B |
+| LAB-HW-07 | map abstract neuron-state RAM onto real on-chip BRAM resources | LSN-009/016 | RMD-013 |
+| LAB-HW-08 | run a small FlyBrain network on hardware and compare replay with the Python fixed reference | LSN-012~016 | RMD-013 |
+| LAB-HW-09 | real DDR write/read integrity + bandwidth measurement | LSN-016/017 | RMD-014 |
+| LAB-HW-10 | compare small/scattered versus burst-oriented transfers on real hardware | LSN-018 | RMD-014A |
 
 Every Physical Lab must:
 
 - introduce one primary physical operation at a time;
 - state the exact board/cable/power setup;
-- separate Build / Program / Run;
+- separate Build / Program / Boot / Run as applicable;
 - define Expected Evidence instead of “no error”;
-- troubleshoot in the order power → cable/JTAG → toolchain → constraints → programming → runtime → core;
+- troubleshoot in the order toolchain/driver/board files → power → cable/JTAG → programming → PS boot/Linux → runtime transport → core;
 - record board revision, tool version, Git commit, artifact hash, and experimental result;
 - never let ordinary CI pretend that a real-KV260 verification occurred.
 
@@ -302,7 +304,7 @@ Notebook imports formal module for teaching and experiments
 - LSN-001~004: being revised from experiment skeletons into textbook-quality executable lessons, with first-use terminology and project IDs moved to the end.
 - LSN-005~008: the second bilingual lesson block is established; teaching RTL lives in `rtl/learning/` and does not replace formal `MOD-003`.
 - LSN-009~012: the third bilingual Notebook block is established; small Python event-machine experiments teach time multiplexing, FIFO/backpressure, sparse lookup, and the event-driven causal chain without declaring MOD-004~009 complete.
-- LSN-013~018: the fourth bilingual Notebook block is established; formal exercises remain board-independent, but the **KV260 Physical Lab Track is now a formal documented learning path** rather than an optional engineering extension.
+- LSN-013~018: the fourth bilingual Notebook block is established; formal exercises remain board-independent, but the **KV260 Physical Lab Track (LAB-HW-00~10) is now a formal documented learning path** rather than an optional engineering extension.
 - LSN-019~023: the fifth bilingual Notebook and exercise block is established; connectome teaching fixtures, synthetic scaling/benchmark numbers, and the toy closed loop teach contracts without impersonating RMD-017~028 formal MaleCNS artifacts, full-system results, or real performance measurements.
-- The KV260 reference board and `LAB-HW-00~08` teaching/acceptance standards are frozen at the documentation level; Lab Notebooks and board-specific RTL/constraints/scripts are not implemented yet.
+- The KV260 reference board and `LAB-HW-00~10` teaching/acceptance standards are frozen at the documentation level; Lab Notebooks and board-specific RTL/constraints/scripts are not implemented yet.
 - First formal implementation remains `RMD-001`; it is not yet declared complete.
