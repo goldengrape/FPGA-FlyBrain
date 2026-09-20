@@ -45,7 +45,7 @@ def test_target_discovery_script_stops_before_programming():
     assert "get_hw_targets -quiet" in text
     assert "open_hw_target" in text
     assert "get_hw_devices -quiet -of_objects" in text
-    assert "NO_HW_DEVICE" in text
+    assert "NO_KV260_FPGA_DEVICE" in text
     assert "program_hw_device" not in text
     assert "PROGRAM.FILE" not in text
 
@@ -141,7 +141,19 @@ def test_detect_target_rejects_target_without_device(tmp_path):
         DETECT,
     )
     assert result.returncode == 5
-    assert "ERROR=NO_HW_DEVICE" in result.stderr
+    assert "ERROR=NO_KV260_FPGA_DEVICE" in result.stderr
+
+
+@pytest.mark.skipif(TCLSH is None, reason="tclsh is not installed")
+def test_detect_target_rejects_ps_debug_object_without_xck26(tmp_path):
+    result = _run_tcl(
+        tmp_path,
+        _detect_prelude("[list target0]", "[list arm_dap_1]"),
+        DETECT,
+    )
+    assert result.returncode == 5
+    assert "HW_DEVICE=arm_dap_1" in result.stdout
+    assert "ERROR=NO_KV260_FPGA_DEVICE" in result.stderr
 
 
 @pytest.mark.skipif(TCLSH is None, reason="tclsh is not installed")
