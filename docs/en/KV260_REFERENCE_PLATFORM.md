@@ -142,32 +142,35 @@ Every physical lab must record:
 
 If a step is revision-specific, the lab must state that explicitly.
 
-## 7. What Stage 1 now freezes — and what remains provisional
+## 7. What Stages 1–2 now freeze — and what remains provisional
 
-The documentation-first decision has now advanced into the implemented **LAB-HW-00~04** teaching slice.
+The documentation-first decision has now advanced into the authored **LAB-HW-00~06** teaching slice.
 
-Stage 1 now freezes:
+The project now freezes as **authoring contracts**:
 
 - reference target part: `xck26-sfvc784-2LV-c`;
-- LAB-HW-03 board-visible logical output: `bank45_gpio[4:0]`;
-- Bank 45 XDC mapping for those five logical bits;
-- LAB-HW-04 platform clock source: PS `pl_clk0`, taught as nominal 100 MHz;
-- LAB-HW-04 platform reset source: PS `pl_resetn0`;
-- LAB-HW-04 design-local active-low reset: `proc_sys_reset/peripheral_aresetn` delivered to the teaching RTL;
-- direct Vivado/JTAG as the LAB-HW-03/04 programming path;
-- the evidence rule that direct-JTAG programming is proven by Vivado/device status plus the design's own observable output, not by DS34 alone.
+- LAB-HW-03 board-visible logical output: `bank45_gpio[4:0]` and its Bank 45 XDC mapping;
+- LAB-HW-04 platform clock/reset path: PS `pl_clk0`, PS `pl_resetn0`, and `proc_sys_reset/peripheral_aresetn` as the design-local active-low reset;
+- direct Vivado/JTAG as the LAB-HW-03/04/06 PL-programming path;
+- LAB-HW-05 Ubuntu authoring image: Ubuntu Server 24.04 LTS archive `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`;
+- LAB-HW-05 UART path: J4 FTDI at 115200 8N1, no flow control;
+- LAB-HW-06 teaching transport: PS `M_AXI_HPM0_FPD` → SmartConnect → dual-channel AXI GPIO at `0xA0010000`;
+- LAB-HW-06 host access authoring candidate: PS/Linux Python `/dev/mem` MMIO;
+- LAB-HW-06 semantic proof: Channel 1 write at `+0x0`, PL computes `+1 mod 2^32`, Channel 2 read at `+0x8`.
 
 The following are **not yet promoted to tested physical facts**:
 
 - the exact physically observed silkscreen LED designator and visible polarity for each Bank 45 bit;
 - Vivado 2026.1 as the tested/supported course baseline rather than the current authoring candidate;
-- the exact starter-Linux image version/checksum;
-- the final LAB-HW-06 runtime transport (AXI-Lite/UIO/XRT/other);
-- the later DDR access software stack.
+- the expected SHA-256 of the Ubuntu archive; the course manifest intentionally keeps it null until a controlled download records/promotes the value;
+- whether the supported Ubuntu 24.04 runtime permits the `/dev/mem` MMIO path under its default security policy;
+- a real Vivado full build/program PASS for the LAB-HW-06 authoring design;
+- the later BRAM-network, DDR, and performance software stack.
 
-Those remaining facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit and artifact.
+Those facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit and artifact. If Ubuntu policy blocks `/dev/mem`, the teaching transport is revised (for example to UIO) rather than weakening system security.
 
-The implemented board-support code lives under `boards/kv260/`. FlyBrain core RTL still must not depend on KV260 connector names, package pins, Vivado project layout, or Linux device paths.
+The implemented board-support code lives under `boards/kv260/`. FlyBrain core RTL still must not depend on KV260 connector names, package pins, Vivado project layout, Linux device paths, or the temporary teaching transport.
+
 
 ## 8. Reference-board decision
 
