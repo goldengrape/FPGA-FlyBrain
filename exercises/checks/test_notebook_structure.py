@@ -18,6 +18,9 @@ NOTEBOOKS = [
     "03_freeze_neuron_semantics.ipynb",
     "04_state_and_clock.ipynb",
     "05_logic_building_blocks.ipynb",
+    "06_what_is_rtl.ipynb",
+    "07_first_rtl_neuron.ipynb",
+    "08_testbench_waveform_simulation.ipynb",
     "09_time_multiplex_many_neurons.ipynb",
     "10_spike_fifo_backpressure.ipynb",
     "11_sparse_synapse_lookup.ipynb",
@@ -33,6 +36,12 @@ NOTEBOOKS = [
     "21_scaling_bottlenecks.ipynb",
     "22_closed_loop_world.ipynb",
     "23_cpu_gpu_fpga_benchmark.ipynb",
+]
+
+RTL_BRIDGE_NOTEBOOKS = [
+    "06_what_is_rtl.ipynb",
+    "07_first_rtl_neuron.ipynb",
+    "08_testbench_waveform_simulation.ipynb",
 ]
 
 PLATFORM4_NOTEBOOKS = [
@@ -223,7 +232,7 @@ def test_platform4_and5_todos_have_explicit_inputs_outputs_and_return_order():
     }
 
     for language in ("zh", "en"):
-        for name in PLATFORM4_NOTEBOOKS + PLATFORM5_NOTEBOOKS:
+        for name in RTL_BRIDGE_NOTEBOOKS + PLATFORM4_NOTEBOOKS + PLATFORM5_NOTEBOOKS:
             notebook = _read(ROOT / "exercises" / language / name)
             cells = notebook["cells"]
 
