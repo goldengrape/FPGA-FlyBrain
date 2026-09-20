@@ -185,8 +185,8 @@ boards/
 Boundary rules:
 
 - `rtl/neuron/`, `rtl/event/`, and `rtl/memory/` must not contain KV260 connector/pin names;
-- JTAG/UART, PS/Linux, DDR controller, Vivado board flow, and pin constraints belong to the platform layer;
-- the **logical contract** of `MOD-010 host_if` is parameter/stimulus loading plus spike/telemetry readback. Whether KV260 realizes it with AXI-Lite, UIO, XRT, or another supported transport is frozen only after RMD-012B / LAB-HW-04 prose and oracle approval;
+- JTAG/UART, PS/Linux boot/runtime, DDR controller, Vivado board flow, and pin constraints belong to the platform layer;
+- the **logical contract** of `MOD-010 host_if` is parameter/stimulus loading plus spike/telemetry readback. Whether KV260 realizes it with AXI-Lite, UIO, XRT, or another supported transport is frozen only after RMD-012B / LAB-HW-06 prose and oracle approval;
 - board-specific convenience must not redefine `IF-NEURON-UPDATE`, `IF-SPIKE-QUEUE`, or `IF-SYNAPSE-STREAM`;
 - Physical Lab board facts are grounded in `KV260_REFERENCE_PLATFORM.md` and AMD official board documentation.
 
