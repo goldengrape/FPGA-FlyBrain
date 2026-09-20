@@ -15,7 +15,9 @@ There is intentionally no XDC, PL design, PS/Linux runtime code, or DDR/AXI impl
 
 ## Authoring baseline
 
-The current lab prose freezes **Vivado 2026.1** as the authoring baseline. The preflight script rejects another Vivado release instead of silently treating it as equivalent.
+The current lab prose selects **Vivado 2026.1** as the **authoring candidate baseline**. The preflight script rejects another release during this batch so documentation and scripts do not silently drift.
+
+This is not yet a declaration that Vivado 2026.1 is the physically validated course-support baseline. That promotion requires a real-KV260 dry run and retained evidence.
 
 This repository has not yet recorded a real-KV260 physical pass for this batch. Cloud CI validates notebook/script contracts only and must not be interpreted as `T-HW-002` board evidence.
 
@@ -31,7 +33,7 @@ vivado -mode batch -nolog -nojournal \
 
 The script exits non-zero when:
 
-- Vivado is not the frozen 2026.1 release; or
+- Vivado does not match the 2026.1 authoring candidate; or
 - no installed board part contains `kv260`.
 
 Cable-driver installation is an OS/vendor setup step. Physical cable operation is first proven by LAB-HW-02 target discovery.
