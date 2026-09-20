@@ -47,7 +47,7 @@ How is correctness verified?
 Where is the bottleneck?
 ```
 
-They should have hands-on intuition for registers, RAM/BRAM, FIFO, pipelines, fixed point, DDR bandwidth, sparse/event-driven computation, FPGA accelerators, and neuromorphic hardware; and they should be able to complete the basic bring-up path on the **AMD Kria KV260 Vision AI Starter Kit**, from target discovery and first bitstream through physical I/O, host↔PL loopback, and small FlyBrain replay.
+They should have hands-on intuition for registers, RAM/BRAM, FIFO, pipelines, fixed point, DDR bandwidth, sparse/event-driven computation, FPGA accelerators, and neuromorphic hardware; and they should be able to complete the basic bring-up path on the **AMD Kria KV260 Vision AI Starter Kit**, from vendor-toolchain preflight and target discovery through first bitstream, physical I/O, PS/Linux first boot, host↔PL loopback, and small FlyBrain replay.
 
 ## 4. Three-layer translation
 Important ideas should be described in three languages at once:
@@ -110,7 +110,7 @@ The route therefore includes explicit bridges for:
 - Python → RTL: Digital Hardware Bridge;
 - multi-neuron → event-driven: four-neuron event walkthrough;
 - simulation → FPGA: synthesis, first bitstream, host/FPGA loopback;
-- **KV260 Physical Lab Track**: board orientation → target detection → first bitstream → constraints/I/O → host loopback → BRAM → small-network replay;
+- **KV260 Physical Lab Track**: toolchain preflight → board orientation → target detection → first bitstream → constraints/I/O → PS/Linux first boot → host loopback → BRAM → small-network replay;
 - FPGA → DDR/AXI: memory hierarchy and bandwidth bridge.
 
 Bridge chapters are first-class course material, not remedial appendices.
