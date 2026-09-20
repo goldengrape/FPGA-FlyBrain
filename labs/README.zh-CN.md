@@ -13,8 +13,10 @@ Physical Lab 是第 13–18 课的真实硬件配套路径，面向此前没有�
 | LAB-HW-02 | [供电与目标发现](zh/02_power_target_detection.ipynb) | [Power + target detection](en/02_power_target_detection.ipynb) | KV260 + 12 V / 3 A 电源 + J4 USB data cable |
 | LAB-HW-03 | [第一次生成并配置 bitstream](zh/03_first_bitstream.ipynb) | [First bitstream](en/03_first_bitstream.ipynb) | KV260 + LAB-HW-02 connection |
 | LAB-HW-04 | [Clock、reset 与 physical I/O](zh/04_clock_reset_io.ipynb) | [Clock, reset, and physical I/O](en/04_clock_reset_io.ipynb) | KV260 + LAB-HW-03 passed |
+| LAB-HW-05 | [第一次启动 PS/Linux + UART console](zh/05_ps_linux_first_boot.ipynb) | [PS/Linux first boot + UART console](en/05_ps_linux_first_boot.ipynb) | KV260 + microSD + J4 UART + J12 power |
+| LAB-HW-06 | [真正的 PS/Linux ↔ PL loopback](zh/06_host_pl_loopback.ipynb) | [Real PS/Linux ↔ PL loopback](en/06_host_pl_loopback.ipynb) | LAB-HW-05 runtime host + Vivado/JTAG development host |
 
-**第一阶段（LAB-HW-00~04）的教材、board helper、RTL/XDC contract 已实现。** LAB-HW-05~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
+**第一、二阶段（LAB-HW-00~06）的教材与 CI contract 已实现。** LAB-HW-05 加入版本化 Ubuntu image/UART evidence helper；LAB-HW-06 加入 authoring-candidate PS/MMIO↔PL loopback、RTL、Vivado build helper 与 self-checking runtime script。LAB-HW-07~10 仍按 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
 
 ## Evidence 规则
 
