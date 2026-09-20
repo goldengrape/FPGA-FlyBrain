@@ -130,12 +130,13 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 
 实体上板教学已冻结 **AMD Kria KV260 Vision AI Starter Kit** 为第一套完整 reference board。概念课仍尽量板卡无关，但零基础 Physical Lab 会给出 KV260 的 vendor toolchain preflight、供电、JTAG/UART、target discovery、first bitstream、constraints/I/O、PS/Linux first boot、host↔PL、BRAM、DDR 与 AXI/burst 实操路径。
 
-当前先完成 documentation-first 规范；Physical Lab Notebook 与 `boards/kv260/` 实现随后进入下一阶段。
+documentation-first 规范已经进入实现阶段。**LAB-HW-00~02** 已有中英文学生 Notebook，并开始提供 `boards/kv260/` preflight/target-discovery helper；真实 KV260 physical verification 仍待执行。
 
 先看：
 
 - [KV260 参考硬件平台](docs/zh/KV260_REFERENCE_PLATFORM.md)
 - [实体 FPGA 实验教学规范](docs/zh/PHYSICAL_FPGA_LABS.md)
+- [实体 FPGA Lab Notebook](labs/README.zh-CN.md)
 
 注意：第 6–13 课的 OSS CAD Suite 与后续 KV260 的 AMD Vivado/platform toolchain 是两层不同工具链。
 
@@ -237,7 +238,7 @@ GitHub Actions 会从 Ubuntu runner 安装 Icarus Verilog、Verilator 与 Yosys�
 
 ## 当前状态
 
-项目规划、系统架构和第一次课程审计已经完成；**KV260 reference board 与 LAB-HW-00~10 的实体教学/验收规范已在文档层冻结**，对应 Lab Notebook 与板卡代码尚未实现。第一段正式工程实现尚未声明完成。
+项目规划、系统架构和第一次课程审计已经完成；**KV260 reference board 与 LAB-HW-00~10 的实体教学/验收规范已冻结。** LAB-HW-00~02 已建立双语 Notebook 与 KV260 preflight/target-discovery helper；LAB-HW-03~10 和真实板卡 evidence 尚待实现。第一段正式工程实现尚未声明完成。
 
 当前第一批工程任务：
 
