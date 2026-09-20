@@ -171,6 +171,13 @@ def test_physical_evidence_template_is_versioned_but_generated_evidence_is_ignor
     assert template["board_model"] == "AMD Kria KV260 Vision AI Starter Kit"
     assert "git_commit" in template
     assert "vivado_version" in template
+    assert "platform_version" in template
+    assert "linux_image_version" in template
+    assert "bitstream_sha256" in template
+    assert "build_artifact_hashes" in template
+    assert "test_input" in template
+    assert "output_summary" in template
+    assert "artifacts" in template
     ignore = (evidence / ".gitignore").read_text(encoding="utf-8")
     assert "!manifest.example.json" in ignore
     assert "!README.md" in ignore
@@ -187,6 +194,8 @@ def test_lab03_freezes_minimal_marker_build_and_program_contract():
         assert "SHA-256" in text
         assert "T-HW-003" in text
         assert "DS34" in text
+        assert "TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS" in text
+        assert "drc.rpt" in text
         assert "<svg " in text
 
 
@@ -201,6 +210,10 @@ def test_lab04_freezes_clock_reset_and_constraint_layers():
         assert "IOSTANDARD LVCMOS33" in text
         assert "SW2" in text
         assert "T-HW-004" in text
+        assert "Checkpoint A" in text
+        assert "Checkpoint B" in text
+        assert "TIMING_SETUP_WORST_SLACK_NS" in text
+        assert "TIMING_HOLD_WORST_SLACK_NS" in text
         assert text.count("<svg ") >= 2
 
 
@@ -233,3 +246,12 @@ def test_first_stage_board_sources_and_helpers_exist():
     ]
     for relative in expected_paths:
         assert (ROOT / relative).is_file(), relative
+
+
+
+def test_lab02_troubleshooting_uses_current_discovery_error_names():
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "02_power_target_detection.ipynb"))
+        assert "NO_HW_TARGET" in text
+        assert "NO_KV260_FPGA_DEVICE" in text
+        assert "NO_HW_DEVICE" not in text
