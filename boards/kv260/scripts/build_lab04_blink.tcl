@@ -31,6 +31,7 @@ add_files -norecurse $rtl_file
 add_files -fileset constrs_1 -norecurse $xdc_file
 
 create_bd_design system
+update_compile_order -fileset sources_1
 
 set ps_defs [get_ipdefs -all xilinx.com:ip:zynq_ultra_ps_e:*]
 if {[llength $ps_defs] == 0} {
