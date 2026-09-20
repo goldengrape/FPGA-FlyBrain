@@ -13,6 +13,7 @@ LABS = [
     "02_power_target_detection.ipynb",
     "03_first_bitstream.ipynb",
     "04_clock_reset_io.ipynb",
+    "05_ps_linux_first_boot.ipynb",
 ]
 
 
@@ -135,9 +136,9 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
 def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05"):
             assert lab in text
-        assert "LAB-HW-05~10" in text
+        assert "LAB-HW-06~10" in text
 
 
 def test_trace_register_points_to_implemented_first_batch():
@@ -148,6 +149,7 @@ def test_trace_register_points_to_implemented_first_batch():
             "labs/en/02_power_target_detection.ipynb",
             "labs/en/03_first_bitstream.ipynb",
             "labs/en/04_clock_reset_io.ipynb",
+            "labs/en/05_ps_linux_first_boot.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
@@ -155,6 +157,7 @@ def test_trace_register_points_to_implemented_first_batch():
             "labs/zh/02_power_target_detection.ipynb",
             "labs/zh/03_first_bitstream.ipynb",
             "labs/zh/04_clock_reset_io.ipynb",
+            "labs/zh/05_ps_linux_first_boot.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -255,3 +258,27 @@ def test_lab02_troubleshooting_uses_current_discovery_error_names():
         assert "NO_HW_TARGET" in text
         assert "NO_KV260_FPGA_DEVICE" in text
         assert "NO_HW_DEVICE" not in text
+
+
+
+def test_lab05_freezes_linux_uart_boundary_without_host_pl_transport():
+    required = (
+        "J4",
+        "J11",
+        "J12",
+        "115200",
+        "Ubuntu Server 24.04 LTS",
+        "ubuntu",
+        "collect_boot_info.sh",
+        "hash_image.py",
+        "T-HW-005",
+        "T-HW-011",
+        "sudo shutdown -h now",
+    )
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "05_ps_linux_first_boot.ipynb"))
+        for marker in required:
+            assert marker in text
+        assert "host↔PL" not in text
+        assert "AXI-Lite" not in text
+        assert "loopback_mmio.py" not in text
