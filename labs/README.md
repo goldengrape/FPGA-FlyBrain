@@ -13,8 +13,10 @@ Reference board: **AMD Kria KV260 Vision AI Starter Kit**.
 | LAB-HW-02 | [Power + target detection](en/02_power_target_detection.ipynb) | [供电与目标发现](zh/02_power_target_detection.ipynb) | KV260 + 12 V / 3 A supply + J4 USB data cable |
 | LAB-HW-03 | [First bitstream](en/03_first_bitstream.ipynb) | [第一次生成并配置 bitstream](zh/03_first_bitstream.ipynb) | KV260 + LAB-HW-02 connection |
 | LAB-HW-04 | [Clock, reset, and physical I/O](en/04_clock_reset_io.ipynb) | [Clock、reset 与 physical I/O](zh/04_clock_reset_io.ipynb) | KV260 + LAB-HW-03 passed |
+| LAB-HW-05 | [PS/Linux first boot + UART console](en/05_ps_linux_first_boot.ipynb) | [第一次启动 PS/Linux + UART console](zh/05_ps_linux_first_boot.ipynb) | KV260 + microSD + J4 UART + J12 power |
+| LAB-HW-06 | [Real PS/Linux ↔ PL loopback](en/06_host_pl_loopback.ipynb) | [真正的 PS/Linux ↔ PL loopback](zh/06_host_pl_loopback.ipynb) | LAB-HW-05 runtime host + Vivado/JTAG development host |
 
-**Stage 1 (LAB-HW-00~04) now has implemented prose, board helpers, and RTL/XDC contracts.** LAB-HW-05~10 remain documentation-first work items. A physical PASS still requires the corresponding T-HW evidence from a real board.
+**Stages 1–2 (LAB-HW-00~06) now have implemented prose and CI contracts.** LAB-HW-05 adds versioned Ubuntu-image/UART evidence helpers; LAB-HW-06 adds the authoring-candidate PS/MMIO↔PL loopback path, RTL, Vivado build helper, and self-checking runtime script. LAB-HW-07~10 remain documentation-first work items. A physical PASS still requires the corresponding T-HW evidence from a real board.
 
 ## Evidence rule
 
