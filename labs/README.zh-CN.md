@@ -13,8 +13,9 @@ Physical Lab 是第 13–18 课的真实硬件配套路径，面向此前没有�
 | LAB-HW-02 | [供电与目标发现](zh/02_power_target_detection.ipynb) | [Power + target detection](en/02_power_target_detection.ipynb) | KV260 + 12 V / 3 A 电源 + J4 USB data cable |
 | LAB-HW-03 | [第一次生成并配置 bitstream](zh/03_first_bitstream.ipynb) | [First bitstream](en/03_first_bitstream.ipynb) | KV260 + LAB-HW-02 connection |
 | LAB-HW-04 | [Clock、reset 与 physical I/O](zh/04_clock_reset_io.ipynb) | [Clock, reset, and physical I/O](en/04_clock_reset_io.ipynb) | KV260 + LAB-HW-03 passed |
+| LAB-HW-05 | [第一次启动 PS/Linux + UART Console](zh/05_ps_linux_first_boot.ipynb) | [First PS/Linux boot + UART console](en/05_ps_linux_first_boot.ipynb) | KV260 + 16 GB+ microSD + J4 USB data cable + 12 V / 3 A 电源 |
 
-**第一阶段（LAB-HW-00~04）的教材、board helper、RTL/XDC contract 已实现。** LAB-HW-05~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
+**LAB-HW-00~05 的教材与 CI contract 已实现。** LAB-HW-05 加入 PS/Linux first boot、UART、image identity 与 boot-evidence helper。LAB-HW-06~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
 
 ## Evidence 规则
 
