@@ -70,30 +70,34 @@ Then introduce:
 Completion feeling: a small network processes only actual spikes instead of scanning every connection.
 
 ## Stage 6 — Enter a real FPGA for the first time
-Do a synthesis dry run before buying hardware.
 
-After the board arrives:
-1. counter / observable register;
-2. minimal host ↔ FPGA loopback;
-3. move the already-verified small network onto FPGA.
+The reference board is frozen to the **AMD Kria KV260 Vision AI Starter Kit**. Keep the synthesis dry run before buying hardware; after purchase, do not compress “board bring-up” into a single step. Follow the zero-experience Physical Lab sequence:
 
-Completion feeling: the circuit that used to exist only in simulation is now physically running inside the chip.
+1. **LAB-HW-00**: identify the real KV260, connectors, and carrier revision;
+2. **LAB-HW-01**: power correctly, distinguish J12 board power from J4 USB/JTAG/UART, and enumerate a real target;
+3. **LAB-HW-02**: first synthesis → implementation → bitstream → program;
+4. **LAB-HW-03**: connect logical ports and clock/reset to real board resources/constraints;
+5. **LAB-HW-04**: real KV260 PS/runtime-host ↔ PL minimal loopback;
+6. **LAB-HW-05**: map neuron-state RAM onto real on-chip BRAM resources;
+7. **LAB-HW-06**: move the verified small FlyBrain network onto KV260 and compare replay against the Python fixed reference.
+
+Completion feeling: the learner can start from an unconfigured board, connect it, discover the target, build/program it, observe physical evidence, perform host readback, and prove that a small FlyBrain network is actually running on FPGA.
+
+See `KV260_REFERENCE_PLATFORM.md` and `PHYSICAL_FPGA_LABS.md`.
 
 ## Stage 7 — Understand why memory becomes the bottleneck
-Build intuition for memory hierarchy and bandwidth before touching DDR/AXI.
+Build memory-hierarchy and bandwidth intuition first, then connect real DDR/AXI.
 
-Compare:
-- sequential access;
-- random access;
-- burst access.
+Physical Labs:
 
-Then implement:
-- DDR read/write integrity tests;
-- AXI bursts;
-- move the synapse store from on-chip memory to DDR;
-- measure bandwidth, latency, and synaptic events/s.
+1. **LAB-HW-07**: use the KV260 platform infrastructure for DDR write → read → integrity compare, then measure sequential/random-like access;
+2. **LAB-HW-08**: under the same workload, compare small/scattered and burst-oriented transfer latency/effective bandwidth;
+3. only after integrity and measurement are stable, move the synapse store from on-chip memory to DDR;
+4. then measure bandwidth, latency, and synaptic events/s.
 
-Completion feeling: you understand why modern AI hardware is often limited by data movement rather than by the arithmetic itself.
+The learner does not implement a DDR PHY/controller, and a full AXI master from scratch is not a prerequisite for the first DDR lab.
+
+Completion feeling: the learner has real KV260 measurements rather than only a toy cost model and can explain why modern AI hardware is often data-movement limited.
 
 ## Stage 8 — Run real connectome data for the first time
 - MaleCNS converter;
