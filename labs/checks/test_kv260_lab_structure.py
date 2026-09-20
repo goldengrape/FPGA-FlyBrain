@@ -13,6 +13,8 @@ LABS = [
     "02_power_target_detection.ipynb",
     "03_first_bitstream.ipynb",
     "04_clock_reset_io.ipynb",
+    "05_ps_linux_first_boot.ipynb",
+    "06_host_pl_loopback.ipynb",
 ]
 
 
@@ -135,9 +137,9 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
 def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06"):
             assert lab in text
-        assert "LAB-HW-05~10" in text
+        assert "LAB-HW-07~10" in text
 
 
 def test_trace_register_points_to_implemented_first_batch():
@@ -148,6 +150,8 @@ def test_trace_register_points_to_implemented_first_batch():
             "labs/en/02_power_target_detection.ipynb",
             "labs/en/03_first_bitstream.ipynb",
             "labs/en/04_clock_reset_io.ipynb",
+            "labs/en/05_ps_linux_first_boot.ipynb",
+            "labs/en/06_host_pl_loopback.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
@@ -155,6 +159,8 @@ def test_trace_register_points_to_implemented_first_batch():
             "labs/zh/02_power_target_detection.ipynb",
             "labs/zh/03_first_bitstream.ipynb",
             "labs/zh/04_clock_reset_io.ipynb",
+            "labs/zh/05_ps_linux_first_boot.ipynb",
+            "labs/zh/06_host_pl_loopback.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -255,3 +261,59 @@ def test_lab02_troubleshooting_uses_current_discovery_error_names():
         assert "NO_HW_TARGET" in text
         assert "NO_KV260_FPGA_DEVICE" in text
         assert "NO_HW_DEVICE" not in text
+
+
+
+def test_lab05_freezes_ubuntu_uart_and_hash_boundary():
+    image_name = "iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz"
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "05_ps_linux_first_boot.ipynb"))
+        assert image_name in text
+        assert "Ubuntu Server 24.04 LTS" in text
+        assert "Raspberry Pi Imager" in text
+        assert "115200" in text
+        assert "8 data bits" in text
+        assert "no flow control" in text
+        assert "xmutil boardid" in text
+        assert "xmutil bootfw_status" in text
+        assert "sudo shutdown -h now" in text
+        assert "T-HW-005" in text
+        assert "<svg " in text
+
+    manifest = json.loads(
+        (ROOT / "boards" / "kv260" / "runtime" / "ubuntu24_image.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert manifest["image_filename"] == image_name
+    assert manifest["expected_sha256"] is None
+    assert manifest["formal_hash_pass_blocked"] is True
+
+
+def test_lab06_freezes_mmio_register_and_failure_contract():
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "06_host_pl_loopback.ipynb"))
+        assert "0xA0010000" in text
+        assert "GPIO_DATA" in text and "0x0000" in text
+        assert "GPIO2_DATA" in text and "0x0008" in text
+        assert "M_AXI_HPM0_FPD" in text
+        assert "loopback_mmio.py" in text
+        assert "--dry-run" in text
+        assert "TRANSPORT_PERMISSION_OR_POLICY" in text
+        assert "CORE_BEHAVIOR_MISMATCH" in text
+        assert "T-HW-006" in text
+        assert "<svg " in text
+
+
+def test_stage2_runtime_artifacts_exist():
+    expected_paths = [
+        "boards/kv260/runtime/ubuntu24_image.json",
+        "boards/kv260/runtime/hash_image.py",
+        "boards/kv260/runtime/collect_boot_info.sh",
+        "boards/kv260/runtime/loopback_mmio.py",
+        "boards/kv260/rtl/kv260_loopback_transform.sv",
+        "boards/kv260/tb/kv260_loopback_transform_tb.sv",
+        "boards/kv260/scripts/build_lab06_loopback.tcl",
+    ]
+    for relative in expected_paths:
+        assert (ROOT / relative).is_file(), relative
