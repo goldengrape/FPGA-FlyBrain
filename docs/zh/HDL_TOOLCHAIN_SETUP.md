@@ -124,7 +124,7 @@ Lesson 13 不要求安装 FPGA 厂商的完整板卡工具链。它的目标只�
 
 ## KV260 Physical Lab 使用另一套工具层
 
-从 `LAB-HW-00~08` 开始，课程进入 **AMD KV260 实体平台**：
+从 `LAB-HW-00~10` 开始，课程进入 **AMD KV260 实体平台**：
 
 - reference board：AMD Kria KV260 Vision AI Starter Kit；
 - board-specific build/program 使用 AMD 官方支持的 **Vivado Board Flow**；
@@ -138,9 +138,9 @@ Lessons 6–13
   OSS CAD Suite
   → generic RTL compile/sim/lint/synthesis
 
-LAB-HW-00~08
+LAB-HW-00~10
   AMD KV260 + Vivado/platform tools
   → target-specific implementation/timing/bitstream/program/runtime
 ```
 
-本次 documentation-first 修订**尚未冻结具体 Vivado 版本**。具体支持版本要在写 LAB-HW-01/02 prose 时，用真实 KV260 完整 dry run 后再写入课程；在此之前不要根据网络教程猜测版本兼容性。
+本次 documentation-first 修订**尚未冻结具体 Vivado 版本**。具体支持版本要在写 LAB-HW-00 prose 时，用真实 KV260 完整 dry run 后再写入课程；在此之前不要根据网络教程猜测版本兼容性。
