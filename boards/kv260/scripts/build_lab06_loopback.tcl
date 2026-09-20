@@ -20,6 +20,7 @@ puts "VIVADO_VERSION=[version -short]"
 puts "FPGA_PART=$part_name"
 puts "BOARD_PART=$board_part_name"
 puts [format "AXI_GPIO_BASE=0x%08X" $axi_gpio_base]
+puts "ADDRESS_REFERENCE=Xilinx/kria-base-hardware:k26_starter_kits/base_gpio_bram"
 
 if {[llength [get_board_parts -quiet $board_part_name]] == 0} {
     puts stderr "STATUS=FAIL"
@@ -145,6 +146,14 @@ set bit_file [file join $build_dir kv260_loopback.bit]
 report_timing_summary -file $timing_report
 report_utilization -file $util_report
 report_drc -file $drc_report
+
+set drc_errors [get_drc_violations -quiet -filter {SEVERITY == "Error"}]
+puts "DRC_ERROR_COUNT=[llength $drc_errors]"
+if {[llength $drc_errors] > 0} {
+    puts stderr "STATUS=FAIL"
+    puts stderr "ERROR=DRC_ERROR_PRESENT"
+    exit 14
+}
 
 set clocks [get_clocks -quiet]
 puts "CLOCK_COUNT=[llength $clocks]"
