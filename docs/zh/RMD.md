@@ -2,8 +2,8 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r1
-- 日期：2026-09-16
+- 修订：v0.3-r2
+- 日期：2026-09-19
 - 目的：根据 Learning Independence Axiom 压平学习曲线；保留已有 RMD 编号，并用字母后缀插入 bridge slice，避免破坏既有追踪。
 
 ## 1. 总原则
@@ -288,8 +288,8 @@ baseline 正确后才优化：lazy membrane update、cache、banking、多 synap
 |---|---|---|
 | Python → RTL | 同时遇到 clock/register/HDL/waveform/bit width | RMD-003A 三个微型数字硬件实验 |
 | 多神经元 → event-driven | sparse graph/FIFO/router 同时出现 | RMD-007A 四神经元事件传播 |
-| Simulation → FPGA | 工具链、bitstream、host I/O 同时出现 | RMD-011A、012A、012B 分开 |
-| FPGA → DDR/AXI | memory hierarchy、DDR、AXI、bandwidth 同时出现 | RMD-013A、014、014A 分层引入 |
+| Simulation → FPGA | power/cable/JTAG、bitstream、constraint、host I/O 同时出现 | RMD-011A + LAB-HW-00~06 分成 target discovery、first bitstream、physical I/O、loopback、BRAM、small replay |
+| FPGA → DDR/AXI | memory hierarchy、DDR、AXI、bandwidth 同时出现 | RMD-013A + LAB-HW-07/08 分成 integrity 与 measurement |
 
 ## 4. 当前第一批只执行的任务
 1. RMD-001 Python LIF float reference
