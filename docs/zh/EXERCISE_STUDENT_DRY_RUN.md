@@ -11,7 +11,7 @@
 - 完成解答后，才用现有 grader 契约验证是否通过；
 - 同时记录环境、题意、回翻教材、提示密度与调试反馈中的摩擦。
 
-9 份 Python 作业（LSN-001~005、009~012）都能依据教材和题面独立完成。按题面得到的实现全部通过当前 grader。
+最初一轮 Dry Run 覆盖 9 份 Python 作业（LSN-001~005、009~012），均能依据教材和题面独立完成。随后补齐的 LSN-006~008 独立作业册见第 12 节；当前 LSN-001~023 已都有正式作业入口。
 
 ## 2. 最重要的发现：grader import 在真实 Jupyter 路径下不稳
 
@@ -115,7 +115,7 @@ grader import blocker 已修复，并新增维护者级“真实 kernel cwd”�
 
 ## 9. Dry Run 结论
 
-当前作业在**概念清晰度、手算桥梁、TODO 范围、grader 反馈**四方面已经可以使用；9 份题目都能独立解出并通过 grader。
+这一轮早期 9 份作业在**概念清晰度、手算桥梁、TODO 范围、grader 反馈**四方面已经可以使用；后续新增的 LSN-006~008 另在第 12 节复测。
 
 下一步优先级应是：
 
@@ -221,7 +221,7 @@ LSN-013~018 已满足当前作业册的核心要求：题意可独立理解、�
 - 5 课 × 2 语言的 personal-work copy 路径全部从 `exercises/work/<lang>/` 目录执行；
 - 10 / 10 workbooks 使用独立 reference implementation 后均得到 **3 / 3 groups passed**；
 - 5 课 × 2 语言的 lesson example code 均按学生看到的顺序执行并匹配预期输出；
-- Python exercise infrastructure 总结果：**107 passed, 2 skipped**。两个 skip 仍是没有 Yosys 的 Python job 中 Lesson 13 中英文真实 synthesis；RTL workflow 已实际覆盖该路径。
+- Python exercise infrastructure 当前总结果：**129 passed, 2 skipped**。两个 skip 仍是没有 Yosys 的 Python job 中 Lesson 13 中英文真实 synthesis；RTL workflow 已实际覆盖该路径。
 
 ### 11.4 本轮 Dry Run 实际发现并修掉的问题
 
@@ -248,3 +248,39 @@ Platform 5 五张课程图已全部由 Mermaid 改为 inline SVG。最终 GitHub
 ### 11.6 Platform 5 Dry Run 结论
 
 修订后的 LSN-019~023 已满足当前学生作业路径标准：**题意可独立理解、pre-code 例子不泄漏 grader 数值、TODO contract 明确、grader 覆盖书面语义、personal work-copy 可运行、中英文路径一致、课程图在最终 PDF 中真实可见。**
+
+## 12. LSN-006~008 独立作业补齐后的学生路径复测
+
+### 12.1 设计边界
+
+第 6~8 课仍然以真实 SystemVerilog、testbench 与 waveform 为课程主实验；新增 Exercise Notebook 不把 Python grader 冒充 HDL 工具链。三份作业分别只抽取一个可独立判定的语义：
+
+- L06：一个 `posedge` 上同步低有效 reset 与 state 累加的结果；
+- L07：`always_comb` 的 candidate/next-state 与 `always_ff` 的 register writeback 分层；
+- L08：self-checking testbench 在采样之后如何用 oracle 找到第一次 mismatch。
+
+所有手算例都与 grader 隐藏向量不同，并明确把 8-bit overflow 排除在这三份作业的正式判题范围之外；真实有限位宽行为继续由教学 RTL 与 RTL CI 观察。
+
+### 12.2 只看题面的手算结果
+
+- L06：`state=7, input=-2, rst_n=True` 得到 5；`rst_n=False` 的 edge 无论旧 state / input 是什么都写成 0。
+- L07：`membrane_v=2, input=1, threshold=4` 得 `(candidate,next_v,spike_next)=(3,3,False)`；把 membrane 改成 3 后得到 `(4,0,True)`。
+- L08：expected `[(1,F),(2,F),(0,T)]` 与 actual `[(1,F),(3,F),(0,T)]` 的第一次 mismatch index 是 1；若 actual 只有共同前缀两项，则第一个缺失 sample 的 index 是 2。
+
+这些结果都可以从题面直接推出，不需要读取 grader。
+
+### 12.3 自动化学生流
+
+新增 `exercises/checks/test_rtl_bridge_student_flow.py`，对中英文三份作业分别：
+
+1. 通过 `start_exercise.py` 语义建立个人 work copy；
+2. 只注入依据题面写出的 reference implementation；
+3. 按 Notebook code-cell 顺序执行；
+4. 要求最终输出 `3 / 3 groups passed`。
+
+因此 3 课 × 2 语言共 6 条个人作业路径进入持续 CI。当前 Python exercise infrastructure 结果为 **129 passed, 2 skipped**；两个 skip 仍是 Python job 中没有 Yosys 时的 Lesson 13 真实综合检查，RTL workflow 会实际执行该路径。
+
+### 12.4 结论
+
+LSN-006~008 现在既有独立作业册，也保留真实 RTL 实验。作业册负责检查语义理解，`check_rtl_learning.sh` / RTL workflow 负责检查 SystemVerilog compile、simulation、lint、synthesis 与 Lesson 8 VCD；两条路径互补，不互相替代。
+

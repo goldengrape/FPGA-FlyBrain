@@ -10,6 +10,9 @@ from exercises.grader import (
     lesson03,
     lesson04,
     lesson05,
+    lesson06,
+    lesson07,
+    lesson08,
     lesson09,
     lesson10,
     lesson11,
@@ -133,6 +136,75 @@ def test_lesson05_grader_detects_strict_threshold():
 
     assert _all_pass(lesson05.evaluate(not_, and_, or_, good_threshold, good_spike))
     assert _some_fail(lesson05.evaluate(not_, and_, or_, bad_threshold, bad_spike))
+
+
+def test_lesson06_grader_rejects_reset_or_state_semantic_errors():
+    def good(state, input_value, rst_n):
+        return 0 if not rst_n else state + input_value
+
+    def ignores_reset(state, input_value, rst_n):
+        return state + input_value
+
+    def forgets_old_state(state, input_value, rst_n):
+        return 0 if not rst_n else input_value
+
+    assert _all_pass(lesson06.evaluate(good))
+    assert _some_fail(lesson06.evaluate(ignores_reset))
+    assert _some_fail(lesson06.evaluate(forgets_old_state))
+
+
+def test_lesson07_grader_rejects_strict_threshold_and_bad_reset_edge():
+    def good_comb(membrane_v, input_current, threshold, reset_value):
+        candidate = membrane_v + input_current
+        spike_next = candidate >= threshold
+        next_v = reset_value if spike_next else candidate
+        return candidate, next_v, spike_next
+
+    def strict_comb(membrane_v, input_current, threshold, reset_value):
+        candidate = membrane_v + input_current
+        spike_next = candidate > threshold
+        next_v = reset_value if spike_next else candidate
+        return candidate, next_v, spike_next
+
+    def good_edge(next_v, spike_next, rst_n, reset_value):
+        if not rst_n:
+            return reset_value, False
+        return next_v, spike_next
+
+    def bad_edge(next_v, spike_next, rst_n, reset_value):
+        return next_v, spike_next
+
+    assert _all_pass(lesson07.evaluate(good_comb, good_edge))
+    assert _some_fail(lesson07.evaluate(strict_comb, good_edge))
+    assert _some_fail(lesson07.evaluate(good_comb, bad_edge))
+
+
+def test_lesson08_grader_rejects_prefix_only_or_late_mismatch_reporting():
+    def good(actual, expected):
+        common = min(len(actual), len(expected))
+        for cycle in range(common):
+            if actual[cycle] != expected[cycle]:
+                return False, cycle
+        if len(actual) != len(expected):
+            return False, common
+        return True, None
+
+    def prefix_only(actual, expected):
+        for cycle, (a, e) in enumerate(zip(actual, expected)):
+            if a != e:
+                return False, cycle
+        return True, None
+
+    def last_mismatch(actual, expected):
+        bad = None
+        for cycle, (a, e) in enumerate(zip(actual, expected)):
+            if a != e:
+                bad = cycle
+        return (True, None) if bad is None else (False, bad)
+
+    assert _all_pass(lesson08.evaluate(good))
+    assert _some_fail(lesson08.evaluate(prefix_only))
+    assert _some_fail(lesson08.evaluate(last_mismatch))
 
 
 def test_lesson09_grader_detects_non_addressed_update():

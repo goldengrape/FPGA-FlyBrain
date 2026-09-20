@@ -11,7 +11,7 @@ This pass deliberately used a student perspective:
 - validate against the current grader only after producing the solutions;
 - record friction in environment setup, task interpretation, lesson lookup, hint density, and debugging.
 
-All nine Python exercises (LSN-001~005 and LSN-009~012) were solvable from the lesson and assignment text. The independently derived implementations passed all current grader groups.
+The initial dry run covered nine Python exercises (LSN-001~005 and LSN-009~012), all solvable from the lesson and assignment text. The later standalone LSN-006~008 workbooks are rerun in Section 12; the current LSN-001~023 sequence now has a formal exercise entry for every lesson.
 
 ## 2. Most important finding: grader imports are fragile in a real Jupyter cwd
 
@@ -80,7 +80,7 @@ The grader import blocker has been fixed. Maintainer tests now start an independ
 
 ## 9. Conclusion
 
-The exercises are usable in terms of conceptual clarity, pre-code reasoning, TODO scope, and grader feedback. All nine can be solved and pass.
+The nine exercises covered by this early pass are usable in terms of conceptual clarity, pre-code reasoning, TODO scope, and grader feedback. The later LSN-006~008 additions are rerun separately in Section 12.
 
 Priorities after this dry run:
 
@@ -186,7 +186,7 @@ Automated learner-path coverage now includes:
 - all 5 × 2 personal-work copies execute from `exercises/work/<lang>/`;
 - all 10 workbooks report **3 / 3 groups passed** with independently derived reference implementations;
 - teaching code for all 5 lessons × 2 languages runs in learner-visible order and matches expected output;
-- Python exercise infrastructure result: **107 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job where Yosys is absent; the RTL workflow executes that path for real.
+- Current Python exercise infrastructure result: **129 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job where Yosys is absent; the RTL workflow executes that path for real.
 
 ### 11.4 Problems found and fixed during this dry run
 
@@ -213,3 +213,39 @@ The final artifact was also rendered and inspected visually. All five diagrams s
 ### 11.6 Platform 5 conclusion
 
 The revised LSN-019~023 workbooks now meet the current learner-path bar: **standalone task meaning, non-leaking pre-code examples, explicit TODO contracts, graders that enforce written semantics, runnable personal work copies, aligned bilingual paths, and diagrams that are visibly present in final PDFs.**
+
+## 12. LSN-006~008 standalone-workbook student-path rerun
+
+### 12.1 Design boundary
+
+Lessons 6–8 still use real SystemVerilog, testbenches, and waveforms as their primary laboratory path. The new Exercise Notebooks do not present a Python grader as a substitute for HDL tooling. Each workbook extracts one independently checkable semantic task:
+
+- L06: one `posedge` update with synchronous active-low reset and stored state;
+- L07: separation of `always_comb` candidate/next-state logic from `always_ff` register writeback;
+- L08: post-sampling oracle logic for locating the first mismatch in a self-checking testbench.
+
+Visible hand-work values are distinct from hidden grader vectors, and 8-bit overflow is explicitly outside these workbook grading contracts. Finite-width behavior remains observable in the teaching RTL and RTL CI.
+
+### 12.2 Hand-work from the task text only
+
+- L06: `state=7, input=-2, rst_n=True` gives 5; an edge with `rst_n=False` stores 0 regardless of old state/input.
+- L07: `membrane_v=2, input=1, threshold=4` gives `(candidate,next_v,spike_next)=(3,3,False)`; changing membrane to 3 gives `(4,0,True)`.
+- L08: expected `[(1,F),(2,F),(0,T)]` vs actual `[(1,F),(3,F),(0,T)]` first diverges at index 1; a two-sample actual trace matching the expected prefix first fails at missing-sample index 2.
+
+All three results follow from the written contracts without inspecting grader code.
+
+### 12.3 Automated student flow
+
+`exercises/checks/test_rtl_bridge_student_flow.py` now runs all three workbooks in both languages from personal work-copy paths:
+
+1. create the work copy using the same `start_exercise.py` semantics;
+2. inject only reference implementations derived from the visible task contract;
+3. execute workbook code cells in order;
+4. require `3 / 3 groups passed`.
+
+That places 3 lessons × 2 languages = 6 personal-workbook paths under continuous CI. The current Python exercise infrastructure result is **129 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job without Yosys; the RTL workflow executes that path for real.
+
+### 12.4 Conclusion
+
+LSN-006~008 now have both standalone workbooks and real RTL labs. The workbooks check semantic understanding; `check_rtl_learning.sh` / the RTL workflow checks SystemVerilog compile, simulation, lint, synthesis, and the Lesson 8 VCD. The two paths complement rather than replace each other.
+

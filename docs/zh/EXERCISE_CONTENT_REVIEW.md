@@ -2,7 +2,7 @@
 
 ## 1. 范围与结论
 
-本轮审稿覆盖 LSN-001~005、LSN-009~012 共 9 份 Python 作业 Notebook。当前架构已经稳定，grader 语义与测试向量不在本轮重设计范围内。
+最初一轮审稿覆盖 LSN-001~005、LSN-009~012 共 9 份 Python 作业 Notebook；后续章节继续覆盖 Platform 4、Platform 5，并在第 11 节补审新加入的 LSN-006~008 作业。当前 1~23 课均已有正式作业入口。
 
 总体判断：多数 Notebook 仍偏向“带说明的 starter code”，还没有完全达到正式电子作业集的教学密度。当前常见结构是“课程摘要 → 任务规则 → 一个代码单元 → grader → Human Check”。最需要补的是写代码前的手算、预测、表格推演或状态追踪。
 
@@ -72,7 +72,7 @@ LSN-003 只需结构化整理，不需要重写核心任务。
 | 03 | 设计 distinguishing probe | 中高 | 从实现转向验证思维 |
 | 04 | state / next-state / clock 分层 | 中高 | 第一次硬件时序思维 |
 | 05 | truth table 与组合逻辑 | 低~中 | **有意的巩固谷**，为 RTL 腾出认知空间 |
-| 06~08 | RTL / SystemVerilog / simulation | 持续上升 | 不属于 Python 作业册，但承担主要语法与验证负担 |
+| 06~08 | RTL / SystemVerilog / simulation + semantic workbook | 持续上升 | Python 作业检查语义翻译；真实 RTL lab 承担语法与验证负担 |
 | 09 | time multiplexing / addressed state | 中 | 从 RTL 切回架构抽象的缓冲课 |
 | 10 | bounded FIFO + ownership/backpressure | 中 | 事件运输语义 |
 | 11 | sparse packing + lookup | 中高~高 | 当前最大算法跳级点 |
@@ -157,3 +157,25 @@ LSN-013~018 六份作业均完成内容审稿与学生 dry run。对应执行记
 Platform 5 五张课程结构图全部迁移为 Markdown inline SVG，不再使用 Mermaid。PDF CI 使用 SVG 专用填充色验证最终渲染，且已对生成 artifact 做真实视觉检查。
 
 对应学生路径执行记录见 `EXERCISE_STUDENT_DRY_RUN.md` 第 11 节。
+
+## 11. LSN-006~008 补齐作业内容审稿
+
+三份新增作业刻意不让学生在 Notebook 里“用字符串写 SystemVerilog”，也不把 HDL simulator 变成 Python 作业的隐藏系统依赖。它们选择与课程主概念一一对应、且可用纯函数判定的语义层任务。
+
+| Lesson | 作业定位 | 内容审稿结论 |
+|---|---|---|
+| 06 | one-edge RTL semantics | 合适；用一个 rising edge 把 module/register/reset 语义落到可手算更新，不提前考 overflow policy |
+| 07 | combinational vs sequential split | 合适；Part A / B 明确区分 candidate/next-state 与 register writeback，threshold equality 单独成为边界 |
+| 08 | self-checking oracle | 合适；比较 sampled trace、first mismatch 与 length mismatch，明确不替代 clock generation / RTL simulation |
+
+共同约束：
+
+- 每题都先手算，且例子与 hidden grader vector 解耦；
+- TODO 前明确输入、输出和 tuple 返回顺序；
+- grader 按 3 个概念组反馈，不显示隐藏向量；
+- 维护者负向测试覆盖忽略 reset、严格 `>` threshold、只比较共同前缀/错误 mismatch 定位；
+- 中英文代码单元保持一致；
+- 真实 `rtl/learning/`、`tb/learning/` 和 `check_rtl_learning.sh` 仍是 HDL 行为验证的正式教学路径。
+
+这组三课因此不再是作业体系中的空档，同时也没有把 Python 层扩大成“假的 RTL 仿真器”。
+

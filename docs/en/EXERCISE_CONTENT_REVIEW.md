@@ -2,7 +2,7 @@
 
 ## 1. Scope and conclusion
 
-This review covers the nine Python Exercise Notebooks for LSN-001~005 and LSN-009~012. The architecture is stable; existing grader semantics and vectors are not being redesigned in this pass.
+The initial review covered the nine Python Exercise Notebooks for LSN-001~005 and LSN-009~012. Later sections cover Platforms 4 and 5, and Section 11 reviews the newly added LSN-006~008 workbooks. The current Lesson 01–23 sequence now has a formal exercise entry for every lesson.
 
 Overall, most notebooks still read more like documented starter code than a formal electronic workbook. The missing teaching layer is pre-code reasoning: a hand calculation, prediction, table trace, state trace, or small manual data-layout exercise.
 
@@ -66,7 +66,7 @@ Exercise difficulty does not need to increase monotonically.
 | 03 | Designing distinguishing probes | Medium-high | Shift from implementation to verification thinking |
 | 04 | State / next-state / clock separation | Medium-high | First hardware-timing mindset |
 | 05 | Truth tables and combinational logic | Low-medium | **Intentional consolidation valley** before RTL |
-| 06~08 | RTL / SystemVerilog / simulation | Rising | Main syntax and verification load outside the Python workbooks |
+| 06~08 | RTL / SystemVerilog / simulation + semantic workbook | Rising | Python workbooks check semantic translation; real RTL labs carry syntax and verification load |
 | 09 | Time multiplexing / addressed state | Medium | Architecture reset after the RTL block |
 | 10 | Bounded FIFO + ownership/backpressure | Medium | Event-transport semantics |
 | 11 | Sparse packing + lookup | Medium-high to high | Largest current algorithmic jump |
@@ -151,3 +151,25 @@ This pass applies the objective review findings rather than treating green CI as
 All five Platform 5 structural diagrams were migrated to Markdown inline SVG; Mermaid is no longer used in LSN-019~023. PDF CI verifies the dedicated SVG fill in final output, and the generated artifact has also been visually inspected.
 
 See Section 11 of `EXERCISE_STUDENT_DRY_RUN.md` for the learner-path execution record.
+
+## 11. LSN-006~008 completed-workbook content review
+
+The three new workbooks deliberately avoid asking learners to write SystemVerilog as Python strings, and they do not make an HDL simulator a hidden dependency of the Python exercise path. Instead, each selects one pure semantic task that maps directly to the lesson's primary concept.
+
+| Lesson | Exercise role | Content-review conclusion |
+|---|---|---|
+| 06 | one-edge RTL semantics | Appropriate; turns module/register/reset meaning into one hand-checkable rising-edge update without prematurely freezing overflow policy |
+| 07 | combinational vs sequential split | Appropriate; Part A/B cleanly separates candidate/next-state from register writeback, with threshold equality as an explicit boundary |
+| 08 | self-checking oracle | Appropriate; checks sampled trace, first mismatch, and length mismatch while explicitly not replacing clock generation or RTL simulation |
+
+Shared constraints:
+
+- every workbook starts with hand work using values distinct from hidden grader vectors;
+- each TODO states inputs, outputs, and tuple return order when applicable;
+- graders report three conceptual groups without exposing hidden vectors;
+- maintainer negative tests cover ignored reset, strict-`>` threshold behavior, prefix-only checking, and incorrect mismatch selection;
+- Chinese and English code cells remain aligned;
+- the real `rtl/learning/`, `tb/learning/`, and `check_rtl_learning.sh` path remains the teaching authority for HDL behavior.
+
+This closes the exercise-gap for Lessons 6–8 without turning the Python layer into a fake RTL simulator.
+

@@ -152,6 +152,9 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 | 03 | [把 LIF 变成明确 specification](zh/03_freeze_neuron_semantics.ipynb) | 固定语义、boundary、counterexample |
 | 04 | [next state 与 register state](zh/04_state_and_clock.ipynb) | combinational next-state、clock edge、state history |
 | 05 | [逻辑门、比较器与 enable](zh/05_logic_building_blocks.ipynb) | Boolean logic、threshold、enable |
+| 06 | [把一个 RTL 时钟沿翻译成 Python 语义](zh/06_what_is_rtl.ipynb) | synchronous reset、stored state、rising-edge update |
+| 07 | [拆开 combinational 与 sequential path](zh/07_first_rtl_neuron.ipynb) | candidate/next-state、threshold boundary、register writeback |
+| 08 | [用 oracle 检查 sampled waveform](zh/08_testbench_waveform_simulation.ipynb) | self-checking testbench、first mismatch、trace length |
 | 09 | [一个 engine 轮流服务多个 state](zh/09_time_multiplex_many_neurons.ipynb) | addressed state、round robin |
 | 10 | [有界 FIFO 与 backpressure](zh/10_spike_fifo_backpressure.ipynb) | FIFO ordering、full/empty、retry |
 | 11 | [稀疏连接的顺序读取表示](zh/11_sparse_synapse_lookup.ipynb) | source index、contiguous records、zero fanout |
@@ -172,13 +175,13 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 
 第 19–23 课进入 connectome integrity、scaling、closed loop 与 benchmark。正式作业使用 teaching fixture 与 synthetic measurement，因此完整 MaleCNS 下载、正式 converter、GPU 或实体 FPGA 都不是继续学习这些 contract 的前置条件。
 
-第 6–8 课主要练习 SystemVerilog、testbench 和 waveform，继续使用 RTL 教学检查：
+第 6–8 课现在也有独立的 Python/推理作业册：分别把 RTL 时钟沿语义、combinational/sequential 分离、self-checking testbench 的 oracle 判断压缩成小函数，因此即使暂时没有 HDL 工具链也能完成正式作业。真实 SystemVerilog/testbench 路径仍保留在课程中，并单独通过：
 
 ```bash
 ./scripts/check_rtl_learning.sh
 ```
 
-后续如果为 6–8 课增加独立作业册，也遵守同一套“题目先于代码、检查不泄露答案、Human Check 补充理解”的原则。
+作业 grader 通过不等于 RTL compile/simulation 已通过；两条路径验证的是不同层次。
 
 ## 对课程维护者
 
@@ -191,6 +194,7 @@ uv run pytest \
   exercises/checks/test_graders.py \
   exercises/checks/test_notebook_structure.py \
   exercises/checks/test_start_exercise.py \
+  exercises/checks/test_rtl_bridge_student_flow.py \
   exercises/checks/test_platform5_student_flow.py \
   lessons/checks/test_platform4_notebook_structure.py \
   lessons/checks/test_platform4_student_dryrun.py \

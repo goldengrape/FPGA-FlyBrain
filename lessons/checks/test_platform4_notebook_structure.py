@@ -297,3 +297,13 @@ def test_lesson18_markdown_has_no_literal_newline_escapes():
     for language in ("zh", "en"):
         text = _markdown(_read(language, "18_axi_subset.ipynb"))
         assert "\\n" not in text
+
+def test_lesson14_board_diagram_uses_inline_svg():
+    for language in ("zh", "en"):
+        notebook = _read(language, "14_what_is_fpga_board.ipynb")
+        text = _markdown(notebook)
+        assert "```mermaid" not in text
+        assert "<svg " in text and "</svg>" in text
+        assert 'aria-label="fpga development board diagram"' in text
+        assert 'fill="#e6f4ea"' in text
+

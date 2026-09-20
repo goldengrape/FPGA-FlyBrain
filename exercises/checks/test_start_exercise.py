@@ -14,6 +14,8 @@ from scripts.start_exercise import (
 def test_normalize_lesson_accepts_common_forms():
     assert normalize_lesson("1") == "01"
     assert normalize_lesson("01") == "01"
+    assert normalize_lesson("06") == "06"
+    assert normalize_lesson("8") == "08"
     assert normalize_lesson("lesson11") == "11"
     assert normalize_lesson("18") == "18"
     assert normalize_lesson("all") == "all"
@@ -21,7 +23,7 @@ def test_normalize_lesson_accepts_common_forms():
 
 def test_normalize_lesson_rejects_missing_python_exercise():
     with pytest.raises(ValueError):
-        normalize_lesson("06")
+        normalize_lesson("24")
 
 
 def test_create_work_copy_creates_ignored_style_workspace_and_never_overwrites(tmp_path: Path):
