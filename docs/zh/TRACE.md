@@ -2,7 +2,7 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r5
+- 修订：v0.3-r6
 - 日期：2026-09-19
 - 目的：同步 ADD 的产品/过程 FR 分层、RMD bridge slices，以及新的 Learning Architecture / Notebook 教学层。
 
