@@ -95,8 +95,8 @@ DP：DP4/DP5
 FR：FR2/FR3/FR5  
 DP：DP2/DP3/DP5  
 模块：MOD-003/004/005/010 + KV260 platform shell  
-教学：LAB-HW-00~06  
-测试：T-HW-001~006 + T-HW-009 + L5 replay  
+教学：LAB-HW-00~08  
+测试：T-HW-001~008 + T-HW-011 + L5 replay  
 任务：RMD-011A, 012, 012A, 012B, 013
 
 ### TRACE-M-001 — 外部突触内存
@@ -104,8 +104,8 @@ DP：DP2/DP3/DP5
 FR：FR6  
 DP：DP6  
 模块：MOD-010/014  
-教学：LAB-HW-07/08  
-测试：T-HW-007/008/009 + integrity + on-chip/DDR differential + bandwidth benchmark  
+教学：LAB-HW-09/10  
+测试：T-HW-009/010/011 + integrity + on-chip/DDR differential + bandwidth benchmark  
 任务：RMD-013A, 014, 014A, 015, 016
 
 ### TRACE-C-001 — MaleCNS 导入
