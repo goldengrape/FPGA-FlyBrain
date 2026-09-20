@@ -67,9 +67,9 @@ Reference / 备查：
 | ID | 中文 | English | Practice / 检查 | Primary concept / 主要概念 | Engineering mapping |
 |---|---|---|---|---|---|
 | LSN-005 | [数字逻辑积木](zh/05_logic_building_blocks.ipynb) | [Digital logic building blocks](en/05_logic_building_blocks.ipynb) | [中文](../exercises/zh/05_logic_building_blocks.ipynb) / [English](../exercises/en/05_logic_building_blocks.ipynb) | Boolean logic | RMD-003A |
-| LSN-006 | [什么是 RTL？](zh/06_what_is_rtl.ipynb) | [What is RTL?](en/06_what_is_rtl.ipynb) | compile-only RTL check + state walkthrough | RTL / HDL / module / port | prepares RMD-004 |
-| LSN-007 | [第一个 RTL 神经元](zh/07_first_rtl_neuron.ipynb) | [The first RTL neuron](en/07_first_rtl_neuron.ipynb) | Python oracle + RTL review | combinational + sequential | RMD-004 teaching precursor |
-| LSN-008 | [我们怎么知道硬件是对的？](zh/08_testbench_waveform_simulation.ipynb) | [How do we know hardware is correct?](en/08_testbench_waveform_simulation.ipynb) | self-checking testbench + persistent VCD waveform | simulation/testbench | RMD-005/005A |
+| LSN-006 | [什么是 RTL？](zh/06_what_is_rtl.ipynb) | [What is RTL?](en/06_what_is_rtl.ipynb) | [中文作业](../exercises/zh/06_what_is_rtl.ipynb) / [English](../exercises/en/06_what_is_rtl.ipynb) + compile-only RTL check | RTL / HDL / module / port | prepares RMD-004 |
+| LSN-007 | [第一个 RTL 神经元](zh/07_first_rtl_neuron.ipynb) | [The first RTL neuron](en/07_first_rtl_neuron.ipynb) | [中文作业](../exercises/zh/07_first_rtl_neuron.ipynb) / [English](../exercises/en/07_first_rtl_neuron.ipynb) + RTL review | combinational + sequential | RMD-004 teaching precursor |
+| LSN-008 | [我们怎么知道硬件是对的？](zh/08_testbench_waveform_simulation.ipynb) | [How do we know hardware is correct?](en/08_testbench_waveform_simulation.ipynb) | [中文作业](../exercises/zh/08_testbench_waveform_simulation.ipynb) / [English](../exercises/en/08_testbench_waveform_simulation.ipynb) + self-checking testbench/VCD | simulation/testbench | RMD-005/005A |
 
 `rtl/learning/` and `tb/learning/` are teaching artifacts. They do **not** declare formal `MOD-003 lif_neuron_engine` complete.
 

@@ -136,6 +136,9 @@ The links below point to official starters for reading and version tracking. Whe
 | 03 | [Explicit LIF specification](en/03_freeze_neuron_semantics.ipynb) | frozen semantics, boundaries, counterexamples |
 | 04 | [Next state and register state](en/04_state_and_clock.ipynb) | combinational next-state, clock edge, state history |
 | 05 | [Logic gates, comparison, and enable](en/05_logic_building_blocks.ipynb) | Boolean logic, threshold, enable |
+| 06 | [Translate one RTL clock edge](en/06_what_is_rtl.ipynb) | synchronous reset, stored state, rising-edge update |
+| 07 | [Separate combinational and sequential paths](en/07_first_rtl_neuron.ipynb) | candidate/next-state, threshold boundary, register writeback |
+| 08 | [Check a sampled waveform against an oracle](en/08_testbench_waveform_simulation.ipynb) | self-checking testbench logic, first mismatch, trace length |
 | 09 | [One engine serving many states](en/09_time_multiplex_many_neurons.ipynb) | addressed state, round robin |
 | 10 | [Bounded FIFO and backpressure](en/10_spike_fifo_backpressure.ipynb) | FIFO ordering, full/empty, retry |
 | 11 | [Sequential sparse lookup representation](en/11_sparse_synapse_lookup.ipynb) | source index, contiguous records, zero fanout |
@@ -156,11 +159,13 @@ Lessons 13–18 enter FPGA-board, host, DDR, and AXI topics, but their formal wo
 
 Lessons 19–23 enter connectome integrity, scaling, closed-loop experiments, and benchmarking. Their official exercises use teaching fixtures and synthetic measurements so full MaleCNS downloads, a finished converter, GPU access, and a physical FPGA are not prerequisites for learning the contracts.
 
-Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms and continue to use the RTL learning check:
+Lessons 6–8 now also have standalone Python/reasoning workbooks. They translate RTL semantics, combinational/sequential separation, and self-checking testbench logic into small callable contracts that can be graded without requiring an HDL toolchain. The real SystemVerilog/testbench path remains part of the lessons and is checked separately with:
 
 ```bash
 ./scripts/check_rtl_learning.sh
 ```
+
+Passing the workbook grader does not replace RTL compile/simulation; the two paths check different layers.
 
 ## For maintainers
 

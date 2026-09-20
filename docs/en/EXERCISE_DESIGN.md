@@ -159,6 +159,9 @@ exercises/
 │   ├── lesson03.py
 │   ├── lesson04.py
 │   ├── lesson05.py
+│   ├── lesson06.py
+│   ├── lesson07.py
+│   ├── lesson08.py
 │   ├── lesson09.py
 │   ├── lesson10.py
 │   ├── lesson11.py
@@ -179,6 +182,9 @@ exercises/
     ├── 03_freeze_neuron_semantics.ipynb
     ├── 04_state_and_clock.ipynb
     ├── 05_logic_building_blocks.ipynb
+    ├── 06_what_is_rtl.ipynb
+    ├── 07_first_rtl_neuron.ipynb
+    ├── 08_testbench_waveform_simulation.ipynb
     ├── 09_time_multiplex_many_neurons.ipynb
     ├── 10_spike_fifo_backpressure.ipynb
     ├── 11_sparse_synapse_lookup.ipynb
@@ -193,7 +199,7 @@ exercises/
 
 Exercise Notebook names should match their lesson counterparts whenever practical.
 
-Lessons 6–8 focus on SystemVerilog, testbenches, and waveforms, so they are not forced into Python exercise Notebooks. Their HDL exercises will follow the same workbook principles later.
+Lessons 6–8 now have small Python/reasoning Exercise Notebooks in addition to the real SystemVerilog/testbench labs. The workbooks grade semantic translation and oracle reasoning without pretending to replace RTL compile, simulation, or waveform inspection.
 
 Lessons 13–18 enter physical-hardware and external-memory topics, but their formal workbooks deliberately remain board-independent semantic/performance models. Physical-board steps, DDR controllers, and platform-specific procedures belong to the matching RMD engineering labs rather than becoming coursework prerequisites.
 

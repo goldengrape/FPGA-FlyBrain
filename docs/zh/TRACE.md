@@ -29,9 +29,9 @@
 | LSN-003 | 冻结可测试的 neuron semantics | PFR3/PFR4 | semantic ambiguity tests + spec checkpoint | RMD-003 | `lessons/zh/03_freeze_neuron_semantics.ipynb` |
 | LSN-004 | 建立 register/clock/combinational/sequential 直觉 | PFR1；准备 FR2/DP2 | explanation checkpoint | RMD-003A | `lessons/zh/04_state_and_clock.ipynb` |
 | LSN-005 | Boolean logic 最小组合判断 | PFR1；准备 FR2/DP2 | `exercises/zh/05_logic_building_blocks.ipynb`（grader: `exercises/grader/lesson05.py`）+ Human Check | RMD-003A | `lessons/zh/05_logic_building_blocks.ipynb` |
-| LSN-006 | 理解 RTL/HDL/SystemVerilog/module/port | PFR1；准备 FR2/DP2 | teaching RTL simulation + Human Check | 准备 RMD-004 | `lessons/zh/06_what_is_rtl.ipynb` |
-| LSN-007 | 已知 neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | Python oracle + RTL review | RMD-004 教学前置 | `lessons/zh/07_first_rtl_neuron.ipynb` |
-| LSN-008 | testbench/waveform/simulation 验证 RTL | PFR4/PDP4 | self-checking testbench + explanation | RMD-005/005A | `lessons/zh/08_testbench_waveform_simulation.ipynb` |
+| LSN-006 | 理解 RTL/HDL/SystemVerilog/module/port | PFR1；准备 FR2/DP2 | `exercises/zh/06_what_is_rtl.ipynb`（grader: `exercises/grader/lesson06.py`）+ compile-only RTL check + Human Check | 准备 RMD-004 | `lessons/zh/06_what_is_rtl.ipynb` |
+| LSN-007 | 已知 neuron contract → combinational + sequential RTL | FR2/DP2 + PFR4 | `exercises/zh/07_first_rtl_neuron.ipynb`（grader: `exercises/grader/lesson07.py`）+ RTL review + Human Check | RMD-004 教学前置 | `lessons/zh/07_first_rtl_neuron.ipynb` |
+| LSN-008 | testbench/waveform/simulation 验证 RTL | PFR4/PDP4 | `exercises/zh/08_testbench_waveform_simulation.ipynb`（grader: `exercises/grader/lesson08.py`）+ self-checking testbench/VCD + Human Check | RMD-005/005A | `lessons/zh/08_testbench_waveform_simulation.ipynb` |
 | LSN-009 | 理解一个物理 engine 如何 time-multiplex 多个虚拟 neuron state | FR3/DP3 + PFR1 | `exercises/zh/09_time_multiplex_many_neurons.ipynb`（grader: `exercises/grader/lesson09.py`）+ Human Check | RMD-006/007 教学前置 | `lessons/zh/09_time_multiplex_many_neurons.ipynb` |
 | LSN-010 | 理解 bounded FIFO ordering 与 backpressure | FR4/DP4 + PFR4 | `exercises/zh/10_spike_fifo_backpressure.ipynb`（grader: `exercises/grader/lesson10.py`）；T-007/008 前置 | RMD-007A/009 教学前置 | `lessons/zh/10_spike_fifo_backpressure.ipynb` |
 | LSN-011 | 用 sparse source index 精确定位真实 synapse range | FR4/DP4 + PFR4 | `exercises/zh/11_sparse_synapse_lookup.ipynb`（grader: `exercises/grader/lesson11.py`）；T-009 前置 | RMD-008 | `lessons/zh/11_sparse_synapse_lookup.ipynb` |
