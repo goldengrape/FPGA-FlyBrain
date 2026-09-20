@@ -142,32 +142,35 @@ boards/kv260/
 
 如果某个步骤只在特定 carrier revision 上成立，Lab 必须明确写出，不能让学生从失败现象反推板卡版本差异。
 
-## 7. 第一阶段现在冻结了什么——什么仍然只是 provisional
+## 7. 第一、二阶段现在冻结了什么——什么仍然只是 provisional
 
-documentation-first 决策已经进入 **LAB-HW-00~04** 的实际实现阶段。
+documentation-first 决策已经进入 **LAB-HW-00~06** 的实际撰写/实现阶段。
 
-第一阶段现在冻结：
+项目现在冻结以下 **authoring contract**：
 
 - reference target part：`xck26-sfvc784-2LV-c`；
-- LAB-HW-03 board-visible logical output：`bank45_gpio[4:0]`；
-- 这 5 个 logical bit 的 Bank 45 XDC mapping；
-- LAB-HW-04 platform clock source：PS `pl_clk0`，教学口径为 nominal 100 MHz；
-- LAB-HW-04 platform reset source：PS `pl_resetn0`；
-- LAB-HW-04 design-local active-low reset：`proc_sys_reset/peripheral_aresetn`，再送入教学 RTL；
-- LAB-HW-03/04 采用 direct Vivado/JTAG programming；
-- direct-JTAG 的主要 evidence 必须是 Vivado/device status + 设计自身 observable output，不能只看 DS34。
+- LAB-HW-03 board-visible logical output：`bank45_gpio[4:0]` 及其 Bank 45 XDC mapping；
+- LAB-HW-04 platform clock/reset path：PS `pl_clk0`、PS `pl_resetn0`、以及作为 design-local active-low reset 的 `proc_sys_reset/peripheral_aresetn`；
+- LAB-HW-03/04/06 的 PL programming path：direct Vivado/JTAG；
+- LAB-HW-05 Ubuntu authoring image：Ubuntu Server 24.04 LTS archive `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`；
+- LAB-HW-05 UART path：J4 FTDI，115200 8N1、no flow control；
+- LAB-HW-06 teaching transport：PS `M_AXI_HPM0_FPD` → SmartConnect → `0xA0010000` 的 dual-channel AXI GPIO；
+- LAB-HW-06 host access authoring candidate：PS/Linux Python `/dev/mem` MMIO；
+- LAB-HW-06 semantic proof：Channel 1 在 `+0x0` 写入，PL 执行 `+1 mod 2^32`，Channel 2 在 `+0x8` 读回。
 
 以下内容**还不能升级成已验证的实体事实**：
 
 - 每个 Bank 45 bit 在真实板上对应的具体丝印 LED designator 与肉眼可见 polarity；
 - Vivado 2026.1 是否可从 authoring candidate 升级为 tested/supported course baseline；
-- starter Linux image 的精确版本/checksum；
-- LAB-HW-06 最终 runtime transport（AXI-Lite/UIO/XRT/其他）；
-- 后续 DDR access software stack。
+- Ubuntu archive 的 expected SHA-256；course manifest 当前故意保持 null，必须在受控下载后才记录/升级；
+- 受支持 Ubuntu 24.04 runtime 的默认 security policy 是否允许 `/dev/mem` MMIO；
+- LAB-HW-06 authoring design 是否在真实 Vivado/真实板上完成 full build/program PASS；
+- 后续 BRAM network、DDR 与 performance software stack。
 
-这些事实只有在真实 KV260 dry run 针对具体 Git commit 与 artifact 留下 T-HW evidence 后，才能升级为 tested fact。
+这些事实只有在真实 KV260 dry run 针对具体 Git commit 与 artifact 留下 T-HW evidence 后，才能升级为 tested fact。如果 Ubuntu policy 阻止 `/dev/mem`，应修订 teaching transport（例如 UIO），不能降低系统安全策略来强行 PASS。
 
-已实现的 board-support code 位于 `boards/kv260/`。FlyBrain core RTL 仍然不得依赖 KV260 connector 名、package pin、Vivado project layout 或 Linux device path。
+已实现的 board-support code 位于 `boards/kv260/`。FlyBrain core RTL 仍然不得依赖 KV260 connector 名、package pin、Vivado project layout、Linux device path 或这条临时 teaching transport。
+
 
 ## 8. 参考板卡决策
 
