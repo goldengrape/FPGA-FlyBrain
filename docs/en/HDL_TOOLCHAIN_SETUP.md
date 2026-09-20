@@ -143,4 +143,4 @@ LAB-HW-00~10
   → target-specific implementation/timing/bitstream/program/runtime
 ```
 
-This documentation-first revision **does not yet freeze an exact Vivado version**. The supported version is written into LAB-HW-00 only after a complete real-KV260 dry run; do not guess compatibility from third-party tutorials.
+LAB-HW-00 may name an **authoring candidate** Vivado version so the prose and helper scripts remain reproducible. That candidate is **not yet the tested support baseline**. Promotion to supported/tested status requires a complete real-KV260 dry run with retained physical evidence; do not infer compatibility from third-party tutorials.
