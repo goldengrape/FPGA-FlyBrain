@@ -2,9 +2,9 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r1
-- 日期：2026-09-16
-- 本次修订目的：严格区分 FlyBrain 产品系统与学习/工程过程；验证系统矩阵为下三角（decoupled）；把学习曲线本身纳入公理设计约束。
+- 修订：v0.3-r2
+- 日期：2026-09-19
+- 本次修订目的：严格区分 FlyBrain 产品系统与学习/工程过程；验证系统矩阵为下三角（decoupled）；把学习曲线本身纳入公理设计约束；冻结 KV260 reference board，并把零基础实体上板拆成 Physical Lab Track。
 
 ## 1. 设计原则
 1. **Independence Axiom**：尽量保持 Functional Requirements（FR）独立。
