@@ -15,6 +15,7 @@ DETECT = ROOT / "boards" / "kv260" / "scripts" / "detect_target.tcl"
 BUILD03 = ROOT / "boards" / "kv260" / "scripts" / "build_lab03_marker.tcl"
 BUILD04 = ROOT / "boards" / "kv260" / "scripts" / "build_lab04_blink.tcl"
 PROGRAM = ROOT / "boards" / "kv260" / "scripts" / "program_bitstream.tcl"
+BUILD06 = ROOT / "boards" / "kv260" / "scripts" / "build_lab06_loopback.tcl"
 TCLSH = shutil.which("tclsh")
 
 
@@ -326,3 +327,27 @@ def test_program_bitstream_rejects_target_without_xck26(tmp_path):
     )
     assert result.returncode == 8
     assert "ERROR=NO_KV260_FPGA_DEVICE" in result.stderr
+
+
+
+def test_lab06_build_script_freezes_minimal_mmio_transport():
+    text = BUILD06.read_text(encoding="utf-8")
+    assert 'set axi_gpio_base 0xA0010000' in text
+    assert "CONFIG.PSU__USE__M_AXI_GP0 {1}" in text
+    assert "xilinx.com:ip:axi_gpio:" in text
+    assert "CONFIG.C_IS_DUAL {1}" in text
+    assert "CONFIG.C_ALL_OUTPUTS {1}" in text
+    assert "CONFIG.C_ALL_INPUTS_2 {1}" in text
+    assert "ps/M_AXI_HPM0_FPD" in text
+    assert "axi_smc/S00_AXI" in text
+    assert "axi_smc/M00_AXI" in text
+    assert "axi_gpio/S_AXI" in text
+    assert "axi_gpio/gpio_io_o" in text
+    assert "axi_gpio/gpio2_io_i" in text
+    assert "assign_bd_address" in text
+    assert "get_bd_addr_spaces ps/Data" in text
+    assert "GPIO_DATA_OFFSET=0x0000" in text
+    assert "GPIO2_DATA_OFFSET=0x0008" in text
+    assert "NEGATIVE_SETUP_SLACK" in text
+    assert "NEGATIVE_HOLD_SLACK" in text
+    assert text.index("NEGATIVE_HOLD_SLACK") < text.index("write_bitstream -force")
