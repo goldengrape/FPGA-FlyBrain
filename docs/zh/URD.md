@@ -2,8 +2,8 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 版本：v0.3-init
-- 状态：Draft for first implementation cycle
+- 版本：v0.3-r1
+- 状态：Reference board frozen; physical-lab documentation pass
 - 本文档角色：定义“为什么做、给谁做、做到什么算成功”。
 
 ## 1. 项目愿景
