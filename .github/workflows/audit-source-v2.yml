@@ -1,0 +1,21 @@
+name: Audit source snapshot v2
+
+on:
+  push:
+    branches:
+      - audit/kv260-review-v2
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - run: rm -rf .git
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fpga-flybrain-audit-source-v2
+          path: .
+          include-hidden-files: true
+          retention-days: 1
