@@ -15,7 +15,7 @@ Link user needs → functional requirements → design parameters → teaching a
 | U1 Understand a minimal neuron | FR1 | DP1 | LSN-001/002 + MOD-001/002 | T-001~006 | 001~003 |
 | U2 Use AI while remaining able to explain the result | PFR1/PFR2 | PDP1/PDP2 | Notebook AI Task/Human Check + bridge slices | explanation checkpoints + module tests | all relevant |
 | U3 Build multi-neuron and event networks | FR3/FR4/FR5 | DP3/DP4/DP5 | MOD-004~009 | T-007~013 | 006~011 + 007A |
-| U4 Run on FPGA | FR2/FR3/FR5/FR6 | DP2/DP3/DP5/DP6 | MOD-003/010/014 | L3~L5 + board replay | 011A~016 |
+| U4 Run on FPGA | FR2/FR3/FR5/FR6 | DP2/DP3/DP5/DP6 | MOD-003/004/005/010/014 + KV260 platform shell | L3~L5 + T-HW-001~009 + board replay | 011A~016 |
 | U5 Import real MaleCNS data | FR7 | DP7 | MOD-011 | T-014/015 | 017~021 |
 | U6 Build a layered verification chain | PFR4 | PDP4 | LSN-002/003 + float/fixed/RTL/FPGA oracle chain | L0~L7 | all relevant |
 | U7 Learn Axiomatic Design and traceability | PFR2/PFR3 | PDP2/PDP3 | docs/ + lessons/ + exercises/ + CI checks | trace checks + checkpoints | all |
@@ -48,6 +48,26 @@ Link user needs → functional requirements → design parameters → teaching a
 | LSN-022 | Build closed-loop feedback while making manual sensory/output mappings explicit | FR8/DP8 + PFR4 | `exercises/en/22_closed_loop_world.ipynb` (grader: `exercises/grader/lesson22.py`); prepares T-016 | RMD-023~025 | `lessons/en/22_closed_loop_world.ipynb` |
 | LSN-023 | Freeze a CPU/GPU/FPGA benchmark comparability contract before calculating throughput/energy metrics | FR2~FR8 + PFR4 | `exercises/en/23_cpu_gpu_fpga_benchmark.ipynb` (grader: `exercises/grader/lesson23.py`); prepares P-001~008 | RMD-028 | `lessons/en/23_cpu_gpu_fpga_benchmark.ipynb` |
 
+### 3.1 KV260 Physical Lab traceability
+
+`LAB-HW-*` does not replace LSN lessons. It turns Platform 4 concepts into real KV260 operations and evidence.
+
+| Lab | Objective | Primary test | RMD | Artifact |
+|---|---|---|---|---|
+| LAB-HW-00 | identify real KV260, interfaces, carrier revision | T-HW-009 (inventory/evidence) | RMD-012 | planned `labs/en/00_*` |
+| LAB-HW-01 | power + JTAG target discovery | T-HW-001/T-HW-009 | RMD-012 | planned `labs/en/01_*` |
+| LAB-HW-02 | first bitstream build/program | T-HW-002/T-HW-009 | RMD-012A | planned `labs/en/02_*` |
+| LAB-HW-03 | clock/reset/I/O constraints | T-HW-003/T-HW-009 | RMD-012A | planned `labs/en/03_*` |
+| LAB-HW-04 | real host↔PL loopback | T-HW-004/T-HW-009 | RMD-012B | planned `labs/en/04_*` |
+| LAB-HW-05 | BRAM neuron-state store | T-HW-005/T-HW-009 | RMD-013 | planned `labs/en/05_*` |
+| LAB-HW-06 | small FlyBrain FPGA replay | T-HW-006/T-HW-009 | RMD-013 | planned `labs/en/06_*` |
+| LAB-HW-07 | DDR integrity + real measurement | T-HW-007/T-HW-009 | RMD-014 | planned `labs/en/07_*` |
+| LAB-HW-08 | AXI/burst measurement | T-HW-008/T-HW-009 | RMD-014A | planned `labs/en/08_*` |
+
+Physical-Lab specification sources:
+- `docs/en/KV260_REFERENCE_PLATFORM.md`
+- `docs/en/PHYSICAL_FPGA_LABS.md`
+
 Principle: Notebooks may prototype and demonstrate, but formal algorithms, RTL, interfaces, and oracles remain authoritative in `python/`, `rtl/`, MDD, TDD, and other engineering sources.
 
 ## 4. Key trace examples
@@ -69,11 +89,12 @@ Tests: T-007~T-010
 Tasks: RMD-007A, 008~011
 
 ### TRACE-H-001 — First real FPGA
-Requirement: a small network already verified in simulation can move to a real FPGA, with host input and output readback.  
+Requirement: a zero-FPGA-experience learner can take KV260 from correct connection/target discovery through first bitstream, physical I/O, host↔PL loopback, and migration of an already simulation-verified small network.  
 FR: FR2/FR3/FR5  
 DP: DP2/DP3/DP5  
-Modules: MOD-003/004/005/010  
-Tests: synthesis report + loopback + L5 replay  
+Modules: MOD-003/004/005/010 + KV260 platform shell  
+Teaching: LAB-HW-00~06  
+Tests: T-HW-001~006 + T-HW-009 + L5 replay  
 Tasks: RMD-011A, 012, 012A, 012B, 013
 
 ### TRACE-M-001 — External synapse memory
@@ -81,7 +102,8 @@ Requirement: synapses larger than on-chip SRAM can live in DDR without changing 
 FR: FR6  
 DP: DP6  
 Modules: MOD-010/014  
-Tests: integrity + on-chip/DDR differential + bandwidth benchmark  
+Teaching: LAB-HW-07/08  
+Tests: T-HW-007/008/009 + integrity + on-chip/DDR differential + bandwidth benchmark  
 Tasks: RMD-013A, 014, 014A, 015, 016
 
 ### TRACE-C-001 — MaleCNS import
@@ -161,7 +183,9 @@ Change routing:
 - LSN-001~004: first bilingual executable lesson block established
 - LSN-005~008: second bilingual lesson block established; `rtl/learning/` and `tb/learning/` do not declare MOD-003 complete
 - LSN-009~012: third bilingual lesson block established; Python teaching models do not declare MOD-004~009 complete
-- LSN-013~018: fourth bilingual lesson block established; synthesis/board/host/DDR/AXI teaching experiments do not declare the corresponding formal MODs or physical-platform implementation complete
+- LSN-013~018: fourth bilingual lesson block established; concept Notebooks do not declare the physical-platform implementation complete
+- Reference board: **AMD Kria KV260 Vision AI Starter Kit** is frozen
+- LAB-HW-00~08: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen at the documentation layer; Lab Notebooks and board-specific implementation have not started
 - LSN-019~023: fifth bilingual lesson block established; connectome teaching fixtures, synthetic scale/benchmark numbers, and the toy closed loop do not declare RMD-017~028 formal data artifacts, full-system implementation, or real performance results complete
 - TRACE: synchronized across engineering and teaching paths through LSN-023
 - First formal implementation slice: not started
@@ -170,6 +194,6 @@ Change routing:
 - first freeze of an `IF-NEURON-*` interface;
 - when LSN-001~004 move from prototype code to importing formal `python/`/`rtl/` modules;
 - first addition or removal of a MOD or LSN ID;
-- final FPGA board selection;
+- any change to the reference board, carrier-revision policy, or supported physical tool flow;
 - freezing the MaleCNS binary-image schema;
 - any RMD renumbering.
