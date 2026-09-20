@@ -130,34 +130,82 @@ The learner separates:
 
 ### LAB-HW-03 — First bitstream
 
-**Primary new operation:** take minimal RTL through synthesis → implementation → bitstream → program.
+**Primary new operation:** take a tiny RTL design with no clock/reset/AXI/Linux dependency through synthesis → implementation → bitstream → JTAG programming.
 
-The first implementation uses a PL proof that is observable and supported by the official board flow/schematic. The exact user output and constraints are frozen when the lab prose is implemented; this standards document does not guess a pin.
+The first teaching implementation is now frozen as a **Bank 45 GPIO marker**:
 
-**Pass evidence includes at least:**
+- top module: `kv260_marker_top`;
+- logical output: `bank45_gpio[4:0]`;
+- fixed logical pattern: `5'b10101`;
+- target part: `xck26-sfvc784-2LV-c`;
+- physical mapping comes from `boards/kv260/constraints/bank45_gpio.xdc`;
+- the XDC is grounded in the AMD/Xilinx Board Store KV260 carrier `bank45_gpio` 5-bit LED-class interface and the K26 SOM `part0_pins.xml` package-pin mapping.
+
+Frozen package pins:
+
+| logical bit | K26 SOM signal | package pin | I/O standard |
+|---|---|---|---|
+| `bank45_gpio[0]` | SOM240 D18 | J11 | LVCMOS33 |
+| `bank45_gpio[1]` | SOM240 B17 | J10 | LVCMOS33 |
+| `bank45_gpio[2]` | SOM240 B18 | K13 | LVCMOS33 |
+| `bank45_gpio[3]` | SOM240 A15 | F11 | LVCMOS33 |
+| `bank45_gpio[4]` | SOM240 C24 | A12 | LVCMOS33 |
+
+Learners do **not** need to understand those constraints yet; the XDC is treated as a course-provided board adapter. LAB-HW-04 explains why RTL ports need physical mapping and why these pins are used.
+
+The build helper emits the bitstream, utilization report, and timing summary into a fixed build directory. The programming helper accepts only an existing bitstream and requires an `xck26*` device on the JTAG chain before programming.
+
+**Pass evidence includes:**
 
 - no blocking implementation/timing error;
-- bitstream hash;
-- programming success;
-- **configuration evidence appropriate to the actual programming path**;
-- at least one observable result demonstrating that the learner's design, not merely board power, is active.
+- bitstream SHA-256;
+- Vivado/JTAG programming success;
+- `xck26*` target identification;
+- a stable, repeatable marker state on the Bank 45 LED-class output, with photo/observation retained;
+- current Git commit and carrier revision.
 
-**DS34 is not a universal JTAG-programming oracle.** AMD defines DS34 as the PS done indication that the PS successfully loaded a PL design. It may be evidence only when the lab's actual configuration path matches that meaning. If LAB-HW-03 configures PL directly through Vivado/JTAG, use Vivado/device programming status plus the design's own observable output as the primary evidence.
+**Physical-polarity boundary:** Board Store data establishes that these five signals are an LED-class `bank45_gpio` output and establishes the pin mapping. Before a real-KV260 dry run, the course does not invent a silkscreen LED designator or visual polarity. The learner records the actual visible state; physical designator/polarity becomes a tested fact only after the real dry run.
+
+**DS34 is not a universal JTAG-programming oracle.** AMD defines DS34 as the PS-done indication when the PS successfully loaded a PL design. LAB-HW-03 uses direct Vivado/JTAG programming, so the primary evidence is Vivado/device programming status plus the design's Bank 45 observable output.
 
 ### LAB-HW-04 — Constraints + clock/reset/I/O
 
-**Primary new operation:** connect logical RTL ports to physical board resources through board/constraint mapping.
+**Primary new operation:** after the learner can already generate/program a bitstream, connect logical RTL to a physical board resource through explicit clock/reset/platform glue and constraints.
 
-Teach only what this lab needs:
+The first teaching implementation is frozen as a **PS-clock/reset-driven PL blink proof**:
 
-- clock source / period;
-- design-local reset semantics;
-- one safe board-visible I/O;
-- I/O-standard / voltage boundary.
+- the PS is used only as platform infrastructure; Linux/AXI is not introduced;
+- Zynq UltraScale+ MPSoC `pl_clk0` supplies the PL clock, taught as nominal 100 MHz;
+- PS `pl_resetn0` feeds `proc_sys_reset`;
+- `proc_sys_reset/peripheral_aresetn` is the frozen **design-local active-low reset**;
+- `kv260_blink_core` divides the clock with a counter and drives a visible periodic change on `bank45_gpio[0]`, while the remaining bits keep a marker;
+- the physical output reuses LAB-HW-03's `bank45_gpio.xdc`, so this lab adds clock/reset/constraint interpretation instead of a second peripheral.
 
-This lab must freeze the source and polarity of the local reset used by this design and repeat that SW2 is a SOM-level hard reset, not automatically a module reset.
+The lab must distinguish three reset layers:
 
-**Pass evidence:** the course-frozen physical/readable input or local-reset source changes the output as specified; the learner can explain why an RTL port name has no intrinsic physical-pin meaning and can distinguish SOM reset from design-local reset.
+1. **SW2** — SOM-level hard reset;
+2. **PS `pl_resetn0`** — platform reset source;
+3. **`peripheral_aresetn`** — synchronized design-local reset delivered to `kv260_blink_core.resetn`.
+
+It is valid to say SW2 is upstream of the system reset sequence; it is **not** valid to say SW2 is the RTL module's `resetn`.
+
+Teach only the constraints needed here:
+
+- a logical RTL port has no intrinsic package pin;
+- `PACKAGE_PIN` maps the port to the K26 package;
+- `IOSTANDARD LVCMOS33` follows the Board Store constraint for these Bank 45 carrier signals;
+- the clock arrives through the internal PS→PL clock path, so no fake external clock constraint is attached to `bank45_gpio`.
+
+**Pass evidence:**
+
+- synthesis/implementation/timing complete;
+- blink bitstream hash and programming log;
+- periodic activity on `bank45_gpio[0]` with the other marker bits stable;
+- the learner can explain at least one logical-bit → package-pin XDC mapping;
+- the learner can distinguish `pl_resetn0`, `peripheral_aresetn`, and SW2;
+- resource/timing report, Git commit, board/carrier revision are recorded in the T-HW-011 evidence manifest.
+
+
 
 ### LAB-HW-05 — PS/Linux first boot + UART console
 
