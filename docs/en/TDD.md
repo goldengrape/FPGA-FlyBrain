@@ -31,7 +31,7 @@ Scenario: small networks of roughly 10–1000 neurons.
 Compare spike sequences event-by-event or step-by-step; compare neuron-state checksums where useful.
 
 ### L5 FPGA board verification
-Replay fixed seeds and input events, capture outputs, and compare against RTL simulation and Python references.
+The reference board is KV260. Complete target-discovery / programming / physical-I/O / host-loopback `T-HW-*` checkpoints first, then replay fixed seeds and input events, capture outputs, and compare against RTL simulation and Python references.
 
 ### L6 Connectome subset verification
 Choose a real subgraph of roughly 1K neurons. The exact same binary image is consumed by software and FPGA implementations.
@@ -60,7 +60,42 @@ Choose a real subgraph of roughly 1K neurons. The exact same binary image is con
 - **T-015** real-subset differential test
 - **T-016** full-system replay determinism; if the model includes noise, fix the PRNG seed
 
-## 3. Performance metrics
+## 3. KV260 physical-board checkpoints
+
+These `T-HW-*` items are physical-lab oracles. They do not replace T-001~T-016 model/algorithm correctness tests. Ordinary cloud CI without a real KV260 must never mark them as passed.
+
+- **T-HW-001 Target discovery**: with the KV260 correctly powered, the development host reliably enumerates the target through the course-specified JTAG path; record board/carrier revision, tool version, and target identification.
+- **T-HW-002 First bitstream program**: the approved minimal design completes implementation/timing, produces a bitstream, and programs successfully; retain the artifact hash and PL-configuration-status evidence.
+- **T-HW-003 Physical clock/reset/I/O**: real clock/reset and one course-approved physical I/O behave according to contract; wrong constraints or a held reset must be detectable.
+- **T-HW-004 Host↔PL loopback**: the runtime host writes PL state/operations and reads results back in a fixed sequence; a self-checking script detects wrong values/order.
+- **T-HW-005 BRAM neuron-state store**: state read/write is correct across multiple addresses, and synthesis/resource reports show the intended on-chip-memory mapping.
+- **T-HW-006 Small FlyBrain replay**: for a fixed network image / seed / input, KV260 spike/state traces match the Python fixed-point reference under the frozen contract.
+- **T-HW-007 DDR integrity**: a known payload reads back byte-for-byte or with the approved checksum; any integrity failure blocks performance claims.
+- **T-HW-008 AXI/burst measurement**: with the same data volume and explicit measurement window, at least two access patterns produce repeatable latency/effective-bandwidth measurements.
+- **T-HW-009 Hardware evidence manifest**: every physical checkpoint records Git commit, board model/revision, tool version, board/platform version when known, bitstream/build hash, test input, output summary, and date.
+
+### 3.1 Minimum physical evidence
+
+“No tool error” is not a pass criterion. A board test needs at least one direct evidence source:
+
+- target/program log;
+- physical/readable I/O observation;
+- host readback;
+- hardware trace;
+- resource/timing report;
+- differential replay report;
+- DDR integrity/bandwidth measurement.
+
+A photo may supplement evidence that a real board visibly changed, but it never replaces a machine-readable oracle.
+
+### 3.2 Hardware runner / CI boundary
+
+- A full Vivado + physical-board run is not required on every normal CI commit.
+- Automatable HDL, report parsers, and host self-check scripts belong in ordinary CI.
+- `T-HW-*` steps that require a real KV260 run as a manual physical checkpoint or controlled hardware runner.
+- PRs/documentation must not say “board verified” unless physical evidence actually exists for a specific commit/artifact.
+
+## 4. Performance metrics
 - **P-001** max clock frequency
 - **P-002** synaptic events / second
 - **P-003** spikes / second
@@ -70,7 +105,7 @@ Choose a real subgraph of roughly 1K neurons. The exact same binary image is con
 - **P-007** power estimate / measured board power
 - **P-008** real-time factor
 
-## 4. Learning verification
+## 5. Learning verification
 At the end of each chapter, the learner should be able to answer:
 1. What practical problem did the newly introduced hardware concept solve?
 2. Which state is stored, and where?
@@ -78,14 +113,14 @@ At the end of each chapter, the learner should be able to answer:
 4. When a test fails, should debugging start from the model, interface, or implementation?
 5. Did this slice introduce multiple still-unmastered major concepts? If yes, return to ADD/RMD and split the slice.
 
-## 5. Additional rules for AI-generated code
+## 6. Additional rules for AI-generated code
 - When AI writes RTL, it must also provide an interface explanation and a testbench/test-vector plan.
 - Critical arithmetic requires a bit-level reference; “looks reasonable” is not acceptable.
 - Before AI changes a public interface, update MDD/TRACE.
 - Before AI changes model semantics, update URD/ADD/TDD; do not silently change RTL to make a test pass.
 - Any AI claim about passing tests, timing closure, or performance must be backed by the corresponding command, waveform, report, or benchmark evidence.
 
-## 6. Minimal CI (partially implemented)
+## 7. Minimal CI (partially implemented)
 
 Current status:
 - Python tests: **implemented** (Python exercise infrastructure)
@@ -97,4 +132,4 @@ Current status:
 - trace-consistency check: **not yet automated**
 - bilingual-ID consistency check: **not yet fully automated**; Exercise Notebooks already enforce bilingual structure/code-cell consistency
 
-A full FPGA build does not need to run on every CI invocation; it can be reserved for checkpoints or nightly builds.
+A full FPGA build does not need to run on every CI invocation; it can be reserved for checkpoints or nightly builds. Physical KV260 `T-HW-*` results must also follow the physical-evidence boundary in Section 3.2.
