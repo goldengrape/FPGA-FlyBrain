@@ -126,6 +126,19 @@ To run the complete teaching RTL checks locally:
 
 This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanity checks, and verifies that the Lesson 8 VCD waveform was actually generated. The Lesson 13 Notebook also calls Yosys directly on `rtl/learning/clocked_accumulator.sv` so learners can inspect a real synthesis report.
 
+### 7. Physical FPGA reference board: AMD Kria KV260
+
+The physical teaching path now freezes the **AMD Kria KV260 Vision AI Starter Kit** as the first complete reference board. Concept lessons remain board-neutral where practical, while the zero-experience Physical Lab track will give explicit KV260 steps for power, JTAG/UART, target discovery, first bitstream, constraints/I/O, host↔PL, BRAM, DDR, and AXI/burst measurement.
+
+This change is currently documentation-first; the Physical Lab Notebooks and `boards/kv260/` implementation come next.
+
+Read:
+
+- [KV260 Reference Hardware Platform](docs/en/KV260_REFERENCE_PLATFORM.md)
+- [Physical FPGA Lab Teaching Standard](docs/en/PHYSICAL_FPGA_LABS.md)
+
+The OSS CAD Suite used by Lessons 6–13 and the later AMD Vivado/platform toolchain for KV260 are intentionally separate tool layers.
+
 ## Start learning
 
 The current executable lessons are in [`lessons/`](lessons/README.md):
@@ -204,6 +217,8 @@ These are the foundational sources currently used or repeatedly referenced by th
 | [Beginner Glossary](docs/en/GLOSSARY.md) | [初学者术语表](docs/zh/GLOSSARY.md) |
 | [Exercise Notebook Design](docs/en/EXERCISE_DESIGN.md) | [作业 Notebook 设计](docs/zh/EXERCISE_DESIGN.md) |
 | [HDL Toolchain Setup and Jupyter Launch](docs/en/HDL_TOOLCHAIN_SETUP.md) | [HDL 工具链安装与 Jupyter 启动](docs/zh/HDL_TOOLCHAIN_SETUP.md) |
+| [KV260 Reference Hardware Platform](docs/en/KV260_REFERENCE_PLATFORM.md) | [KV260 参考硬件平台](docs/zh/KV260_REFERENCE_PLATFORM.md) |
+| [Physical FPGA Lab Teaching Standard](docs/en/PHYSICAL_FPGA_LABS.md) | [实体 FPGA 实验教学规范](docs/zh/PHYSICAL_FPGA_LABS.md) |
 
 ### Engineering source documents
 | English | 中文 |
@@ -222,7 +237,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 
 ## Current status
 
-Planning, system architecture, and the first curriculum audit are complete. The first formal implementation slice has not yet been declared complete.
+Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~08 physical-teaching/acceptance standards are frozen at the documentation layer**; matching Lab Notebooks and board code are not implemented yet. The first formal implementation slice has not yet been declared complete.
 
 Current first implementation batch:
 
