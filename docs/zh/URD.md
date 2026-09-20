@@ -18,7 +18,7 @@
 - 理解膜电位、动作电位、阈值、不应期、突触、兴奋/抑制。
 - 会基本代数、微积分、向量与矩阵运算。
 - 对 AND / OR / NOT 等最基本数字逻辑有概念，但不要求熟练。
-- 可以没有 FPGA、HDL、计算机组成、嵌入式开发经验。
+- 可以没有 FPGA、HDL、计算机组成、嵌入式开发经验；课程必须支持“第一次拿到 FPGA 开发板”的零经验路径。
 - 可以不会系统编程；Python 只要求愿意边做边学。
 
 ### 不假设具备
@@ -43,6 +43,7 @@
 ### 学习成功
 - 能解释 register、RAM、FIFO、pipeline、fixed point、DDR bandwidth、event-driven computation 为什么在本项目中出现。
 - 能独立解释一个 LIF neuron RTL 的状态、输入、输出与时序。
+- 能从一块未配置的参考开发板开始，完成正确供电、目标发现、bitstream build/program、最小物理 I/O 验证和 host↔PL readback，并能按层区分 connection/build/program/runtime failure。
 - 能根据一个功能需求草拟 FR/DP 和简单设计矩阵。
 
 ### 工程成功
@@ -50,7 +51,7 @@
 - 有可仿真的 SystemVerilog 单神经元实现。
 - 有多神经元时分复用实现。
 - 有稀疏突触表、spike FIFO、事件路由和 synapse engine。
-- 有 FPGA 板上可运行版本。
+- 有在参考板卡 AMD Kria KV260 Vision AI Starter Kit 上可重复构建、program、验证的 FPGA 版本，并保留 board/tool/artifact evidence。
 - 有外部内存支持。
 - 有真实 MaleCNS 子图版本。
 - 最终可运行完整目标 MaleCNS 模型，电脑负责感觉输入/输出与可视化。
@@ -63,7 +64,7 @@
 
 ## 5. 当前范围
 ### In scope
-LIF/简化脉冲神经元、Python reference、SystemVerilog RTL、FPGA 仿真与上板、稀疏连接、event-driven spike processing、BRAM/URAM/DDR、MaleCNS 数据转换、AI-assisted engineering/vibe coding、公理设计、测试/追踪/Git checkpoint，以及教材/公开项目双用途文档。
+LIF/简化脉冲神经元、Python reference、SystemVerilog RTL、FPGA 仿真与上板、KV260 零基础 Physical Lab 路径、稀疏连接、event-driven spike processing、BRAM/URAM/DDR、MaleCNS 数据转换、AI-assisted engineering/vibe coding、公理设计、测试/追踪/Git checkpoint，以及教材/公开项目双用途文档。
 
 ### Out of scope
 完整生物学果蝇脑或意识复制、Hodgkin–Huxley 级全面生物物理模拟、模拟电路、晶体管工艺、自研 ASIC 流片、医疗器械/临床系统，以及第一阶段就加入 STDP、复杂神经调质和完整身体模型。
@@ -75,7 +76,7 @@ LIF/简化脉冲神经元、Python reference、SystemVerilog RTL、FPGA 仿真�
 - **C4** 不为了公理设计矩阵漂亮而制造无意义模块。
 - **C5** 文档保持小而可用；未来想法进入 PARKING_LOT。
 - **C6** 硬件购买延后到仿真阶段通过之后。
-- **C7** 初期平台优先考虑带 ARM + FPGA + 外部 DDR 的 SoC FPGA，但板卡保持可替换。
+- **C7** 第一套完整实体教学路径冻结 **AMD Kria KV260 Vision AI Starter Kit** 为 reference board；FlyBrain core 与稳定接口仍保持板卡可替换，板卡专有内容隔离在 platform shell / Physical Lab。
 
 ## 7. 关键假设
 - **A1** MaleCNS 数据在项目执行期间保持可公开获取。
@@ -83,8 +84,12 @@ LIF/简化脉冲神经元、Python reference、SystemVerilog RTL、FPGA 仿真�
 - **A3** 定点数是 FPGA 主实现方向；浮点用于软件参考。
 - **A4** 第一阶段允许 AI 生成大量样板代码和 testbench，但关键模块必须有解释与验证。
 
-## 8. 开放问题
-- **Q1** 第一块推荐硬件锁定 KV260，还是保留 PYNQ-Z2 / 其他 SoC FPGA 兼容路径？
+## 8. 开放问题与已解决决策
+
+**已解决：**
+- **Q1** 第一套完整上板教学锁定 **AMD Kria KV260 Vision AI Starter Kit**。其他板卡以后可增加 porting guide，但不要求第一版课程同时维护多套零基础上板步骤。
+
+**仍开放：**
 - **Q2** 完整 MaleCNS 最终采用固定时间步 + 稀疏传播，还是 lazy/event-driven neuron update？
 - **Q3** 公开教材中文优先，还是同步中英文？——当前决定：GitHub 工程文档同步中英文。
 - **Q4** 最终闭环 demo 选虚拟身体、简单游戏，还是自建二维环境？
