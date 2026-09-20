@@ -130,12 +130,13 @@ This runs Icarus self-checking simulation, Verilator lint, Yosys synthesis sanit
 
 The physical teaching path now freezes the **AMD Kria KV260 Vision AI Starter Kit** as the first complete reference board. Concept lessons remain board-neutral where practical, while the zero-experience Physical Lab track will give explicit KV260 steps for vendor-toolchain preflight, power, JTAG/UART, target discovery, first bitstream, constraints/I/O, PS/Linux first boot, host↔PL, BRAM, DDR, and AXI/burst measurement.
 
-This change is currently documentation-first; the Physical Lab Notebooks and `boards/kv260/` implementation come next.
+The documentation-first design is now being implemented. **LAB-HW-00~02** have bilingual student Notebooks plus first board-support helpers under `boards/kv260/`; real-KV260 physical verification is still pending.
 
 Read:
 
 - [KV260 Reference Hardware Platform](docs/en/KV260_REFERENCE_PLATFORM.md)
 - [Physical FPGA Lab Teaching Standard](docs/en/PHYSICAL_FPGA_LABS.md)
+- [Physical Lab Notebooks](labs/README.md)
 
 The OSS CAD Suite used by Lessons 6–13 and the later AMD Vivado/platform toolchain for KV260 are intentionally separate tool layers.
 
@@ -237,7 +238,7 @@ These are the foundational sources currently used or repeatedly referenced by th
 
 ## Current status
 
-Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen at the documentation layer**; matching Lab Notebooks and board code are not implemented yet. The first formal implementation slice has not yet been declared complete.
+Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen.** LAB-HW-00~02 now have bilingual Notebooks and KV260 preflight/target-discovery helper scripts; LAB-HW-03~10 and real-board evidence remain pending. The first formal implementation slice has not yet been declared complete.
 
 Current first implementation batch:
 

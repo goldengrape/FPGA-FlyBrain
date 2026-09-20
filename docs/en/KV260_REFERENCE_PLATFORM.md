@@ -150,7 +150,7 @@ This is a **documentation-first** revision. Board code is not written yet, so th
 - exact XDC pin assignments;
 - whether the final host↔PL implementation uses AXI-Lite, UIO, XRT, or another runtime transport;
 - the DDR access software stack;
-- the exact supported Vivado version;
+- the exact **tested/supported** Vivado version; an authoring candidate may be named in LAB-HW-00 before hardware validation, but it is not promoted to supported status until the real-KV260 dry run passes;
 - the exact starter-Linux image version/checksum;
 - the final source of the design-local reset.
 

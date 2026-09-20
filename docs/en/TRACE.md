@@ -54,9 +54,9 @@ Link user needs → functional requirements → design parameters → teaching a
 
 | Lab | Objective | Primary test | RMD | Artifact |
 |---|---|---|---|---|
-| LAB-HW-00 | vendor-toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | planned `labs/en/00_*` |
-| LAB-HW-01 | identify real KV260, interfaces, SW2 SOM reset, carrier revision | T-HW-011 (inventory/evidence) | RMD-012 | planned `labs/en/01_*` |
-| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | planned `labs/en/02_*` |
+| LAB-HW-00 | vendor-toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | `labs/en/00_vendor_toolchain_preflight.ipynb` |
+| LAB-HW-01 | identify real KV260, interfaces, SW2 SOM reset, carrier revision | T-HW-011 (inventory/evidence) | RMD-012 | `labs/en/01_board_orientation.ipynb` |
+| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | `labs/en/02_power_target_detection.ipynb` |
 | LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | planned `labs/en/03_*` |
 | LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | planned `labs/en/04_*` |
 | LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | planned `labs/en/05_*` |
@@ -187,7 +187,7 @@ Change routing:
 - LSN-009~012: third bilingual lesson block established; Python teaching models do not declare MOD-004~009 complete
 - LSN-013~018: fourth bilingual lesson block established; concept Notebooks do not declare the physical-platform implementation complete
 - Reference board: **AMD Kria KV260 Vision AI Starter Kit** is frozen
-- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen at the documentation layer; Lab Notebooks and board-specific implementation have not started
+- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen; **LAB-HW-00~02** now have bilingual Notebooks plus preflight/target-discovery helpers and CI contract checks. No real-KV260 pass is claimed; LAB-HW-03~10 remain pending
 - LSN-019~023: fifth bilingual lesson block established; connectome teaching fixtures, synthetic scale/benchmark numbers, and the toy closed loop do not declare RMD-017~028 formal data artifacts, full-system implementation, or real performance results complete
 - TRACE: synchronized across engineering and teaching paths through LSN-023
 - First formal implementation slice: not started

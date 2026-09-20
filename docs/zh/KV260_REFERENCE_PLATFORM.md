@@ -150,7 +150,7 @@ boards/kv260/
 - 具体 XDC pin assignment；
 - host↔PL 最终使用 AXI-Lite、UIO、XRT 或其他 runtime transport 的实现细节；
 - DDR access software stack；
-- Vivado 的精确支持版本；
+- Vivado 的精确 **tested/supported** 版本；LAB-HW-00 可以先写 authoring candidate，但在真实 KV260 dry run 通过前不得把它称为已支持版本；
 - starter Linux image 的精确版本/checksum；
 - design-local reset 最终采用哪个 platform/local source。
 

@@ -54,9 +54,9 @@
 
 | Lab | 目标 | 主要 Test | RMD | Artifact |
 |---|---|---|---|---|
-| LAB-HW-00 | vendor toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | planned `labs/zh/00_*` |
-| LAB-HW-01 | 认识 KV260 实体、接口、SW2 SOM reset、carrier revision | T-HW-011（inventory/evidence） | RMD-012 | planned `labs/zh/01_*` |
-| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | planned `labs/zh/02_*` |
+| LAB-HW-00 | vendor toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | `labs/zh/00_vendor_toolchain_preflight.ipynb` |
+| LAB-HW-01 | 认识 KV260 实体、接口、SW2 SOM reset、carrier revision | T-HW-011（inventory/evidence） | RMD-012 | `labs/zh/01_board_orientation.ipynb` |
+| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | `labs/zh/02_power_target_detection.ipynb` |
 | LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | planned `labs/zh/03_*` |
 | LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | planned `labs/zh/04_*` |
 | LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | planned `labs/zh/05_*` |
@@ -187,7 +187,7 @@ DP：PDP1
 - LSN-009~012：第三组双语课程已建立；Python teaching models 不代表 MOD-004~009 已完成
 - LSN-013~018：第四组双语课程已建立；概念 Notebook 不代表实体平台实现已完成
 - Reference board：**AMD Kria KV260 Vision AI Starter Kit** 已冻结
-- LAB-HW-00~10：Physical Lab 教学结构、RMD 映射与 T-HW oracle 已在文档层冻结；Lab Notebook 与 board-specific implementation 尚未开始
+- LAB-HW-00~10：Physical Lab 教学结构、RMD 映射与 T-HW oracle 已冻结；**LAB-HW-00~02** 已建立双语 Notebook、preflight/target-discovery helper 与 CI contract checks。当前不宣称真实 KV260 已通过；LAB-HW-03~10 仍待实现
 - LSN-019~023：第五组双语课程已建立；connectome teaching fixture、synthetic scale/benchmark 与 toy closed loop 不代表 RMD-017~028 的正式数据 artifact、全系统实现或真实性能结论已完成
 - TRACE：已同步工程路径与教学路径至 LSN-023
 - First formal implementation slice：not started

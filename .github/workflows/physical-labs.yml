@@ -1,0 +1,38 @@
+name: KV260 Physical Lab Checks
+
+on:
+  push:
+    paths:
+      - "labs/**"
+      - "boards/kv260/**"
+      - ".github/workflows/physical-labs.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "labs/**"
+      - "boards/kv260/**"
+      - ".github/workflows/physical-labs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lab-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Sync Python environment
+        run: uv sync --group dev
+      - name: Install Tcl interpreter
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tcl
+      - name: Check Physical Lab notebooks and KV260 Tcl helpers
+        run: uv run pytest labs/checks -q

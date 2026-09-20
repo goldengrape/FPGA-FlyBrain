@@ -86,15 +86,15 @@ Before LAB-HW-04 freezes the design-local reset source, course material must not
 
 The learner only handles development-host setup:
 
-- install the course-frozen AMD Vivado version;
+- use the current **authoring candidate** AMD Vivado version named by the lab;
 - install/verify the JTAG cable driver;
-- install/verify the course-frozen KV260 board files / board flow;
+- install/verify the matching KV260 board files / board flow;
 - record OS, Vivado version, and board-file/platform version;
 - run course-provided version and board-definition checks.
 
 This lab does not connect the board, generate a bitstream, or teach AXI.
 
-**Pass evidence:** tool/version/board-definition preflight passes and textual output is saved. The exact Vivado version and commands are frozen in this lab's prose only after a real-KV260 dry run.
+**Pass evidence:** tool/version/board-definition preflight passes and textual output is saved. A candidate version may be named during authoring so the prose/scripts do not drift, but it becomes the **tested course-support baseline only after a real-KV260 dry run** with retained evidence.
 
 ### LAB-HW-01 — Board orientation
 
