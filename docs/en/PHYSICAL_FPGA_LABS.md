@@ -198,7 +198,7 @@ Teach only the constraints needed here:
 
 **Pass evidence:**
 
-- synthesis/implementation complete, a real clock and setup timing path are present, and worst setup slack is non-negative;
+- synthesis/implementation complete, a real clock plus setup/hold timing paths are present, and worst setup/hold slack are both non-negative;
 - blink bitstream hash and programming log;
 - periodic activity on `bank45_gpio[0]` with the other marker bits stable;
 - the learner can explain at least one logical-bit → package-pin XDC mapping;
