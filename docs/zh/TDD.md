@@ -68,7 +68,7 @@ Oracle：Python fixed-point vectors 或直接构造 expected values。
 - **T-HW-002 Target discovery**：KV260 正确供电后，development host 能通过课程指定 JTAG 路径稳定枚举目标；记录 board/carrier revision 与 target identification。
 - **T-HW-003 First bitstream program**：课程冻结的 clockless `kv260_marker_top` 在 `xck26-sfvc784-2LV-c` 上完成 synthesis/implementation/DRC、生成 bitstream 并通过 Vivado/JTAG 成功 program；`bank45_gpio[4:0]` 逻辑值为 `5'b10101`，使用课程冻结的 Bank 45 XDC。因为这个 proof 没有 clocked timing path，build 必须明确输出 `TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS`，不能假装已经证明 timing closure。保存 timing summary、bitstream SHA-256、`xck26*` target identification、program log 与真实可见 marker observation。DS34 不作为 direct-JTAG 主 oracle。
 - **T-HW-004 Physical clock/reset/I/O**：`pl_clk0`（nominal 100 MHz）驱动 `kv260_blink_core`，PS `pl_resetn0` 经 `proc_sys_reset` 生成 `peripheral_aresetn` 作为 design-local active-low reset。implemented design 必须真正存在 clock，并且存在 setup 与 hold timing path；worst setup/hold slack 都必须非负，否则 build FAIL。Bank 45 XDC 的 logical-port→package-pin mapping 必须与课程表一致，`bank45_gpio[0]` 出现周期变化且其余 marker bits 保持稳定。错误 constraint、held reset、缺失 clock、缺失 setup/hold timing path 或 negative setup/hold slack 都必须阻断 PASS。SW2 只证明 SOM-level hard reset，不自动等价于 module reset。
-- **T-HW-005 PS/Linux first boot**：课程冻结的 starter Linux image 经 checksum/version 验证后写入 microSD；KV260 能通过课程指定 UART console 启动、输出 boot log 并进入 shell；development host 与 runtime host/PS 的角色可区分。
+- **T-HW-005 PS/Linux first boot**：课程冻结的 starter Linux image 经 checksum/version 验证后写入 microSD；KV260 能通过课程指定 UART console 启动、输出 boot log 并进入 shell；development host 与 runtime host/PS 的角色可区分。撰写阶段可以记录实际下载文件的本地 SHA-256；只要 expected checksum 尚未冻结，该状态只能是 `RECORDED_UNVERIFIED`，不能满足实体 T-HW-005 PASS。
 - **T-HW-006 Host↔PL loopback**：在 T-HW-005 已通过的前提下，runtime host 按固定 sequence 写入 PL state/operation 并读回；self-checking script 能检测错误值/错误顺序，并区分 Linux/transport failure 与 core-behavior failure。
 - **T-HW-007 BRAM neuron-state store**：多个 address 的 state write/read 正确，且 synthesis/resource report 显示预期的 on-chip memory mapping。
 - **T-HW-008 Small FlyBrain replay**：固定 network image / seed / input 下，KV260 的 spike/state trace 与 Python fixed-point reference 在冻结 contract 下匹配。
@@ -148,7 +148,7 @@ Oracle：Python fixed-point vectors 或直接构造 expected values。
 - Yosys synthesis sanity：**已实现**
 - lint/format：**部分实现**，尚无统一 Python format/lint gate
 - trace consistency check：**未实现自动化**
-- bilingual ID consistency check：**部分自动化**；作业 Notebook 与 LAB-HW-00~04 已检查双语 cell structure/ID 一致性
-- KV260 Physical Lab contract checks：**LAB-HW-00~04 已实现**；CI 检查双语 Notebook structure、冻结的 XDC/board-helper contract、LAB-HW-03/04 open-source RTL behavior，以及无需 Vivado 即可执行的 Tcl helper path；不宣称真实板卡验证或真实 Vivado full build 已通过
+- bilingual ID consistency check：**部分自动化**；作业 Notebook 与 LAB-HW-00~05 已检查双语 cell structure/ID 一致性
+- KV260 Physical Lab contract checks：**LAB-HW-00~05 已实现**；CI 检查双语 Notebook structure、冻结的 XDC/board-helper contract、LAB-HW-03/04 open-source RTL behavior、无需 Vivado 即可执行的 Tcl helper path，以及 LAB-HW-05 image-identity/runtime-helper contract；不宣称真实板卡验证或真实 Vivado full build 已通过
 
 FPGA full build 不要求每次 CI 都跑，可按 checkpoint/nightly 处理。实体 KV260 的 `T-HW-*` 还必须遵守 3.2 的 physical-evidence 边界。
