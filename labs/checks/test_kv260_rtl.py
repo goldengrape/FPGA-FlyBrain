@@ -63,3 +63,15 @@ def test_lab04_blink_core_clock_reset_behavior(tmp_path):
         "boards/kv260/tb/kv260_blink_core_tb.sv",
     )
     assert "PASS: kv260_blink_core clock/reset behavior" in stdout
+
+
+
+@pytest.mark.skipif(IVERILOG is None or VVP is None, reason="Icarus Verilog is not installed")
+def test_lab06_loopback_transform(tmp_path):
+    stdout = _simulate(
+        tmp_path,
+        "kv260_loopback_transform_tb",
+        "boards/kv260/rtl/kv260_loopback_transform.sv",
+        "boards/kv260/tb/kv260_loopback_transform_tb.sv",
+    )
+    assert "PASS: kv260_loopback_transform +1 modulo 2^32" in stdout
