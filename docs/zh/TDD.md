@@ -64,7 +64,7 @@ Oracle：Python fixed-point vectors 或直接构造 expected values。
 
 这些 `T-HW-*` 是 physical-lab oracle，不替代 T-001~T-016 的模型/算法正确性测试。普通云 CI 没有实体 KV260 时，不得把它们标成通过。
 
-- **T-HW-001 Vendor toolchain preflight**：development host 上课程冻结的 Vivado、JTAG cable driver 与 KV260 board files/board flow 可用；保存 OS、tool version、board-file/platform version 与自检输出。
+- **T-HW-001 Vendor toolchain preflight**：development host 上 LAB-HW-00 指定的 Vivado authoring candidate、JTAG cable driver 与 KV260 board files/board flow 通过 preflight；保存 OS、tool version、board-file/platform version 与自检输出。只有真实 KV260 dry run 通过后，candidate 才能升级为 tested/supported course baseline。
 - **T-HW-002 Target discovery**：KV260 正确供电后，development host 能通过课程指定 JTAG 路径稳定枚举目标；记录 board/carrier revision 与 target identification。
 - **T-HW-003 First bitstream program**：课程冻结的 clockless `kv260_marker_top` 在 `xck26-sfvc784-2LV-c` 上完成 synthesis/implementation/DRC、生成 bitstream 并通过 Vivado/JTAG 成功 program；`bank45_gpio[4:0]` 逻辑值为 `5'b10101`，使用课程冻结的 Bank 45 XDC。因为这个 proof 没有 clocked timing path，build 必须明确输出 `TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS`，不能假装已经证明 timing closure。保存 timing summary、bitstream SHA-256、`xck26*` target identification、program log 与真实可见 marker observation。DS34 不作为 direct-JTAG 主 oracle。
 - **T-HW-004 Physical clock/reset/I/O**：`pl_clk0`（nominal 100 MHz）驱动 `kv260_blink_core`，PS `pl_resetn0` 经 `proc_sys_reset` 生成 `peripheral_aresetn` 作为 design-local active-low reset。implemented design 必须真正存在 clock，并且存在 setup 与 hold timing path；worst setup/hold slack 都必须非负，否则 build FAIL。Bank 45 XDC 的 logical-port→package-pin mapping 必须与课程表一致，`bank45_gpio[0]` 出现周期变化且其余 marker bits 保持稳定。错误 constraint、held reset、缺失 clock、缺失 setup/hold timing path 或 negative setup/hold slack 都必须阻断 PASS。SW2 只证明 SOM-level hard reset，不自动等价于 module reset。
