@@ -37,7 +37,7 @@ LSN-001：Exercise Notebook 中公式当前使用普通方括号包围，不能�
 
 LSN-004：starter 中的 del candidate_state 虽不影响判题，但会引出与硬件状态无关的 Python 问题。应改为更自然的变量使用或下划线解包。
 
-LSN-012：updated = list(target_accum) 建议保留。Python list copy 不是本课主要学习目标；本课真正要考的是 source range、weighted event 与 target update。grader 继续保护“不修改输入对象”的 API 契约即可。
+LSN-012：updated = list(target_accum) 建议保留。Python list copy 不是本课主要学习目标；本课真正要考的是 source range、weighted event 与 target update。原 grader 仅在零出度时检查返回对象不同，不能证明“不修改输入对象”的 API 契约；第 12 节记录补充检查。
 
 ## 5. 外部审核意见的取舍
 
@@ -178,4 +178,14 @@ Platform 5 五张课程结构图全部迁移为 Markdown inline SVG，不再使�
 - 真实 `rtl/learning/`、`tb/learning/` 和 `check_rtl_learning.sh` 仍是 HDL 行为验证的正式教学路径。
 
 这组三课因此不再是作业体系中的空档，同时也没有把 Python 层扩大成“假的 RTL 仿真器”。
+
+## 12. LSN-010~012 判题契约复查（2026-09-20）
+
+本次复查发现，原测试会接受三类违反现有题目契约的实现：原地修改 FIFO 输入、未经 source 分组直接复制 records、用赋值代替 accumulator 累加。修订只补充已有契约的测试，不改变题目接口或正式 RTL 语义。
+
+- **LSN-010**：新增输入保持不变检查，覆盖空队列、未满/已满 push 与空/非空 pop；独立拒绝原地 push 和原地 pop。
+- **LSN-011**：用 source 交错的连接检查重新分组、精确 start/count、零出度和组内原始顺序；拒绝直接复制 records 或额外按 target 排序。
+- **LSN-012**：新增非零初值、重复 target 和负权重检查；比较调用前后的输入快照，并检查返回新的 accumulator 列表。零出度检查也使用调用前的快照，避免输入和输出同时被修改却误判通过。
+
+维护者测试包含正确实现和上述典型错误实现。新增回归断言在修订前使三项课程测试失败；修订后 `uv run pytest exercises/checks/test_graders.py -q` 的 27 项测试通过。这证明这些具体错误会被拒绝，不代表穷尽所有输入。
 

@@ -9,10 +9,12 @@ def evaluate(fifo_push, fifo_pop, language: str = "zh"):
         ("FIFO ordering", "检查事件是否保持 first-in, first-out 顺序。"),
         ("Full / empty behavior", "检查 full 时不覆盖旧事件、empty 时返回空结果。"),
         ("Backpressure retry", "检查被阻塞的事件能否在空间释放后重新尝试。"),
+        ("Input preservation", "检查 push 和 pop 都不原地修改输入 queue。"),
     ) if zh else (
         ("FIFO ordering", "Check first-in, first-out ordering."),
         ("Full / empty behavior", "Check that full never overwrites old events and empty returns no event."),
         ("Backpressure retry", "Check that a blocked event can be retried after space opens."),
+        ("Input preservation", "Check that neither push nor pop modifies the input queue."),
     )
 
     def ordering_ok():
@@ -45,10 +47,26 @@ def evaluate(fifo_push, fifo_pop, language: str = "zh"):
         q, accepted = fifo_push(q, blocked, 2)
         return accepted is True and q == [5, 7]
 
+    def inputs_ok():
+        for values, capacity in (([], 2), ([2], 2), ([2, 5], 2)):
+            queue = list(values)
+            before = list(queue)
+            fifo_push(queue, 7, capacity)
+            if queue != before:
+                return False
+        for values in ([], [2], [2, 5]):
+            queue = list(values)
+            before = list(queue)
+            fifo_pop(queue)
+            if queue != before:
+                return False
+        return True
+
     return [
         evaluate_group(labels[0][0], ordering_ok, labels[0][1]),
         evaluate_group(labels[1][0], boundary_ok, labels[1][1]),
         evaluate_group(labels[2][0], retry_ok, labels[2][1]),
+        evaluate_group(labels[3][0], inputs_ok, labels[3][1]),
     ]
 
 

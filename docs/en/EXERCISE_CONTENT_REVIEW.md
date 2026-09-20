@@ -37,7 +37,7 @@ LSN-001 uses plain square brackets around the formula instead of proper math del
 
 LSN-004 contains del candidate_state in the starter sequence. It is behaviorally harmless but pedagogically irrelevant.
 
-LSN-012 should keep updated = list(target_accum). Python list-copy mechanics are not the lesson objective; the lesson should focus on routing and target updates.
+LSN-012 should keep updated = list(target_accum). Python list-copy mechanics are not the lesson objective; the lesson should focus on routing and target updates. The original grader checked distinct output identity only for zero fanout, which did not establish input preservation. Section 12 records the additional checks.
 
 ## 5. Treatment of external review comments
 
@@ -172,4 +172,14 @@ Shared constraints:
 - the real `rtl/learning/`, `tb/learning/`, and `check_rtl_learning.sh` path remains the teaching authority for HDL behavior.
 
 This closes the exercise-gap for Lessons 6–8 without turning the Python layer into a fake RTL simulator.
+
+## 12. LSN-010~012 grader contract review (2026-09-20)
+
+This review found that the original tests accepted three violations of existing exercise contracts: mutating FIFO inputs, copying records without grouping by source, and assigning weights instead of accumulating them. The revision adds checks for existing contracts without changing exercise interfaces or formal RTL semantics.
+
+- **LSN-010**: Add input-preservation checks for empty, non-full, and full push cases and empty/non-empty pop cases; independently reject mutating push and mutating pop implementations.
+- **LSN-011**: Use interleaved sources to check regrouping, exact start/count, zero fanout, and original within-source order; reject direct record copying and additional target sorting.
+- **LSN-012**: Add nonzero initial state, repeated targets, and negative weights; compare input snapshots before and after the call and require a new accumulator list. The zero-fanout check also uses a pre-call snapshot to reject simultaneous input/output corruption.
+
+Maintainer tests include correct implementations and these representative mistakes. The new regression assertions failed in three lesson tests before the fix; after the fix, all 27 tests passed with `uv run pytest exercises/checks/test_graders.py -q`. This establishes rejection of these specific mistakes, not exhaustive input coverage.
 

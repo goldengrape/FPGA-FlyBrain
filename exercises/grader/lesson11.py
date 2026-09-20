@@ -28,8 +28,14 @@ def evaluate(build_source_index, lookup_source, language: str = "zh"):
         return all(lookup_source(i, index, records) == expected[i] for i in range(4))
 
     def order_ok():
-        index, records = build_source_index(2, [(0, 1, 4), (0, 0, 5)])
-        return lookup_source(0, index, records) == [(1, 4), (0, 5)]
+        edges = [(2, 3, -2), (0, 3, 4), (2, 1, 6), (0, 1, 5)]
+        index, records = build_source_index(4, edges)
+        return (
+            index == [(0, 2), (2, 0), (2, 2), (4, 0)]
+            and records == [(3, 4), (1, 5), (3, -2), (1, 6)]
+            and lookup_source(0, index, records) == [(3, 4), (1, 5)]
+            and lookup_source(2, index, records) == [(3, -2), (1, 6)]
+        )
 
     return [
         evaluate_group(labels[0][0], packing_ok, labels[0][1]),

@@ -295,6 +295,18 @@ def test_lesson10_grader_detects_overwrite_on_full():
     assert _all_pass(lesson10.evaluate(push, pop))
     assert _some_fail(lesson10.evaluate(bad_push, pop))
 
+    def mutating_push(queue, event, capacity):
+        if len(queue) >= capacity:
+            return queue, False
+        queue.append(event)
+        return queue, True
+
+    def mutating_pop(queue):
+        return (queue, queue.pop(0)) if queue else (queue, None)
+
+    assert _some_fail(lesson10.evaluate(mutating_push, pop))
+    assert _some_fail(lesson10.evaluate(push, mutating_pop))
+
 
 def test_lesson11_grader_detects_wrong_lookup_range():
     def build(num_sources, edges):
@@ -319,6 +331,21 @@ def test_lesson11_grader_detects_wrong_lookup_range():
     assert _all_pass(lesson11.evaluate(build, lookup))
     assert _some_fail(lesson11.evaluate(build, bad_lookup))
 
+    def ungrouped_build(num_sources, edges):
+        index = []
+        offset = 0
+        for source in range(num_sources):
+            count = sum(s == source for s, _, _ in edges)
+            index.append((offset, count))
+            offset += count
+        return index, [(target, weight) for _, target, weight in edges]
+
+    def sorted_targets_build(num_sources, edges):
+        return build(num_sources, sorted(edges))
+
+    assert _some_fail(lesson11.evaluate(ungrouped_build, lookup))
+    assert _some_fail(lesson11.evaluate(sorted_targets_build, lookup))
+
 
 def test_lesson12_grader_detects_scanning_all_records():
     def good(source_id, source_index, records, target_accum):
@@ -340,6 +367,38 @@ def test_lesson12_grader_detects_scanning_all_records():
 
     assert _all_pass(lesson12.evaluate(good))
     assert _some_fail(lesson12.evaluate(bad))
+
+    def overwrites(source_id, source_index, records, target_accum):
+        updated = list(target_accum)
+        start, count = source_index[source_id]
+        events = records[start:start + count]
+        for target, weight in events:
+            updated[target] = weight
+        return updated, events
+
+    def loses_repeated_updates(source_id, source_index, records, target_accum):
+        updated = list(target_accum)
+        start, count = source_index[source_id]
+        events = records[start:start + count]
+        for target, weight in events:
+            updated[target] = target_accum[target] + weight
+        return updated, events
+
+    def mutates_input(source_id, source_index, records, target_accum):
+        updated, events = good(source_id, source_index, records, target_accum)
+        target_accum[:] = updated
+        return updated, events
+
+    def ignores_negative_weights(source_id, source_index, records, target_accum):
+        updated = list(target_accum)
+        start, count = source_index[source_id]
+        events = records[start:start + count]
+        for target, weight in events:
+            updated[target] += max(0, weight)
+        return updated, events
+
+    for wrong in (overwrites, loses_repeated_updates, mutates_input, ignores_negative_weights):
+        assert _some_fail(lesson12.evaluate(wrong)), wrong.__name__
 
 
 def test_lesson13_grader_rejects_wrong_critical_path():
