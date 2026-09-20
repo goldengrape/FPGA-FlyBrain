@@ -227,23 +227,25 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 
 | Physical Lab | 主要新操作 | 概念前置 | RMD |
 |---|---|---|---|
-| LAB-HW-00 | 识别 KV260 的电源、JTAG/UART、microSD、reset、I/O 与 carrier revision | LSN-014 | RMD-012 |
-| LAB-HW-01 | 正确供电并让开发工具发现真实 target | LSN-014 | RMD-012 |
-| LAB-HW-02 | synthesis → implementation → bitstream → program | LSN-013/014 | RMD-012A |
-| LAB-HW-03 | clock/reset/I/O constraint 与实体输入输出 | LSN-014 | RMD-012A |
-| LAB-HW-04 | KV260 PS/runtime host ↔ PL 的真实 loopback | LSN-015 | RMD-012B |
-| LAB-HW-05 | 把抽象 neuron state RAM 映射到真实片上 BRAM resource | LSN-009/016 | RMD-013 |
-| LAB-HW-06 | 小型 FlyBrain 网络上板并与 Python fixed reference replay 比较 | LSN-012~016 | RMD-013 |
-| LAB-HW-07 | 真实 DDR write/read integrity + bandwidth measurement | LSN-016/017 | RMD-014 |
-| LAB-HW-08 | 在真实平台比较 small/scattered 与 burst-oriented transfer | LSN-018 | RMD-014A |
+| LAB-HW-00 | vendor toolchain preflight：Vivado / JTAG driver / KV260 board files | LSN-013/014 | RMD-012 |
+| LAB-HW-01 | 识别 KV260 的电源、JTAG/UART、microSD、SW2 SOM reset、I/O 与 carrier revision | LSN-014 | RMD-012 |
+| LAB-HW-02 | 正确供电并让已验证的开发工具发现真实 target | LSN-014 | RMD-012 |
+| LAB-HW-03 | synthesis → implementation → bitstream → program | LSN-013/014 | RMD-012A |
+| LAB-HW-04 | clock / design-local reset / I/O constraint 与实体输入输出 | LSN-014 | RMD-012A |
+| LAB-HW-05 | starter Linux image → microSD → UART console → PS boot/login | LSN-015 前的实体 bridge | RMD-012B |
+| LAB-HW-06 | KV260 PS/runtime host ↔ PL 的真实 loopback | LSN-015 + LAB-HW-05 | RMD-012B |
+| LAB-HW-07 | 把抽象 neuron state RAM 映射到真实片上 BRAM resource | LSN-009/016 | RMD-013 |
+| LAB-HW-08 | 小型 FlyBrain 网络上板并与 Python fixed reference replay 比较 | LSN-012~016 | RMD-013 |
+| LAB-HW-09 | 真实 DDR write/read integrity + bandwidth measurement | LSN-016/017 | RMD-014 |
+| LAB-HW-10 | 在真实平台比较 small/scattered 与 burst-oriented transfer | LSN-018 | RMD-014A |
 
 Physical Lab 必须同时满足：
 
 - 一次只引入一个主要实体操作；
 - 明确桌面硬件、线缆和供电；
-- 把 Build / Program / Run 分开；
+- 把 Build / Program / Boot / Run 按实际阶段分开；
 - 给出 Expected Evidence，而不是“没有报错”；
-- 提供 power → cable/JTAG → toolchain → constraints → programming → runtime → core 的 troubleshooting 顺序；
+- 提供 toolchain/driver/board files → power → cable/JTAG → programming → PS boot/Linux → runtime transport → core 的 troubleshooting 顺序；
 - 记录 board revision、tool version、Git commit、artifact hash 与实验结果；
 - 实验需要真实 KV260 时，不允许普通 CI 假装完成板上验证。
 
@@ -302,7 +304,7 @@ Notebook imports formal module for teaching and experiments
 - LSN-001~004：进入“教材化”修订，要求术语首次展开、工程 ID 后置、叙事先于代码。
 - LSN-005~008：第二组双语 Notebook 已建立；教学 RTL 放在 `rtl/learning/`，不替代正式 `MOD-003`。
 - LSN-009~012：第三组双语 Notebook 已建立；先用小规模 Python event-machine 实验讲清 time multiplexing、FIFO/backpressure、sparse lookup 与 event-driven causal chain，不宣称 MOD-004~009 已完成。
-- LSN-013~018：第四组双语 Notebook 已建立；正式作业仍可无板完成，但 **KV260 Physical Lab Track 已在文档层冻结为正式学习路径**，不再把实体 FPGA/DDR 实验仅作为可选“工程延伸”。
+- LSN-013~018：第四组双语 Notebook 已建立；正式作业仍可无板完成，但 **KV260 Physical Lab Track（LAB-HW-00~10）已在文档层冻结为正式学习路径**，不再把实体 FPGA/DDR 实验仅作为可选“工程延伸”。
 - LSN-019~023：第五组双语 Notebook 与独立作业已建立；connectome teaching fixture、synthetic scaling/benchmark 数字与 toy closed loop 只教学 contract，不冒充 RMD-017~028 的正式 MaleCNS artifact、全系统结果或真实性能 measurement。
-- KV260 reference board 与 `LAB-HW-00~08` 的教学/验收规范已完成 documentation-first 决策；对应 Lab Notebook、board-specific RTL/constraints/scripts 尚未实现。
+- KV260 reference board 与 `LAB-HW-00~10` 的教学/验收规范已完成 documentation-first 决策；对应 Lab Notebook、board-specific RTL/constraints/scripts 尚未实现。
 - 第一项正式工程实现仍为 `RMD-001`，尚未声明完成。
