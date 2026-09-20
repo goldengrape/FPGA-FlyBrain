@@ -204,11 +204,20 @@ FPGA-FlyBrain/
   lessons/
     en/
     zh/
+    checks/
   exercises/
     en/
     zh/
     grader/
     checks/
+  labs/
+    en/             # LAB-HW-00~02 已实现
+    zh/
+    checks/
+  boards/
+    kv260/
+      README.md
+      scripts/      # LAB-HW-00~02 的 preflight + target discovery
   rtl/
     learning/
   tb/
@@ -219,7 +228,7 @@ FPGA-FlyBrain/
 
 ### 7.2 规划中的正式工程目录
 
-以下目录属于后续 RMD slice 的**规划态**，尚未因为出现在 MDD 中就视为已实现：
+以下目录或更深层内容属于后续 RMD slice 的**规划态**，尚未因为出现在 MDD 中就视为已实现：
 
 ```text
 python/
@@ -231,12 +240,17 @@ rtl/
   memory/
   top/
 boards/
-  kv260/          # planned reference-board platform shell
+  kv260/
+    rtl/            # 后续 platform shell
+    constraints/    # 经 Lab 审批的 board/XDC glue
+    evidence/       # 生成的实体 evidence，不是设计 source
 tests/
 data/
 okf/
 .vibe/
 ```
+
+当前 `labs/` 与 `boards/kv260/scripts/` 只实现 LAB-HW-00~02 的教学/support slice，不代表 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
