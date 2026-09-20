@@ -211,7 +211,7 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~04 implemented
+    en/             # LAB-HW-00~05 implemented
     zh/
     checks/
   boards/
@@ -221,6 +221,7 @@ FPGA-FlyBrain/
       tb/           # open-source self-checking teaching testbenches
       constraints/  # frozen Bank 45 XDC mapping
       scripts/      # preflight, discovery, build, and program helpers
+      runtime/      # LAB-HW-05 Ubuntu identity and boot-evidence helpers
       evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
@@ -245,7 +246,6 @@ rtl/
   top/
 boards/
   kv260/
-    runtime/        # later PS/Linux runtime helpers
     platform/       # later host↔PL / DDR platform integration
 tests/
 data/
@@ -253,7 +253,7 @@ okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/` implement the LAB-HW-00~04 teaching/support slice, including the first board-specific marker/blink RTL and frozen Bank 45 physical mapping. They do not declare the KV260 platform shell, MOD-003, or any later formal hardware module complete.
+Current `labs/` and `boards/kv260/` implement the LAB-HW-00~05 teaching/support slice, including the first board-specific marker/blink RTL, frozen Bank 45 physical mapping, and the independent PS/Linux image/UART/boot-evidence helpers. They do not declare the KV260 platform shell, MOD-003, or any later formal hardware module complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
