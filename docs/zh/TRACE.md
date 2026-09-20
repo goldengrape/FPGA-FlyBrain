@@ -54,9 +54,9 @@
 
 | Lab | 目标 | 主要 Test | RMD | Artifact |
 |---|---|---|---|---|
-| LAB-HW-00 | vendor toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | planned `labs/zh/00_*` |
-| LAB-HW-01 | 认识 KV260 实体、接口、SW2 SOM reset、carrier revision | T-HW-011（inventory/evidence） | RMD-012 | planned `labs/zh/01_*` |
-| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | planned `labs/zh/02_*` |
+| LAB-HW-00 | vendor toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | `labs/zh/00_vendor_toolchain_preflight.ipynb` |
+| LAB-HW-01 | 认识 KV260 实体、接口、SW2 SOM reset、carrier revision | T-HW-011（inventory/evidence） | RMD-012 | `labs/zh/01_board_orientation.ipynb` |
+| LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | `labs/zh/02_power_target_detection.ipynb` |
 | LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | planned `labs/zh/03_*` |
 | LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | planned `labs/zh/04_*` |
 | LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | planned `labs/zh/05_*` |
