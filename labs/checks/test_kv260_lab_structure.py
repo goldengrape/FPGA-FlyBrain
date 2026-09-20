@@ -134,3 +134,23 @@ def test_lab_readmes_name_only_the_implemented_first_batch():
         for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02"):
             assert lab in text
         assert "LAB-HW-03~10" in text
+
+
+def test_trace_register_points_to_implemented_first_batch():
+    expected = {
+        "en": [
+            "labs/en/00_vendor_toolchain_preflight.ipynb",
+            "labs/en/01_board_orientation.ipynb",
+            "labs/en/02_power_target_detection.ipynb",
+        ],
+        "zh": [
+            "labs/zh/00_vendor_toolchain_preflight.ipynb",
+            "labs/zh/01_board_orientation.ipynb",
+            "labs/zh/02_power_target_detection.ipynb",
+        ],
+    }
+    for language, paths in expected.items():
+        trace = (ROOT / "docs" / language / "TRACE.md").read_text(encoding="utf-8")
+        for path in paths:
+            assert f"`{path}`" in trace
+            assert (ROOT / path).exists()
