@@ -133,33 +133,104 @@ Scale: roughly 100–1000 neurons.
 Major new concept: **synthesis and simulation answer different questions**.  
 Synthesize a counter/accumulator and read basic resource and timing reports. Do not learn AXI or DDR yet.
 
-### RMD-012 Select board and create platform shell
-Only now purchase hardware. Default candidate: a KV260-class SoC FPGA; keep the platform interface replaceable.
+### RMD-012 Select reference board and create platform shell
+
+The reference board is frozen to the **AMD Kria KV260 Vision AI Starter Kit**. Physical teaching becomes board-specific here, while FlyBrain core RTL remains board-independent.
+
+Physical Labs:
+
+- **LAB-HW-00**: board orientation; identify the K26 SOM, carrier, J12 power, J4 UART/JTAG, microSD, Ethernet, reset, and carrier revision;
+- **LAB-HW-01**: correct power-up and target enumeration; isolate power/cable/JTAG/driver/tool failures from RTL failures.
+
+Pass criteria:
+- learner can connect the KV260 correctly from a powered-off state;
+- development host can discover the target reliably;
+- board revision, tool version, and target identification are recorded;
+- the planned `boards/kv260/` platform-shell boundary is clear and board pins/platform IP do not leak into core RTL.
 
 ### RMD-012A First physical proof
-Major new concept: **a bitstream turns RTL into a real implementation inside the chip**.  
-Use a counter / LED or another observable register.
+
+Major new concept: **a bitstream turns RTL into a real implementation, and a logical port needs board/constraint mapping before it has physical meaning.**
+
+Physical Labs:
+
+- **LAB-HW-02**: minimal RTL through synthesis → implementation → timing → bitstream → program;
+- **LAB-HW-03**: constraints and physical behavior for clock/reset/one safe board-visible I/O.
+
+Pass evidence includes:
+- no blocking build/implementation error;
+- bitstream/build-artifact hash;
+- programming success;
+- KV260 PL-configuration-status evidence;
+- at least one observable result proving that the learner's design is active rather than merely board power;
+- real reset/input produces the specified output behavior.
+
+The first physical proof does not simultaneously teach AXI, DDR, or the FlyBrain network.
 
 ### RMD-012B Host ↔ FPGA minimal loopback
-Major new concept: **the host and programmable logic are separate execution domains**.  
-Minimal experiment: host writes a value → FPGA accumulator/register → host reads it back. Do not dive deeply into AXI yet.
+
+Major new concept: **the development PC build/program path and the KV260 PS/runtime-host control path are different paths.**
+
+This maps to **LAB-HW-04**. Freeze the semantic contract first:
+
+```text
+write value → PL stores/processes → read back result
+```
+
+The exact runtime transport (for example AXI-Lite/UIO/XRT or another supported path) is selected only after the Lab prose and TDD oracle are reviewed. Prefer the smallest stable path rather than using the first loopback to teach full AXI.
+
+Pass criteria:
+- write/readback is repeatable;
+- PL state/operation ordering matches the contract;
+- a self-checking host script can distinguish transport failure from core-behavior failure.
 
 ### RMD-013 Run small network on FPGA
-Move the already-verified Platform 3 network onto hardware and perform L5 replay.
+
+Use **LAB-HW-05** first to map Lesson 9's abstract neuron-state memory onto real on-chip BRAM resources, then use **LAB-HW-06** to move the already-verified Platform 3 network onto hardware.
+
+LAB-HW-05 teaches only the address/read/write/synchronous-read behavior and resource-report interpretation needed by this design; it does not teach every BRAM primitive parameter.
+
+LAB-HW-06 uses the same fixed input/seed and compares KV260 output against the Python fixed-point reference for L5 replay.
+
+Pass criteria:
+- multi-address neuron-state read/write is correct;
+- synthesis/resource report confirms the intended on-chip memory resource;
+- small-network spike/state trace matches the frozen reference contract;
+- bitstream, network fixture, input fixture, output hash/trace, and Git commit are recorded.
 
 # Bridge 4 — Memory is not “one very large RAM”
 
 ### RMD-013A Memory hierarchy & bandwidth bridge
 Major new concept: **moving data can cost more than arithmetic**.  
-First compare sequential, random, and batched/burst-like access and distinguish latency from throughput.
+First compare sequential, random, and batched/burst-like access and distinguish latency from throughput. Concept lessons may start with models; real measurements are produced by LAB-HW-07/08.
 
 ### RMD-014 DDR hello-world
-Major new concept: **external memory has its own latency and control path**.  
-Use platform-provided controllers/IP for stable read/write + integrity tests. Do not hand-build a DDR PHY/controller.
+
+Major new concept: **external memory has its own latency and control path**.
+
+This maps to **LAB-HW-07** using KV260 platform-provided controllers/IP:
+
+```text
+known payload → DDR write → DDR read → byte/checksum compare → measurement
+```
+
+Do not implement a DDR PHY/controller.
+
+Pass criteria:
+- integrity PASS;
+- transfer size, elapsed time, access pattern, and effective bandwidth are recorded;
+- corrupted data must fail integrity before any performance result is accepted.
 
 ### RMD-014A AXI burst practical bridge
-Major new concept: **moving contiguous data efficiently through standardized bus transactions**.  
-Learn only the AXI mental model/subset needed by this project. Compare small/random transactions with bursts.
+
+Major new concept: **move contiguous data efficiently through standardized bus transactions**.
+
+This maps to **LAB-HW-08**. Learn only the project-required AXI subset and compare small/scattered versus burst-oriented transfers on a real KV260. The required objective is “use + measure”; implementing a complete AXI master from scratch is optional.
+
+Pass criteria:
+- same data volume and explicit measurement window;
+- repeatable latency/effective-bandwidth results for at least two access patterns;
+- workload contract is explicit and no single measurement is generalized into “AXI/FPGA is faster.”
 
 ### RMD-015 Move synapse store to DDR
 Replace the storage backend without changing `IF-SYNAPSE-STREAM`.  
@@ -168,7 +239,7 @@ Test: identical network results with on-chip versus DDR storage.
 ### RMD-016 Throughput baseline
 Measure the currently available subset of P-001~P-008.
 
-**Platform 4 completion:** the FPGA network uses external memory, and the learner can explain and measure how memory becomes a bottleneck.
+**Platform 4 completion:** the learner can start from an unconfigured KV260 and independently complete target discovery, bitstream build/program, physical I/O, host↔PL loopback, BRAM state, small-network replay, DDR integrity, and real bandwidth measurement. The FPGA network uses external memory, and the learner can explain and measure the memory bottleneck.
 
 # Platform 5 — I can run real neural-system data
 
