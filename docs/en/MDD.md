@@ -149,12 +149,46 @@ Initial direction:
 Any bit-width decision must first be evaluated in TDD experiments before RTL is frozen.
 
 ## 6. Hardware-platform abstraction
-Core RTL must not be tied to one board. Platform-specific material lives under `boards/<board>/`:
-- clock/reset
-- DDR controller / PS configuration
-- AXI interconnect
-- pin constraints
-- build scripts
+
+The first complete physical-teaching reference board is frozen to the **AMD Kria KV260 Vision AI Starter Kit**, while core RTL remains board-independent.
+
+Platform boundary:
+
+```text
+core RTL / stable FlyBrain interfaces
+              │
+              ▼
+        platform shell
+  ├─ clock/reset adaptation
+  ├─ board-visible I/O
+  ├─ PS↔PL runtime control path
+  ├─ on-chip memory mapping
+  └─ DDR/platform integration
+              │
+              ▼
+   KV260 board files / constraints
+   build/program/runtime scripts
+```
+
+Platform-specific material lives under `boards/<board>/`. The first KV260 plan is:
+
+```text
+boards/
+  kv260/
+    README.md
+    rtl/            # board/platform shell only
+    constraints/    # XDC / board-flow glue approved by the Lab
+    scripts/        # build/program/runtime helpers
+    evidence/       # ignored/generated evidence manifests, not a source of truth
+```
+
+Boundary rules:
+
+- `rtl/neuron/`, `rtl/event/`, and `rtl/memory/` must not contain KV260 connector/pin names;
+- JTAG/UART, PS/Linux, DDR controller, Vivado board flow, and pin constraints belong to the platform layer;
+- the **logical contract** of `MOD-010 host_if` is parameter/stimulus loading plus spike/telemetry readback. Whether KV260 realizes it with AXI-Lite, UIO, XRT, or another supported transport is frozen only after RMD-012B / LAB-HW-04 prose and oracle approval;
+- board-specific convenience must not redefine `IF-NEURON-UPDATE`, `IF-SPIKE-QUEUE`, or `IF-SYNAPSE-STREAM`;
+- Physical Lab board facts are grounded in `KV260_REFERENCE_PLATFORM.md` and AMD official board documentation.
 
 ## 7. Bilingual repository layout
 
@@ -197,6 +231,7 @@ rtl/
   memory/
   top/
 boards/
+  kv260/          # planned reference-board platform shell
 tests/
 data/
 okf/
