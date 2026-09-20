@@ -1,4 +1,4 @@
-"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-05."""
+"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-06."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ LABS = [
     "03_first_bitstream.ipynb",
     "04_clock_reset_io.ipynb",
     "05_ps_linux_first_boot.ipynb",
+    "06_host_pl_loopback.ipynb",
 ]
 
 
@@ -136,9 +137,9 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
 def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06"):
             assert lab in text
-        assert "LAB-HW-06~10" in text
+        assert "LAB-HW-07~10" in text
 
 
 def test_trace_register_points_to_implemented_labs():
@@ -150,6 +151,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/en/03_first_bitstream.ipynb",
             "labs/en/04_clock_reset_io.ipynb",
             "labs/en/05_ps_linux_first_boot.ipynb",
+            "labs/en/06_host_pl_loopback.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
@@ -158,6 +160,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/zh/03_first_bitstream.ipynb",
             "labs/zh/04_clock_reset_io.ipynb",
             "labs/zh/05_ps_linux_first_boot.ipynb",
+            "labs/zh/06_host_pl_loopback.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -282,3 +285,29 @@ def test_lab05_freezes_linux_uart_boundary_without_host_pl_transport():
         assert "host↔PL" not in text
         assert "AXI-Lite" not in text
         assert "loopback_mmio.py" not in text
+
+
+
+def test_lab06_freezes_minimal_ps_pl_roundtrip_without_turning_into_axi_course():
+    required = (
+        "0xA0010000",
+        "M_AXI_HPM0_FPD",
+        "SmartConnect",
+        "GPIO_DATA",
+        "GPIO2_DATA",
+        "build_lab06_loopback.tcl",
+        "program_bitstream.tcl",
+        "loopback_mmio.py",
+        "--dry-run",
+        "TRANSPORT_REQUIRES_ROOT",
+        "T-HW-006",
+        "T-HW-011",
+    )
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "06_host_pl_loopback.ipynb"))
+        for marker in required:
+            assert marker in text
+        assert "read = (write + 1) mod 2^32" in text
+        assert "--base 0xA0010000" not in text
+        assert "DDR" in text
+        assert "performance" in text.lower()
