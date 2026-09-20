@@ -122,6 +122,8 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
         assert "J12" in text and "J4" in text
         assert "detect_target.tcl" in text
         assert "get_hw_devices" in text
+        assert "xck26" in text.lower()
+        assert "arm_dap_1" in text
         assert "T-HW-002" in text
         assert "bitstream" in text.lower()
 
