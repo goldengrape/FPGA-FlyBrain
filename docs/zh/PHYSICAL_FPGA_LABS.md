@@ -198,7 +198,7 @@ build helper 输出固定目录下的 bitstream、utilization report、timing su
 
 **通过证据：**
 
-- synthesis/implementation 完成，implemented design 中真实存在 clock 和 setup timing path，且 worst setup slack 非负；
+- synthesis/implementation 完成，implemented design 中真实存在 clock 与 setup/hold timing path，且 worst setup/hold slack 都非负；
 - blink bitstream hash 与 program log；
 - `bank45_gpio[0]` 出现周期变化、其他 marker bits 保持稳定；
 - 学生能指出 XDC 中至少一个 logical bit → package pin 的 mapping；
