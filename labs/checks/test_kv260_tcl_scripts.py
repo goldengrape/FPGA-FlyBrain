@@ -18,10 +18,15 @@ PROGRAM = ROOT / "boards" / "kv260" / "scripts" / "program_bitstream.tcl"
 TCLSH = shutil.which("tclsh")
 
 
-def _run_tcl(tmp_path: Path, prelude: str, script: Path):
+def _run_tcl(tmp_path: Path, prelude: str, script: Path, argv: list[str] | None = None):
     wrapper = tmp_path / "wrapper.tcl"
+    argv = argv or []
+    argv_literal = " ".join(f"{{{value}}}" for value in argv)
     wrapper.write_text(
-        prelude + f"\nsource {{{script.as_posix()}}}\n",
+        prelude
+        + f"\nset argc {len(argv)}\n"
+        + f"set argv [list {argv_literal}]\n"
+        + f"source {{{script.as_posix()}}}\n",
         encoding="utf-8",
     )
     return subprocess.run(
@@ -185,6 +190,11 @@ def test_lab03_build_script_is_minimal_and_target_specific():
     assert "write_bitstream -force" in text
     assert "report_timing_summary" in text
     assert "report_utilization" in text
+    assert "report_drc" in text
+    assert "get_clocks -quiet" in text
+    assert "TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS" in text
+    assert "UNEXPECTED_CLOCK_IN_CLOCKLESS_MARKER" in text
+    assert text.index("TIMING_CHECK=NOT_APPLICABLE_CLOCKLESS") < text.index("write_bitstream -force")
     assert "zynq_ultra_ps_e" not in text
     assert "axi" not in text.lower()
 
@@ -199,20 +209,119 @@ def test_lab04_build_script_freezes_ps_clock_and_design_local_reset_path():
     assert "ps/pl_resetn0" in text
     assert "rst/peripheral_aresetn" in text
     assert "blink_core/resetn" in text
+    assert "launch_runs impl_1 -to_step route_design" in text
+    assert "get_clocks -quiet" in text
+    assert "get_timing_paths -quiet -setup" in text
+    assert "get_timing_paths -quiet -hold" in text
+    assert "TIMING_SETUP_WORST_SLACK_NS" in text
+    assert "TIMING_HOLD_WORST_SLACK_NS" in text
+    assert "NEGATIVE_SETUP_SLACK" in text
+    assert "NEGATIVE_HOLD_SLACK" in text
     assert "write_bitstream -force" in text
+    assert text.index("NEGATIVE_HOLD_SLACK") < text.index("write_bitstream -force")
     assert "report_timing_summary" in text
     assert "report_utilization" in text
+    assert "report_drc" in text
     assert "M_AXI" not in text
     assert "S_AXI" not in text
 
 
-def test_shared_program_helper_requires_existing_bitstream_and_xck26():
+def test_shared_program_helper_requires_unique_xck26_target():
     text = PROGRAM.read_text(encoding="utf-8")
     assert "BITSTREAM_ARGUMENT_REQUIRED" in text
     assert "BITSTREAM_NOT_FOUND" in text
     assert "BITSTREAM_EXTENSION_NOT_BIT" in text
-    assert "get_hw_devices -quiet xck26*" in text
+    assert "get_hw_targets -quiet" in text
+    assert "get_hw_devices -quiet -of_objects" in text
     assert "NO_KV260_FPGA_DEVICE" in text
+    assert "AMBIGUOUS_KV260_FPGA_DEVICE" in text
+    assert "KV260_HW_TARGET" in text
     assert "set_property PROGRAM.FILE" in text
     assert "program_hw_devices" in text
     assert "STATUS=PASS" in text
+
+
+def _program_prelude(target_map: dict[str, list[str]]) -> str:
+    target_list = " ".join(target_map)
+    cases = "\n".join(
+        f'if {{$target eq "{target}"}} {{ return [list {" ".join(devices)}] }}'
+        for target, devices in target_map.items()
+    )
+    return f"""
+proc version {{args}} {{ return "2026.1" }}
+proc open_hw_manager {{}} {{}}
+proc connect_hw_server {{args}} {{}}
+proc get_hw_targets {{args}} {{ return [list {target_list}] }}
+proc open_hw_target {{target}} {{}}
+proc close_hw_target {{args}} {{}}
+proc get_hw_devices {{args}} {{
+    set target [lindex $args end]
+    {cases}
+    return {{}}
+}}
+proc current_hw_device {{device}} {{}}
+proc refresh_hw_device {{args}} {{}}
+array set mock_props {{}}
+proc set_property {{name value obj}} {{
+    global mock_props
+    set mock_props($name,$obj) $value
+}}
+proc get_property {{name obj}} {{
+    global mock_props
+    if {{[info exists mock_props($name,$obj)]}} {{
+        return $mock_props($name,$obj)
+    }}
+    return ""
+}}
+proc program_hw_devices {{device}} {{}}
+proc disconnect_hw_server {{}} {{}}
+proc close_hw_manager {{}} {{}}
+"""
+
+
+@pytest.mark.skipif(TCLSH is None, reason="tclsh is not installed")
+def test_program_bitstream_selects_one_xck26_target(tmp_path):
+    bit_file = tmp_path / "proof.bit"
+    bit_file.write_bytes(b"mock")
+    result = _run_tcl(
+        tmp_path,
+        _program_prelude({"target0": ["arm_dap_1", "xck26_0"]}),
+        PROGRAM,
+        [str(bit_file)],
+    )
+    assert result.returncode == 0, result.stderr
+    assert "KV260_FPGA_CANDIDATE_COUNT=1" in result.stdout
+    assert "KV260_HW_TARGET=target0" in result.stdout
+    assert "KV260_FPGA_DEVICE=xck26_0" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+
+
+@pytest.mark.skipif(TCLSH is None, reason="tclsh is not installed")
+def test_program_bitstream_rejects_multiple_xck26_targets(tmp_path):
+    bit_file = tmp_path / "proof.bit"
+    bit_file.write_bytes(b"mock")
+    result = _run_tcl(
+        tmp_path,
+        _program_prelude({
+            "target0": ["xck26_0"],
+            "target1": ["xck26_1"],
+        }),
+        PROGRAM,
+        [str(bit_file)],
+    )
+    assert result.returncode == 9
+    assert "ERROR=AMBIGUOUS_KV260_FPGA_DEVICE" in result.stderr
+
+
+@pytest.mark.skipif(TCLSH is None, reason="tclsh is not installed")
+def test_program_bitstream_rejects_target_without_xck26(tmp_path):
+    bit_file = tmp_path / "proof.bit"
+    bit_file.write_bytes(b"mock")
+    result = _run_tcl(
+        tmp_path,
+        _program_prelude({"target0": ["arm_dap_1"]}),
+        PROGRAM,
+        [str(bit_file)],
+    )
+    assert result.returncode == 8
+    assert "ERROR=NO_KV260_FPGA_DEVICE" in result.stderr
