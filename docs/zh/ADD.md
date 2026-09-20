@@ -127,7 +127,7 @@ PFR4        .    .    .    X
 - clock/register 先通过微型电路掌握，再写 LIF RTL；
 - FIFO 先在极小网络中看懂，再引入 CSR/大规模传播；
 - 第一次上板不同时学习 AXI；
-- 第一次实体上板按 board orientation → power/target detection → first bitstream → constraints/I/O → host loopback 顺序拆开；
+- 第一次实体上板按 vendor toolchain preflight → board orientation → power/target detection → first bitstream → constraints/I/O → PS/Linux first boot → host loopback 顺序拆开；
 - DDR/AXI 前先建立 memory hierarchy 与 bandwidth 直觉。
 
 ### LI-2 以下情况必须插入 bridge slice
@@ -171,7 +171,7 @@ D-007 AI 可写大量实现与测试代码，但不能绕过 FR/DP、接口、or
 D-008 产品系统 ADD 与学习/工程过程 ADD 分层维护。  
 D-009 教学路线遵守 Learning Independence Axiom。  
 D-010 第一套完整实体 FPGA 教学 reference board：AMD Kria KV260 Vision AI Starter Kit。  
-D-011 Concept Lesson 与 Physical Lab 分层：Lesson 负责概念，`LAB-HW-*` 负责真实连接、build/program/run、故障定位与 evidence。
+D-011 Concept Lesson 与 Physical Lab 分层：Lesson 负责概念，`LAB-HW-*` 负责真实 toolchain setup、连接、build/program/boot/run、故障定位与 evidence。
 
 ## 9. 本轮结论
 - FlyBrain 产品系统矩阵：**通过下三角 / decoupled 检查**。
