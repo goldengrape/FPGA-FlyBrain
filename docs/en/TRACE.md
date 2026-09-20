@@ -2,7 +2,7 @@
 
 ## 0. Document information
 - Project: FPGA FlyBrain / From Membrane Potential to Silicon
-- Revision: v0.3-r5
+- Revision: v0.3-r6
 - Date: 2026-09-19
 - Purpose: synchronize ADD's product/process FR split, RMD bridge slices, and the new Learning Architecture / Notebook teaching layer.
 
