@@ -2,8 +2,8 @@
 
 ## 0. 文档信息
 - 项目：FPGA果蝇 / From Membrane Potential to Silicon
-- 修订：v0.3-r7
-- 日期：2026-09-19
+- 修订：v0.3-r8
+- 日期：2026-09-20
 - 目的：同步 ADD 的产品/过程 FR 分层、RMD bridge slices，以及新的 Learning Architecture / Notebook 教学层。
 
 ## 1. 目的
@@ -57,8 +57,8 @@
 | LAB-HW-00 | vendor toolchain preflight | T-HW-001/T-HW-011 | RMD-012 | `labs/zh/00_vendor_toolchain_preflight.ipynb` |
 | LAB-HW-01 | 认识 KV260 实体、接口、SW2 SOM reset、carrier revision | T-HW-011（inventory/evidence） | RMD-012 | `labs/zh/01_board_orientation.ipynb` |
 | LAB-HW-02 | power + JTAG target discovery | T-HW-002/T-HW-011 | RMD-012 | `labs/zh/02_power_target_detection.ipynb` |
-| LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | planned `labs/zh/03_*` |
-| LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | planned `labs/zh/04_*` |
+| LAB-HW-03 | first bitstream build/program | T-HW-003/T-HW-011 | RMD-012A | `labs/zh/03_first_bitstream.ipynb` + `boards/kv260/rtl/kv260_marker_top.sv` |
+| LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | `labs/zh/04_clock_reset_io.ipynb` + `boards/kv260/rtl/kv260_blink_core.sv` |
 | LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | planned `labs/zh/05_*` |
 | LAB-HW-06 | real host↔PL loopback | T-HW-006/T-HW-011 | RMD-012B | planned `labs/zh/06_*` |
 | LAB-HW-07 | BRAM neuron-state store | T-HW-007/T-HW-011 | RMD-013 | planned `labs/zh/07_*` |
@@ -187,7 +187,7 @@ DP：PDP1
 - LSN-009~012：第三组双语课程已建立；Python teaching models 不代表 MOD-004~009 已完成
 - LSN-013~018：第四组双语课程已建立；概念 Notebook 不代表实体平台实现已完成
 - Reference board：**AMD Kria KV260 Vision AI Starter Kit** 已冻结
-- LAB-HW-00~10：Physical Lab 教学结构、RMD 映射与 T-HW oracle 已冻结；**LAB-HW-00~02** 已建立双语 Notebook、preflight/target-discovery helper 与 CI contract checks。当前不宣称真实 KV260 已通过；LAB-HW-03~10 仍待实现
+- LAB-HW-00~10：Physical Lab 教学结构、RMD 映射与 T-HW oracle 已冻结；**LAB-HW-00~04** 已建立双语 Notebook 与 CI contract checks；LAB-HW-03/04 已加入 board-specific RTL、Bank 45 XDC、build/program helper 与 open-source self-checking simulation。当前不宣称真实 KV260 或真实 Vivado full build 已通过；LAB-HW-05~10 仍待实现
 - LSN-019~023：第五组双语课程已建立；connectome teaching fixture、synthetic scale/benchmark 与 toy closed loop 不代表 RMD-017~028 的正式数据 artifact、全系统实现或真实性能结论已完成
 - TRACE：已同步工程路径与教学路径至 LSN-023
 - First formal implementation slice：not started
