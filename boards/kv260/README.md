@@ -27,9 +27,9 @@ This repository has not yet recorded a real-KV260 physical pass for this batch. 
 From a shell where Vivado is available:
 
 ```bash
-vivado -mode batch -nolog -nojournal \
-  -source boards/kv260/scripts/check_vivado.tcl \
-  | tee lab-hw-00-vivado-preflight.txt
+vivado -mode batch -nojournal \
+  -log lab-hw-00-vivado-preflight.log \
+  -source boards/kv260/scripts/check_vivado.tcl
 ```
 
 The script exits non-zero when:
@@ -44,9 +44,9 @@ Cable-driver installation is an OS/vendor setup step. Physical cable operation i
 With the KV260 correctly powered and J4 connected to the development host:
 
 ```bash
-vivado -mode batch -nolog -nojournal \
-  -source boards/kv260/scripts/detect_target.tcl \
-  | tee lab-hw-02-target-detection.txt
+vivado -mode batch -nojournal \
+  -log lab-hw-02-target-detection.log \
+  -source boards/kv260/scripts/detect_target.tcl
 ```
 
 The script exits non-zero when the local hardware server cannot be reached, no hardware target can be opened, or no XCK26 FPGA device is discovered. A PS debug object such as `arm_dap_1` does not satisfy the KV260 FPGA-device oracle by itself.
