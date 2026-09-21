@@ -6,7 +6,7 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-The board-support layer now implements **LAB-HW-00~08**:
+The board-support layer now implements **LAB-HW-00~09**:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
@@ -21,10 +21,11 @@ The board-support layer now implements **LAB-HW-00~08**:
 - `fixtures/lab08_four_neuron_replay_v1.json` + `runtime/lab08_replay_reference.py` — LAB-HW-08 frozen Lesson-12 replay fixture and deterministic Python oracle;
 - `rtl/kv260_replay_state_store.sv` + `rtl/kv260_small_replay_engine.sv` + `scripts/build_lab08_small_replay.tcl` — LAB-HW-08 shared BRAM + fixed four-neuron PL replay path;
 - `runtime/small_replay_mmio.py` — LAB-HW-08 fixed-address differential runtime checker;
+- `runtime/ddr_integrity.py` — LAB-HW-09 fixed 64 MiB OS-managed external-memory integrity checker and host-path timing observer;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-DDR and AXI/burst measurement belong to LAB-HW-09~10 and are not implemented by this stage. LAB-HW-08 implements only the frozen Lesson-12 teaching event machine as a board replay harness; it does not freeze formal MOD-004~009 interfaces or final LIF numerics.
+PL→DDR AXI/burst measurement belongs to LAB-HW-10 and is not implemented by this stage. LAB-HW-09 validates only PS/Linux-managed external-memory integrity and host-path observations; it does not freeze a raw DDR address, DMA path, PL AXI master, or formal DDR-backed synapse store.
 
 ## Authoring baseline
 
@@ -32,7 +33,7 @@ The current lab prose selects **Vivado 2026.1** as the **authoring candidate bas
 
 This is not yet a declaration that Vivado 2026.1 is the physically validated course-support baseline. That promotion requires a real-KV260 dry run and retained evidence.
 
-This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~08. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence or as a real Vivado LAB-HW-08 full-build pass.
+This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~09. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence. LAB-HW-09 requires no new Vivado build.
 
 ## LAB-HW-00
 
@@ -287,3 +288,43 @@ python boards/kv260/runtime/small_replay_mmio.py \
 
 After programming the LAB-HW-08 bitstream, copy the fixture plus the two runtime Python files to PS/Linux and run the same checker with sudo. A physical T-HW-008 PASS requires real-board differential evidence; CI success is not a substitute.
 
+## LAB-HW-09
+
+LAB-HW-09 deliberately needs no new PL bitstream. It validates the K26 external system-memory substrate from PS/Linux while keeping Linux in control of memory ownership.
+
+Dry-run the integrity oracle on any host:
+
+```bash
+python boards/kv260/runtime/ddr_integrity.py \
+  --dry-run \
+  --json-out /tmp/lab-hw-09-dry-run.json
+```
+
+Prove that corruption blocks performance output:
+
+```bash
+python boards/kv260/runtime/ddr_integrity.py \
+  --dry-run \
+  --inject-corruption-for-test
+```
+
+Physical KV260 run:
+
+```bash
+python3 /tmp/ddr_integrity.py \
+  --physical \
+  --json-out /tmp/lab-hw-09-trace.json
+```
+
+Physical mode freezes:
+
+- 64 MiB OS-managed anonymous mapping;
+- 1 MiB contiguous chunks;
+- deterministic SHAKE256 chunk-index payload;
+- prefault before timed payload copies;
+- byte-for-byte readback plus expected/observed SHA-256;
+- performance output only after integrity PASS;
+- board/kernel/OS/memory snapshot;
+- host-path write/read elapsed time and MiB/s observations.
+
+The reported MiB/s values are not peak DDR or PL/AXI bandwidth. LAB-HW-10 owns the first PL→DDR AXI/burst measurement.

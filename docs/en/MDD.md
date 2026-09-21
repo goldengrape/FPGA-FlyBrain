@@ -111,6 +111,21 @@ It composes simplified teaching forms of queue → source lookup → weighted ev
 
 The harness exists to prove one narrow statement: a previously verified event-causality teaching network produces the same deterministic trace when executed in PL on the reference board.
 
+### LAB-HW-09 system-memory teaching boundary
+
+LAB-HW-09 validates the K26's external system-memory substrate from PS/Linux without adding a new FlyBrain core module.
+
+The teaching slice is intentionally outside formal `MOD-004~010`:
+
+- Linux owns the allocation; the Lab uses an anonymous userspace mapping rather than a guessed physical DDR address;
+- the fixed test geometry is 64 MiB total with 1 MiB contiguous chunks;
+- deterministic chunk generation plus byte-for-byte and SHA-256 comparison defines the integrity oracle;
+- measured elapsed time/effective bandwidth is labelled a **host-path observation**, not a PL/AXI or peak-DDR metric;
+- no bitstream, custom driver, DMA engine, PL AXI master, cache-coherency contract, or synapse-stream backend is introduced;
+- LAB-HW-10 is responsible for the first PL→DDR AXI/burst measurement slice.
+
+Therefore LAB-HW-09 proves the platform's external-memory sanity at the OS-managed memory boundary only. It does not complete the formal DDR-backed synapse store described by RMD-015.
+
 ### MOD-010 `host_if`
 Responsibility: load parameters, deliver stimuli, and read spikes/telemetry.  
 Initial: simulation interface.  
@@ -228,7 +243,7 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~08 implemented
+    en/             # LAB-HW-00~09 implemented
     zh/
     checks/
   boards/
@@ -238,7 +253,7 @@ FPGA-FlyBrain/
       tb/           # open-source self-checking teaching testbenches
       constraints/  # frozen Bank 45 XDC mapping
       scripts/      # preflight, discovery, build, and program helpers
-      runtime/      # LAB-HW-05~08 boot/MMIO/state/replay checkers
+      runtime/      # LAB-HW-05~09 boot/MMIO/state/replay/DDR sanity checkers
       evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
@@ -270,7 +285,7 @@ okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/` implement the LAB-HW-00~08 teaching/support slice. LAB-HW-08 adds a fixed Lesson-12 four-neuron replay fixture, deterministic Python oracle, PL replay harness, shared state/trace BRAM, and differential checker. This does not declare formal MOD-004~010, the general KV260 platform shell, or the formal LIF/event modules complete.
+Current `labs/` and `boards/kv260/` implement the LAB-HW-00~09 teaching/support slice. LAB-HW-09 adds a fixed 64 MiB PS/Linux-managed external-memory integrity sanity checker and host-path timing observation, without introducing a new PL bitstream or formal DDR backend. This does not declare formal MOD-004~010, the general KV260 platform shell, or the formal LIF/event/memory modules complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 

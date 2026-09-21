@@ -378,21 +378,50 @@ Do **not** introduce DDR, performance claims, a real MaleCNS image, final LIF nu
 
 ### LAB-HW-09 — DDR integrity
 
-**Prerequisites:** LSN-016 and LSN-017.
+**Course sequence:** after LAB-HW-08.  
+**Operational prerequisites:** LSN-016, LSN-017, and the LAB-HW-05 PS/Linux boot path.
 
-**Primary new operation:** perform stable external-memory read/write through the KV260 platform infrastructure without implementing a DDR PHY/controller.
+**Primary new operation:** prove that a deterministic payload can survive a large write/read roundtrip through the K26 system-memory path before introducing a PL AXI master, DMA engine, or burst benchmark.
 
-Order:
+The KV260/K26 provides 4 GB DDR4 system memory. This Lab deliberately uses an **OS-managed anonymous memory mapping on PS/Linux** instead of guessing a physical DDR address with `/dev/mem`. That keeps Linux memory ownership intact and isolates the new concept: external-memory integrity.
+
+Freeze the physical sanity contract:
+
+- test allocation: **64 MiB**;
+- chunk size: **1 MiB**;
+- access pattern: contiguous sequential chunks only;
+- payload: deterministic, chunk-indexed bytes generated from the fixed LAB-HW-09 seed string;
+- pages are prefaulted before the timed payload write;
+- every read chunk is compared byte-for-byte with the regenerated expected chunk;
+- expected and observed SHA-256 values must match;
+- any mismatch immediately sets `PERFORMANCE_BLOCKED=1` and no bandwidth result is accepted;
+- physical mode must run on PS/Linux and record board model, kernel, OS identity, `MemTotal`, `MemAvailable`, and swap information;
+- no root privilege and no fixed physical DDR address are required.
+
+The script records two **host-path observations** after integrity succeeds:
+
+- timed payload-copy write elapsed time / effective write bandwidth;
+- timed contiguous read elapsed time / effective read bandwidth.
+
+These numbers include the PS/Linux/userspace memory path and are **not** a claim about peak DDR bandwidth, PL bandwidth, AXI burst efficiency, or hardware-only latency. The reproducible multi-pattern benchmark belongs to LAB-HW-10.
+
+The order is mandatory:
 
 ```text
-known payload
-→ write
-→ read
-→ byte-for-byte/checksum compare
-→ only then measure
+verify runtime environment
+→ allocate + prefault OS-managed memory
+→ deterministic payload write
+→ byte-for-byte readback
+→ SHA-256 compare
+→ integrity PASS
+→ only then report host-path timing observations
 ```
 
-**Pass evidence:** integrity PASS + transfer size + elapsed time + effective bandwidth, with access pattern recorded. Any integrity failure blocks performance conclusions.
+A corruption-injection mode exists only for CI/dry-run to prove that a single modified byte blocks all performance conclusions.
+
+Do **not** add a PL AXI master, AXI CDMA, DMA driver, reserved physical DDR region, random/scattered comparison, burst tuning, cache/coherency claims, DDR PHY training, or synapse-store migration here. Those would couple HW-09 to HW-10/RMD-015.
+
+**Pass evidence:** `ddr_integrity.py` SHA-256; fixed 64 MiB/1 MiB geometry; payload seed/algorithm identifier; board model; kernel/OS identity; memory snapshot; expected/observed SHA-256; byte-compare result; integrity `STATUS=PASS`; write/read timer boundaries and elapsed time; observed host-path effective bandwidth; access-pattern label; Git commit/date. No bitstream is required for this Lab. Ordinary CI dry-run cannot claim physical T-HW-009 PASS.
 
 ### LAB-HW-10 — AXI/burst measurement
 

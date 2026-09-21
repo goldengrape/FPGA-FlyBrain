@@ -1,4 +1,4 @@
-"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-08."""
+"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-09."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ LABS = [
     "06_host_pl_loopback.ipynb",
     "07_bram_neuron_state.ipynb",
     "08_small_flybrain_replay.ipynb",
+    "09_ddr_integrity.ipynb",
 ]
 
 
@@ -139,9 +140,9 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
 def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06", "LAB-HW-07", "LAB-HW-08"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06", "LAB-HW-07", "LAB-HW-08", "LAB-HW-09"):
             assert lab in text
-        assert "LAB-HW-09~10" in text
+        assert "LAB-HW-10" in text
 
 
 def test_trace_register_points_to_implemented_labs():
@@ -156,6 +157,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/en/06_host_pl_loopback.ipynb",
             "labs/en/07_bram_neuron_state.ipynb",
             "labs/en/08_small_flybrain_replay.ipynb",
+            "labs/en/09_ddr_integrity.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
@@ -167,6 +169,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/zh/06_host_pl_loopback.ipynb",
             "labs/zh/07_bram_neuron_state.ipynb",
             "labs/zh/08_small_flybrain_replay.ipynb",
+            "labs/zh/09_ddr_integrity.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -379,5 +382,36 @@ def test_lab08_freezes_lesson12_replay_without_claiming_formal_lif():
         assert "MOD-004~009" in text
         assert "DDR" in text
         assert "--base" not in text
+        assert "<svg " in text
+        assert "mermaid" not in text.lower()
+
+
+
+def test_lab09_freezes_os_managed_ddr_integrity_before_axi_measurement():
+    required = (
+        "64 MiB",
+        "1 MiB",
+        "anonymous",
+        "byte-for-byte",
+        "SHA-256",
+        "ddr_integrity.py",
+        "--dry-run",
+        "--physical",
+        "DDR_INTEGRITY_MISMATCH",
+        "PERFORMANCE_BLOCKED=1",
+        "HOST_PATH_WRITE_MIB_PER_S",
+        "HOST_PATH_READ_MIB_PER_S",
+        "T-HW-009",
+        "T-HW-011",
+        "LAB-HW-10",
+    )
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "09_ddr_integrity.ipynb"))
+        for marker in required:
+            assert marker in text
+        assert "4 GB" in text
+        assert "DDR4" in text
+        assert "no new bitstream" in text.lower() or "不需要新 bitstream" in text
+        assert "/dev/mem" in text
         assert "<svg " in text
         assert "mermaid" not in text.lower()

@@ -144,7 +144,7 @@ If a step is revision-specific, the lab must state that explicitly.
 
 ## 7. What the implemented Physical-Lab slice now freezes — and what remains provisional
 
-The documentation-first decision has now advanced through the implemented **LAB-HW-00~08** teaching slice.
+The documentation-first decision has now advanced through the implemented **LAB-HW-00~09** teaching slice.
 
 The repository now freezes:
 
@@ -154,27 +154,30 @@ The repository now freezes:
 - direct Vivado/JTAG programming for LAB-HW-03/04/06/07/08;
 - LAB-HW-05 Ubuntu Server 24.04 LTS first-boot/UART path;
 - LAB-HW-06 PS `M_AXI_HPM0_FPD` → SmartConnect → AXI GPIO teaching loopback at `0xA0010000`;
-- LAB-HW-07 teaching state geometry: **1024 × 32-bit words = 4 KiB**;
-- LAB-HW-07 PS-visible BRAM base: **`0xA0000000`** and block-RAM resource oracle;
-- LAB-HW-08 replay source of truth: `lab08_four_neuron_replay_v1.json`, derived from the exact Lesson-12 four-neuron teaching event machine;
-- LAB-HW-08 expected spike order `[0,1,2,3]`, final teaching accumulator state `[0,0,0,0]`, and four encoded weighted-event records;
-- LAB-HW-08 memory/control layout: 4 KiB state/trace BRAM at `0xA0000000` plus AXI GPIO control/status at `0xA0010000`;
-- LAB-HW-08 host-access rule: shared BRAM is accessed by the host only while engine `busy=0`; concurrent host/engine arbitration is not part of this Lab;
-- LAB-HW-08 verification boundary: deterministic Python fixture oracle, open-source RTL replay, then physical differential readback. The teaching event machine remains distinct from the formal LIF model.
+- LAB-HW-07 4 KiB BRAM teaching state path at `0xA0000000`;
+- LAB-HW-08 deterministic four-neuron board replay and shared BRAM trace;
+- KV260/K26 external system memory is 4 GB DDR4;
+- LAB-HW-09 external-memory sanity boundary: **PS/Linux-managed anonymous memory**, not a raw physical DDR address;
+- LAB-HW-09 fixed geometry: **64 MiB total, 1 MiB contiguous chunks**;
+- LAB-HW-09 integrity oracle: deterministic chunk generation, byte-for-byte readback, and identical expected/observed SHA-256;
+- LAB-HW-09 performance gate: any mismatch sets `PERFORMANCE_BLOCKED=1`; host-path timing is reported only after integrity PASS;
+- LAB-HW-09 timing scope: PS/Linux/userspace path observation only, not peak DDR or PL/AXI bandwidth;
+- LAB-HW-09 requires no new bitstream, root privilege, DMA driver, or PL AXI master.
 
 The following are **not yet promoted to tested physical facts**:
 
 - the exact physically observed visible-polarity details for the early Bank 45 marker;
 - Vivado 2026.1 as the tested/supported course baseline rather than the current authoring candidate;
 - a trusted expected SHA-256 for the LAB-HW-05 Ubuntu archive;
-- whether the selected Ubuntu 24.04 image/kernel permits the fixed `/dev/mem` teaching mappings on a real KV260; if policy blocks them, the relevant T-HW checkpoint remains blocked and the repository transport must be revised without weakening system security;
-- a real Vivado LAB-HW-08 build proving the shared-BRAM/control block design, timing, DRC, and non-zero RAMB resource on the target device;
-- a real-KV260 T-HW-008 differential replay PASS;
-- the final formal MOD-004~009 implementations, final LIF numeric contract, general programmable network image/loader, concurrent memory arbitration, and the later MOD-010/DDR software stack.
+- whether the selected Ubuntu 24.04 image/kernel permits the fixed `/dev/mem` teaching mappings used by earlier LAB-HW-06~08 on a real KV260;
+- a real Vivado LAB-HW-08 build and a real-KV260 T-HW-008 replay PASS;
+- a real-KV260 T-HW-009 64 MiB physical DDR-integrity PASS;
+- the LAB-HW-10 PL→DDR path through an `S_AXI_HP*_FPD` high-performance PS slave interface, its buffer-allocation/coherency contract, and burst measurement method;
+- the final formal MOD-004~010 implementations, formal DDR-backed synapse store, and final performance claims.
 
 Those remaining facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit and artifact.
 
-The implemented board-support code lives under `boards/kv260/`. FlyBrain core RTL still must not depend on KV260 connector names, package pins, Vivado project layout, or Linux device paths.
+The implemented board-support code lives under `boards/kv260/`. FlyBrain core RTL still must not depend on KV260 connector names, package pins, Vivado project layout, Linux device paths, or a teaching-only userspace memory test.
 
 ## 8. Reference-board decision
 

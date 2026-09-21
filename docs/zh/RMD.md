@@ -260,20 +260,36 @@ replay 不只比较 final state，还逐项比较 spike order 与每个 weighted
 
 ### RMD-014 DDR hello-world
 
-主要新概念：**外部存储具有独立访问延迟与控制路径**。
+主要新概念：**外部存储有自己的 latency/control path，而且必须先证明 correctness，再谈 performance**。
 
-对应 **LAB-HW-09**：通过 KV260 平台已有 controller/IP 完成：
+对应 **LAB-HW-09**，先做 PS/Linux 管理的 external-memory sanity slice。板上有 4 GB DDR4 system memory，但本 Lab 暂时不加入 PL→DDR AXI traffic。
+
+第一套 physical DDR 操作冻结为：
 
 ```text
-known payload → DDR write → DDR read → byte/checksum compare → measurement
+OS-managed anonymous mapping
+→ prefault 64 MiB
+→ deterministic contiguous 1 MiB chunks
+→ write
+→ read
+→ byte-for-byte compare
+→ SHA-256 compare
+→ integrity PASS
+→ only then report host-path timing observations
 ```
 
-不手写 DDR PHY/controller。
+这种设计刻意避开 raw physical DDR address、custom DMA driver、AXI master 与 CDMA setup；这些是不同依赖，留到 LAB-HW-10 / RMD-015。
+
+LAB-HW-09 的 timing 只是这个 userspace path 的 descriptive evidence，不是 peak DDR，也不是 PL/AXI bandwidth benchmark。
 
 通过标准：
-- integrity PASS；
-- transfer size、elapsed time、access pattern、effective bandwidth 有记录；
-- 错误数据必须先使 integrity fail，不能用性能数字掩盖 correctness failure。
+- 冻结 64 MiB allocation 与 1 MiB chunk geometry；
+- 每个 regenerated expected chunk 与 readback byte-for-byte 一致；
+- expected / observed SHA-256 一致；
+- CI/dry-run 的 deliberate corruption 必须得到 `DDR_INTEGRITY_MISMATCH`、`PERFORMANCE_BLOCKED=1`，且没有可接受的 bandwidth result；
+- 成功 physical run 保存 board/OS/kernel/memory identity，以及 write/read timer boundary、elapsed time 与 host-path effective bandwidth；
+- 本 Lab 不需要 bitstream；
+- T-HW-009 physical PASS 必须来自真实 KV260 PS/Linux run。
 
 ### RMD-014A AXI burst practical bridge
 
