@@ -131,6 +131,17 @@ module kv260_small_replay_engine_tb;
             $fatal(1, "status event_count expected 4 got %0d", status_word[15:8]);
         end
 
+        // Holding start high after completion must not retrigger the engine.
+        repeat (10) begin
+            @(posedge clk);
+            if (!status_word[1] || status_word[0]) begin
+                $fatal(1, "held-high start unexpectedly changed done/busy");
+            end
+            if (status_word[7:4] !== 4'd4 || status_word[15:8] !== 8'd4) begin
+                $fatal(1, "held-high start unexpectedly changed counters");
+            end
+        end
+
         @(negedge clk);
         control_word = 32'd0;
         repeat (2) @(posedge clk);
@@ -155,7 +166,26 @@ module kv260_small_replay_engine_tb;
         host_check_word(35, 32'h23010301);
         host_check_word(36, 32'd4);
 
-        $display("PASS: LAB-HW-08 Lesson-12 four-neuron replay trace");
+        // A new rising edge after returning start low must launch a clean second run.
+        @(negedge clk);
+        control_word = 32'h00000001;
+        cycles = 0;
+        while (!status_word[1] && cycles < 500) begin
+            @(posedge clk);
+            cycles = cycles + 1;
+        end
+        if (!status_word[1] || status_word[2]) begin
+            $fatal(1, "second replay did not complete cleanly");
+        end
+        if (status_word[7:4] !== 4'd4 || status_word[15:8] !== 8'd4) begin
+            $fatal(1, "second replay counters mismatch");
+        end
+
+        @(negedge clk);
+        control_word = 32'd0;
+        repeat (2) @(posedge clk);
+
+        $display("PASS: LAB-HW-08 Lesson-12 four-neuron replay trace and control behavior");
         $finish;
     end
 endmodule
