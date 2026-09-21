@@ -155,7 +155,7 @@ The links below point to official starters for reading and version tracking. Whe
 | 22 | [Generate a closed-loop position trace](en/22_closed_loop_world.ipynb) | feedback, target-reaching trace |
 | 23 | [Calculate throughput and energy per event](en/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark metrics, duration-aware energy |
 
-Lessons 13–18 enter FPGA-board, host, DDR, and AXI topics, but their formal workbooks remain **board-independent** Python/reasoning exercises. Physical-board labs are engineering extensions of the matching RMD slices, so hardware purchase does not block course progress.
+Lessons 13–18 enter FPGA-board, host, DDR, and AXI topics, but their formal workbooks remain **board-independent** Python/reasoning exercises. The **KV260 Physical Lab Track is the formal hands-on companion path**; the workbook path remains runnable without hardware so conceptual progress is not blocked by board access.
 
 Lessons 19–23 enter connectome integrity, scaling, closed-loop experiments, and benchmarking. Their official exercises use teaching fixtures and synthetic measurements so full MaleCNS downloads, a finished converter, GPU access, and a physical FPGA are not prerequisites for learning the contracts.
 
