@@ -20,6 +20,7 @@ REPLAY_REF = RUNTIME / "lab08_replay_reference.py"
 REPLAY_CHECKER = RUNTIME / "small_replay_mmio.py"
 REPLAY_FIXTURE = ROOT / "boards" / "kv260" / "fixtures" / "lab08_four_neuron_replay_v1.json"
 DDR_INTEGRITY = RUNTIME / "ddr_integrity.py"
+AXI_CDMA_BENCH = RUNTIME / "axi_cdma_benchmark.py"
 
 
 def test_image_manifest_freezes_identity_without_inventing_checksum():
@@ -377,3 +378,133 @@ def test_lab09_helper_freezes_geometry_and_avoids_raw_physical_ddr():
     assert 'Path("/dev/mem")' not in text
     assert "NOT_KV260_RUNTIME_ENVIRONMENT" in text
     assert "BANDWIDTH_SCOPE=HOST_PATH_OBSERVATION_NOT_PEAK_DDR_OR_PL_AXI" in text
+
+
+
+def test_lab10_axi_cdma_dry_run_is_stable_and_retains_raw_samples(tmp_path):
+    out = tmp_path / "lab-hw-10-dry-run.json"
+    result = subprocess.run(
+        [sys.executable, str(AXI_CDMA_BENCH), "--dry-run", "--json-out", str(out)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "FPGA_FLYBRAIN_LAB=LAB-HW-10" in result.stdout
+    assert "MODE=DRY_RUN_CDMA_MODEL" in result.stdout
+    assert "CDMA_CONTROL_BASE=0xa0020000" in result.stdout
+    assert "PL_DDR_PORT=S_AXI_HP0_FPD" in result.stdout
+    assert "PL_DDR_COHERENCY=NON_COHERENT" in result.stdout
+    assert "PAYLOAD_BYTES=262144" in result.stdout
+    assert "SMALL_BLOCK_BYTES=256" in result.stdout
+    assert "SMALL_BLOCK_COUNT=1024" in result.stdout
+    assert "WARMUP_RUNS=5" in result.stdout
+    assert "MEASURED_RUNS=20" in result.stdout
+    assert "BATCH_COUNT=2" in result.stdout
+    assert "PRECHECK_INTEGRITY=PASS" in result.stdout
+    assert "MEASUREMENT_STABLE=1" in result.stdout
+    assert "PERFORMANCE_CONCLUSION_ALLOWED=1" in result.stdout
+    assert "SCATTERED_TO_CONTIGUOUS_MEDIAN_TIME_RATIO=" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["lab_id"] == "LAB-HW-10"
+    assert payload["integrity_pass"] is True
+    assert payload["measurement_stable"] is True
+    assert payload["performance_conclusion_allowed"] is True
+    assert payload["workload"]["payload_bytes"] == 256 * 1024
+    assert payload["workload"]["warmup_runs"] == 5
+    assert payload["workload"]["measured_runs"] == 20
+    assert payload["workload"]["batch_count"] == 2
+    for pattern in ("contiguous", "scattered"):
+        assert len(payload["patterns"][pattern]) == 2
+        for batch in payload["patterns"][pattern]:
+            assert len(batch["samples_ns"]) == 20
+            assert batch["min_ns"] <= batch["median_ns"] <= batch["max_ns"]
+        assert payload["stability_pct"][pattern] <= 10.0
+
+
+def test_lab10_corruption_blocks_benchmark_conclusion(tmp_path):
+    out = tmp_path / "corrupt.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(AXI_CDMA_BENCH),
+            "--dry-run",
+            "--inject-corruption-for-test",
+            "--json-out",
+            str(out),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 5
+    assert "ERROR=BENCHMARK_INTEGRITY_MISMATCH" in result.stdout
+    assert "PERFORMANCE_CONCLUSION_ALLOWED=0" in result.stdout
+    assert "SCATTERED_TO_CONTIGUOUS_MEDIAN_TIME_RATIO=" not in result.stdout
+    assert "STATUS=FAIL" in result.stdout
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["integrity_pass"] is False
+    assert payload["performance_conclusion_allowed"] is False
+
+
+def test_lab10_instability_blocks_benchmark_conclusion(tmp_path):
+    out = tmp_path / "unstable.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(AXI_CDMA_BENCH),
+            "--dry-run",
+            "--unstable-for-test",
+            "--json-out",
+            str(out),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 7
+    assert "ERROR=MEASUREMENT_UNSTABLE" in result.stdout
+    assert "MEASUREMENT_STABLE=0" in result.stdout
+    assert "PERFORMANCE_CONCLUSION_ALLOWED=0" in result.stdout
+    assert "SCATTERED_TO_CONTIGUOUS_MEDIAN_TIME_RATIO=" not in result.stdout
+    assert "STATUS=FAIL" in result.stdout
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["measurement_stable"] is False
+    assert payload["performance_conclusion_allowed"] is False
+    assert payload["stability_pct"]["scattered"] > 10.0
+
+
+def test_lab10_physical_test_injection_is_rejected():
+    result = subprocess.run(
+        [sys.executable, str(AXI_CDMA_BENCH), "--physical", "--unstable-for-test"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 3
+    assert "ERROR=TEST_INJECTION_NOT_ALLOWED_PHYSICAL" in result.stdout
+
+
+def test_lab10_helper_freezes_dma_buffer_workload_and_control_contract():
+    source = AXI_CDMA_BENCH.read_text(encoding="utf-8")
+    assert "CDMA_BASE = 0xA0020000" in source
+    assert "DMA_BUFFER_MIN_BYTES = 2 * 1024 * 1024" in source
+    assert "DST_OFFSET = 1 * 1024 * 1024" in source
+    assert "PAYLOAD_BYTES = 256 * 1024" in source
+    assert "SMALL_BLOCK_BYTES = 256" in source
+    assert "WARMUP_RUNS = 5" in source
+    assert "MEASURED_RUNS = 20" in source
+    assert "STABILITY_LIMIT_PCT = 10.0" in source
+    assert "HP0_DDR_LOW_END = 0x80000000" in source
+    assert 'Path("/dev/udmabuf0")' in source
+    assert 'Path("/sys/class/u-dma-buf/udmabuf0")' in source
+    assert 'Path("/dev/mem")' in source
+    assert 'getattr(os, "O_SYNC", 0)' in source
+    assert "DMA_BUFFER_OUTSIDE_HP0_DDR_LOW" in source
+    assert "CDMA_TIMEOUT" in source
+    assert "BENCHMARK_INTEGRITY_MISMATCH" in source
+    assert "MEASUREMENT_UNSTABLE" in source
+    assert 'parser.add_argument("--base"' not in source
+    assert 'parser.add_argument("--payload-bytes"' not in source

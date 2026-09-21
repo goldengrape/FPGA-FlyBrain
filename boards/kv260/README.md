@@ -6,7 +6,7 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-The board-support layer now implements **LAB-HW-00~09**:
+The board-support layer now implements **LAB-HW-00~10**:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
@@ -22,10 +22,11 @@ The board-support layer now implements **LAB-HW-00~09**:
 - `rtl/kv260_replay_state_store.sv` + `rtl/kv260_small_replay_engine.sv` + `scripts/build_lab08_small_replay.tcl` — LAB-HW-08 shared BRAM + fixed four-neuron PL replay path;
 - `runtime/small_replay_mmio.py` — LAB-HW-08 fixed-address differential runtime checker;
 - `runtime/ddr_integrity.py` — LAB-HW-09 fixed 64 MiB OS-managed external-memory integrity checker and host-path timing observer;
+- `scripts/build_lab10_axi_cdma.tcl` + `runtime/axi_cdma_benchmark.py` — LAB-HW-10 AXI CDMA → `S_AXI_HP0_FPD` DDR build contract and end-to-end benchmark checker;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-PL→DDR AXI/burst measurement belongs to LAB-HW-10 and is not implemented by this stage. LAB-HW-09 validates only PS/Linux-managed external-memory integrity and host-path observations; it does not freeze a raw DDR address, DMA path, PL AXI master, or formal DDR-backed synapse store.
+LAB-HW-10 now implements a teaching PL→DDR AXI CDMA measurement path with a u-dma-buf/O_SYNC buffer contract and two fixed transaction patterns. It remains a board-specific benchmark harness and does not freeze the formal DDR-backed synapse store, production host interface, coherent DMA API, or peak-DDR performance claim.
 
 ## Authoring baseline
 
@@ -33,7 +34,7 @@ The current lab prose selects **Vivado 2026.1** as the **authoring candidate bas
 
 This is not yet a declaration that Vivado 2026.1 is the physically validated course-support baseline. That promotion requires a real-KV260 dry run and retained evidence.
 
-This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~09. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence. LAB-HW-09 requires no new Vivado build.
+This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~10. Cloud CI validates notebook/helper/RTL/runtime/build contracts only and must not be interpreted as physical T-HW evidence or a real Vivado LAB-HW-10 full-build PASS.
 
 ## LAB-HW-00
 
@@ -328,3 +329,47 @@ Physical mode freezes:
 - host-path write/read elapsed time and MiB/s observations.
 
 The reported MiB/s values are not peak DDR or PL/AXI bandwidth. LAB-HW-10 owns the first PL→DDR AXI/burst measurement.
+
+## LAB-HW-10
+
+Build the AXI CDMA teaching bitstream:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-10-build.log \
+  -source boards/kv260/scripts/build_lab10_axi_cdma.tcl
+```
+
+Expected bitstream:
+
+`build/kv260/lab-hw-10/kv260_axi_cdma_benchmark.bit`
+
+The frozen teaching path is:
+
+- control: PS `M_AXI_HPM0_FPD` → AXI CDMA `S_AXI_LITE` at `0xA0020000`;
+- data: AXI CDMA `M_AXI`, 128-bit, max burst 64 → non-coherent PS `S_AXI_HP0_FPD` → DDR;
+- physical buffer: course-approved `/dev/udmabuf0`, at least 2 MiB, opened with `O_SYNC`;
+- payload: 256 KiB;
+- contiguous: one 256 KiB request;
+- small/scattered: 1024 × 256-byte requests in a frozen permutation;
+- two batches per pattern, each with 5 warm-ups + 20 measured repetitions;
+- both pattern medians must reproduce within 10%;
+- integrity failure or unstable measurement blocks the performance conclusion.
+
+Dry-run:
+
+```bash
+python boards/kv260/runtime/axi_cdma_benchmark.py \
+  --dry-run \
+  --json-out /tmp/lab-hw-10-dry-run.json
+```
+
+Physical runs require a compatible DMA-safe buffer provider and root access for the fixed AXI CDMA control MMIO:
+
+```bash
+sudo python3 /tmp/axi_cdma_benchmark.py \
+  --physical \
+  --json-out /tmp/lab-hw-10-trace.json
+```
+
+The reported ratio is an end-to-end software-controlled DMA workload observation. It is not a peak-DDR specification measurement.

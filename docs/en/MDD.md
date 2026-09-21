@@ -126,6 +126,27 @@ The teaching slice is intentionally outside formal `MOD-004~010`:
 
 Therefore LAB-HW-09 proves the platform's external-memory sanity at the OS-managed memory boundary only. It does not complete the formal DDR-backed synapse store described by RMD-015.
 
+### LAB-HW-10 AXI-CDMA benchmark teaching boundary
+
+LAB-HW-10 adds a board-specific measurement harness, not a new formal FlyBrain core module.
+
+Teaching-only platform components:
+
+- AMD AXI CDMA, Simple DMA mode;
+- PS control through `M_AXI_HPM0_FPD` to `S_AXI_LITE` at `0xA0020000`;
+- CDMA `M_AXI` through non-coherent `S_AXI_HP0_FPD` to DDR;
+- 128-bit data path and maximum burst length 64;
+- a course-approved u-dma-buf userspace-visible contiguous DMA buffer opened with `O_SYNC`;
+- fixed source/destination offsets and two benchmark transaction patterns.
+
+This does **not** freeze the formal `MOD-010 host_if`, `MOD-014 telemetry`, or the RMD-015 DDR-backed synapse-store implementation. In particular:
+
+- the benchmark timer intentionally includes Python register programming/polling;
+- the u-dma-buf dependency is a Physical-Lab transport/buffer-provider choice, not a core software API;
+- the first Lab maps only `HP0_DDR_LOW` and rejects other physical-buffer placements rather than generalizing the address map;
+- no cache-coherent HPC contract, DMA driver API, Scatter/Gather descriptor format, interrupt interface, or general allocator contract becomes a formal project interface here;
+- later implementation may replace AXI CDMA/u-dma-buf while preserving the higher-level storage and telemetry contracts.
+
 ### MOD-010 `host_if`
 Responsibility: load parameters, deliver stimuli, and read spikes/telemetry.  
 Initial: simulation interface.  
@@ -243,7 +264,7 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~09 implemented
+    en/             # LAB-HW-00~10 implemented
     zh/
     checks/
   boards/
@@ -253,7 +274,7 @@ FPGA-FlyBrain/
       tb/           # open-source self-checking teaching testbenches
       constraints/  # frozen Bank 45 XDC mapping
       scripts/      # preflight, discovery, build, and program helpers
-      runtime/      # LAB-HW-05~09 boot/MMIO/state/replay/DDR sanity checkers
+      runtime/      # LAB-HW-05~10 boot/MMIO/state/replay/DDR/benchmark checkers
       evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
@@ -285,7 +306,7 @@ okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/` implement the LAB-HW-00~09 teaching/support slice. LAB-HW-09 adds a fixed 64 MiB PS/Linux-managed external-memory integrity sanity checker and host-path timing observation, without introducing a new PL bitstream or formal DDR backend. This does not declare formal MOD-004~010, the general KV260 platform shell, or the formal LIF/event/memory modules complete.
+Current `labs/` and `boards/kv260/` implement the LAB-HW-00~10 teaching/support slice. LAB-HW-10 adds a board-specific AXI CDMA → non-coherent `S_AXI_HP0_FPD` DDR benchmark harness, u-dma-buf/O_SYNC buffer contract, deterministic two-pattern workload, integrity gates, and two-batch reproducibility oracle. This does not declare formal MOD-004~010, the general KV260 platform shell, a production DMA API, or the formal LIF/event/memory modules complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 

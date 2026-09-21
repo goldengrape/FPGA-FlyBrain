@@ -293,21 +293,51 @@ LAB-HW-09 的 timing 只是这个 userspace path 的 descriptive evidence，不�
 
 ### RMD-014A AXI burst practical bridge
 
-主要新概念：**用标准总线事务批量搬运连续数据**。
+主要新概念：**即使 total bytes 与 hardware 完全相同，transaction granularity 与 access ordering 仍会改变 effective DMA throughput**。
 
-对应 **LAB-HW-10**：只学习本项目需要的 AXI subset，在真实 KV260 上比较 small/scattered 与 burst-oriented transfer。第一次必做目标是“使用 + 测量”；从零实现完整 AXI master 只作为可选挑战。
+对应 **LAB-HW-10**。本 Lab 使用 AMD AXI CDMA，不要求学生手写完整 AXI master。
 
-measurement 默认 protocol：
-- 同一 bitstream、data volume、payload 与 measurement boundary；
-- 5 次 warm-up 不计入统计；
-- 每种 access pattern 至少 20 次 measured repetitions；
-- 主结果取 median，并保存全部 raw samples 与 min/max；
-- 同一 session 再做第二批 measurement，两批 median 相对差异 ≤10% 才可称可重复；否则标记 `measurement unstable`；
-- 明确 timer 是否包含 host/software overhead。
+第一套真实 PL→DDR benchmark 冻结为：
+
+```text
+PS/Linux programs AXI CDMA
+        ↓
+AXI CDMA M_AXI
+        ↓
+PS S_AXI_HP0_FPD
+        ↓
+DDR
+```
+
+因为 `S_AXI_HP0_FPD` 是 non-coherent，buffer contract 必须显式冻结。physical run 使用 course-approved u-dma-buf allocation，并以 `O_SYNC` 打开；普通 cached Python memory 不能直接当 DMA buffer。
+
+workload contract：
+- 同一 bitstream + 一个至少 2 MiB 的 DMA-safe buffer；
+- 256 KiB deterministic payload；
+- contiguous pattern = 1 次 256 KiB CDMA request；
+- small/scattered pattern = 冻结 deterministic permutation 下的 1024 × 256-byte request；
+- timer 包含 Python register programming/polling + DMA completion；
+- benchmark 前后两种 pattern 都必须 byte-for-byte integrity PASS。
+
+默认 benchmark protocol：
+- 5 次 warm-up，不进统计；
+- 每种 pattern 20 次 measured repetition；
+- median 为主结果，保留 min/max 与全部 raw sample；
+- 同一 session 再重复第二批；
+- 两批 median 的差异对两种 pattern 都必须 ≤10%；
+- measurement unstable 时保留 evidence，但不能支持 performance conclusion。
+
+这是 end-to-end **software-controlled DMA workload** comparison，不是 peak-DDR specification measurement，也不是 CPU/GPU/FPGA benchmark。
 
 通过标准：
-- 至少两种 access pattern 满足可重复 measurement protocol；
-- workload contract 写清楚，不从单个数字泛化“AXI/FPGA 更快”。
+- AXI CDMA build contract：128-bit data、max burst 64、Simple DMA、`S_AXI_HP0_FPD`；
+- control base 固定为 `0xA0020000`；
+- DMA-safe buffer/cache-mode preflight PASS；
+- 两种 pattern 的 source/destination payload integrity 全部 PASS；
+- 保存所有 raw sample 与两批 summary；
+- 两种 pattern 都通过 ≤10% stability gate；
+- 只有这时才允许报告 contiguous/scattered median ratio；
+- physical T-HW-010 PASS 必须来自真实 KV260 evidence。
 
 ### RMD-015 Move synapse store to DDR
 替换存储后端，不改变 `IF-SYNAPSE-STREAM`。  

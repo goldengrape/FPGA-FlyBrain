@@ -144,40 +144,44 @@ If a step is revision-specific, the lab must state that explicitly.
 
 ## 7. What the implemented Physical-Lab slice now freezes — and what remains provisional
 
-The documentation-first decision has now advanced through the implemented **LAB-HW-00~09** teaching slice.
+The documentation-first decision has now advanced through the implemented **LAB-HW-00~10** teaching slice.
 
 The repository now freezes:
 
 - reference target part: `xck26-sfvc784-2LV-c`;
 - LAB-HW-03 board-visible logical output and Bank 45 XDC mapping;
 - LAB-HW-04 PS `pl_clk0` / `pl_resetn0` clock-reset teaching path;
-- direct Vivado/JTAG programming for LAB-HW-03/04/06/07/08;
+- direct Vivado/JTAG programming for LAB-HW-03/04/06/07/08/10;
 - LAB-HW-05 Ubuntu Server 24.04 LTS first-boot/UART path;
-- LAB-HW-06 PS `M_AXI_HPM0_FPD` → SmartConnect → AXI GPIO teaching loopback at `0xA0010000`;
-- LAB-HW-07 4 KiB BRAM teaching state path at `0xA0000000`;
-- LAB-HW-08 deterministic four-neuron board replay and shared BRAM trace;
-- KV260/K26 external system memory is 4 GB DDR4;
-- LAB-HW-09 external-memory sanity boundary: **PS/Linux-managed anonymous memory**, not a raw physical DDR address;
-- LAB-HW-09 fixed geometry: **64 MiB total, 1 MiB contiguous chunks**;
-- LAB-HW-09 integrity oracle: deterministic chunk generation, byte-for-byte readback, and identical expected/observed SHA-256;
-- LAB-HW-09 performance gate: any mismatch sets `PERFORMANCE_BLOCKED=1`; host-path timing is reported only after integrity PASS;
-- LAB-HW-09 timing scope: PS/Linux/userspace path observation only, not peak DDR or PL/AXI bandwidth;
-- LAB-HW-09 requires no new bitstream, root privilege, DMA driver, or PL AXI master.
+- LAB-HW-06 PS `M_AXI_HPM0_FPD` → AXI GPIO teaching loopback;
+- LAB-HW-07 4 KiB BRAM teaching state path;
+- LAB-HW-08 deterministic four-neuron board replay;
+- LAB-HW-09 64 MiB PS/Linux-managed system-memory integrity sanity path;
+- KV260/K26 external system memory: 4 GB DDR4;
+- LAB-HW-10 control path: PS `M_AXI_HPM0_FPD` → AXI CDMA `S_AXI_LITE` at **`0xA0020000`**;
+- LAB-HW-10 data path: AXI CDMA `M_AXI` → PS **`S_AXI_HP0_FPD`** → DDR;
+- LAB-HW-10 AXI CDMA teaching configuration: Simple DMA, 128-bit data, max burst 64, 64-bit addressing, DRE disabled;
+- LAB-HW-10 first mapped PL-DDR aperture: `HP0_DDR_LOW`;
+- LAB-HW-10 non-coherent buffer contract: course-approved u-dma-buf, at least 2 MiB, physical address from sysfs, device opened with `O_SYNC`;
+- LAB-HW-10 workload: identical 256 KiB payload, contiguous = one request, small/scattered = 1024 × 256-byte requests in a fixed permutation;
+- LAB-HW-10 benchmark oracle: two batches per pattern, each 5 warm-ups + 20 measured samples, byte-integrity gates, raw samples + median/min/max, and ≤10% inter-batch median drift;
+- LAB-HW-10 measurement scope: end-to-end software-controlled DMA workload including Python register programming/polling. It is not a peak-DDR or pure AXI bus-efficiency specification measurement.
 
 The following are **not yet promoted to tested physical facts**:
 
 - the exact physically observed visible-polarity details for the early Bank 45 marker;
 - Vivado 2026.1 as the tested/supported course baseline rather than the current authoring candidate;
 - a trusted expected SHA-256 for the LAB-HW-05 Ubuntu archive;
-- whether the selected Ubuntu 24.04 image/kernel permits the fixed `/dev/mem` teaching mappings used by earlier LAB-HW-06~08 on a real KV260;
-- a real Vivado LAB-HW-08 build and a real-KV260 T-HW-008 replay PASS;
-- a real-KV260 T-HW-009 64 MiB physical DDR-integrity PASS;
-- the LAB-HW-10 PL→DDR path through an `S_AXI_HP*_FPD` high-performance PS slave interface, its buffer-allocation/coherency contract, and burst measurement method;
-- the final formal MOD-004~010 implementations, formal DDR-backed synapse store, and final performance claims.
+- whether the selected Ubuntu 24.04 image/kernel permits the fixed `/dev/mem` teaching mappings used by LAB-HW-06~08/10;
+- a real-KV260 T-HW-007/008/009/010 physical PASS;
+- a real Vivado LAB-HW-08 or LAB-HW-10 full build on the target device;
+- whether the selected course Ubuntu/kernel image provides the required u-dma-buf buffer/cache contract and whether its physical placement lies in the first `HP0_DDR_LOW` aperture;
+- whether the live LAB-HW-05 boot firmware leaves the required `S_AXI_HP0_FPD` runtime path usable after direct PL JTAG programming without a PS reinitialization sequence;
+- the final formal MOD-004~010 implementations, formal DDR-backed synapse store, production DMA/buffer API, coherent-memory strategy, and final performance claims.
 
-Those remaining facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit and artifact.
+Those remaining facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit, bitstream where applicable, software/buffer-provider identity, and raw evidence.
 
-The implemented board-support code lives under `boards/kv260/`. FlyBrain core RTL still must not depend on KV260 connector names, package pins, Vivado project layout, Linux device paths, or a teaching-only userspace memory test.
+The implemented board-support code lives under `boards/kv260/`. FlyBrain core RTL still must not depend on KV260 connector names, package pins, Vivado project layout, Linux device paths, or teaching-only AXI CDMA/u-dma-buf choices.
 
 ## 8. Reference-board decision
 

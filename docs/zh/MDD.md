@@ -126,6 +126,27 @@ LAB-HW-09 从 PS/Linux 侧验证 K26 external system-memory substrate，不新�
 
 因此 LAB-HW-09 只证明 platform 在 OS-managed memory boundary 的 external-memory sanity，不等于 RMD-015 的正式 DDR-backed synapse store 已完成。
 
+### LAB-HW-10 AXI-CDMA benchmark teaching boundary
+
+LAB-HW-10 增加的是 board-specific measurement harness，不是新的正式 FlyBrain core module。
+
+teaching-only platform component：
+
+- AMD AXI CDMA，Simple DMA mode；
+- PS 通过 `M_AXI_HPM0_FPD` 控制 `0xA0020000` 的 `S_AXI_LITE`；
+- CDMA `M_AXI` 经 non-coherent `S_AXI_HP0_FPD` 访问 DDR；
+- 128-bit data path、maximum burst length 64；
+- course-approved u-dma-buf userspace-visible contiguous DMA buffer，以 `O_SYNC` 打开；
+- 固定 source/destination offset 与两种 benchmark transaction pattern。
+
+这**不**冻结正式 `MOD-010 host_if`、`MOD-014 telemetry` 或 RMD-015 DDR-backed synapse-store implementation。特别是：
+
+- benchmark timer 刻意包含 Python register programming/polling；
+- u-dma-buf 只是 Physical-Lab transport/buffer-provider 选择，不是 core software API；
+- 第一版 Lab 只映射 `HP0_DDR_LOW`，遇到其他 physical-buffer placement 会明确拒绝，不把 address map 泛化；
+- cache-coherent HPC contract、DMA driver API、Scatter/Gather descriptor、interrupt interface 与通用 allocator contract 都不会在这里升级成 formal interface；
+- 后续实现可以替换 AXI CDMA/u-dma-buf，同时保持上层 storage/telemetry contract 不变。
+
 ### MOD-010 `host_if`
 职责：装载参数、输入刺激、读取 spike/telemetry。  
 初版：仿真接口。  
@@ -243,7 +264,7 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~09 已实现
+    en/             # LAB-HW-00~10 已实现
     zh/
     checks/
   boards/
@@ -253,7 +274,7 @@ FPGA-FlyBrain/
       tb/           # open-source self-checking teaching testbench
       constraints/  # 冻结的 Bank 45 XDC mapping
       scripts/      # preflight、discovery、build、program helper
-      runtime/      # LAB-HW-05~09 boot/MMIO/state/replay/DDR sanity checker
+      runtime/      # LAB-HW-05~10 boot/MMIO/state/replay/DDR/benchmark checker
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -285,7 +306,7 @@ okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~09 的教学/support slice。LAB-HW-09 新增 fixed 64 MiB 的 PS/Linux-managed external-memory integrity sanity checker 与 host-path timing observation，不增加新 PL bitstream，也不冻结正式 DDR backend；这不代表正式 MOD-004~010、通用 KV260 platform shell 或正式 LIF/event/memory module 已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~10 的教学/support slice。LAB-HW-10 新增 board-specific AXI CDMA → non-coherent `S_AXI_HP0_FPD` DDR benchmark harness、u-dma-buf/O_SYNC buffer contract、deterministic 双 pattern workload、integrity gate 与 two-batch reproducibility oracle；这不代表正式 MOD-004~010、通用 KV260 platform shell、production DMA API 或正式 LIF/event/memory module 已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 

@@ -18,6 +18,7 @@ PROGRAM = ROOT / "boards" / "kv260" / "scripts" / "program_bitstream.tcl"
 BUILD06 = ROOT / "boards" / "kv260" / "scripts" / "build_lab06_loopback.tcl"
 BUILD07 = ROOT / "boards" / "kv260" / "scripts" / "build_lab07_bram_state.tcl"
 BUILD08 = ROOT / "boards" / "kv260" / "scripts" / "build_lab08_small_replay.tcl"
+BUILD10 = ROOT / "boards" / "kv260" / "scripts" / "build_lab10_axi_cdma.tcl"
 TCLSH = shutil.which("tclsh")
 
 
@@ -415,3 +416,32 @@ def test_lab08_build_script_freezes_replay_memory_control_and_resource_contract(
     assert "NEGATIVE_SETUP_SLACK" in text
     assert "NEGATIVE_HOLD_SLACK" in text
     assert text.index("NO_BLOCK_RAM_PRIMITIVE") < text.index("write_bitstream -force")
+
+
+
+def test_lab10_build_script_freezes_axi_cdma_hp0_contract():
+    text = BUILD10.read_text(encoding="utf-8")
+    assert 'set cdma_base 0xA0020000' in text
+    assert 'set ddr_low_base 0x00000000' in text
+    assert 'set ddr_low_range 0x80000000' in text
+    assert "CONFIG.PSU__USE__M_AXI_GP0 {1}" in text
+    assert "CONFIG.PSU__USE__S_AXI_GP2 {1}" in text
+    assert "CONFIG.PSU__SAXIGP2__DATA_WIDTH {128}" in text
+    assert "xilinx.com:ip:axi_cdma:" in text
+    assert "CONFIG.C_INCLUDE_SG {0}" in text
+    assert "CONFIG.C_M_AXI_DATA_WIDTH {128}" in text
+    assert "CONFIG.C_M_AXI_MAX_BURST_LEN {64}" in text
+    assert "CONFIG.C_ADDR_WIDTH {64}" in text
+    assert "CONFIG.C_INCLUDE_DRE {0}" in text
+    assert "ps/M_AXI_HPM0_FPD" in text
+    assert "axi_cdma/S_AXI_LITE" in text
+    assert "axi_cdma/M_AXI" in text
+    assert "ps/S_AXI_HP0_FPD" in text
+    assert "ps/SAXIGP2/HP0_DDR_LOW" in text
+    assert "DMA_BUFFER_CONTRACT=U_DMA_BUF_O_SYNC" in text
+    assert "PL_DDR_COHERENCY=NON_COHERENT" in text
+    assert "DRC_ERROR_PRESENT" in text
+    assert "NEGATIVE_SETUP_SLACK" in text
+    assert "NEGATIVE_HOLD_SLACK" in text
+    assert text.index("DRC_ERROR_PRESENT") < text.index("write_bitstream -force")
+    assert text.index("NEGATIVE_HOLD_SLACK") < text.index("write_bitstream -force")
