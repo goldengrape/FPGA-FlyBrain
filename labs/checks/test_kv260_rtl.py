@@ -75,3 +75,15 @@ def test_lab06_loopback_transform(tmp_path):
         "boards/kv260/tb/kv260_loopback_transform_tb.sv",
     )
     assert "PASS: kv260_loopback_transform +1 modulo 2^32" in stdout
+
+
+
+@pytest.mark.skipif(IVERILOG is None or VVP is None, reason="Icarus Verilog is not installed")
+def test_lab07_bram_state_store(tmp_path):
+    stdout = _simulate(
+        tmp_path,
+        "kv260_neuron_state_store_tb",
+        "boards/kv260/rtl/kv260_neuron_state_store.sv",
+        "boards/kv260/tb/kv260_neuron_state_store_tb.sv",
+    )
+    assert "PASS: kv260_neuron_state_store synchronous multi-address BRAM semantics" in stdout
