@@ -111,6 +111,21 @@ It composes simplified teaching forms of queue → source lookup → weighted ev
 
 The harness exists to prove one narrow statement: a previously verified event-causality teaching network produces the same deterministic trace when executed in PL on the reference board.
 
+### LAB-HW-09 system-memory teaching boundary
+
+LAB-HW-09 validates the K26's external system-memory substrate from PS/Linux without adding a new FlyBrain core module.
+
+The teaching slice is intentionally outside formal `MOD-004~010`:
+
+- Linux owns the allocation; the Lab uses an anonymous userspace mapping rather than a guessed physical DDR address;
+- the fixed test geometry is 64 MiB total with 1 MiB contiguous chunks;
+- deterministic chunk generation plus byte-for-byte and SHA-256 comparison defines the integrity oracle;
+- measured elapsed time/effective bandwidth is labelled a **host-path observation**, not a PL/AXI or peak-DDR metric;
+- no bitstream, custom driver, DMA engine, PL AXI master, cache-coherency contract, or synapse-stream backend is introduced;
+- LAB-HW-10 is responsible for the first PL→DDR AXI/burst measurement slice.
+
+Therefore LAB-HW-09 proves the platform's external-memory sanity at the OS-managed memory boundary only. It does not complete the formal DDR-backed synapse store described by RMD-015.
+
 ### MOD-010 `host_if`
 Responsibility: load parameters, deliver stimuli, and read spikes/telemetry.  
 Initial: simulation interface.  
