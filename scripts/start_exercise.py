@@ -107,16 +107,19 @@ def main() -> int:
     created = 0
     existing = 0
 
-    for item in lessons:
-        destination, was_created = create_work_copy(repo_root, item, args.lang)
-        relative = destination.relative_to(repo_root)
+    try:
+        for item in lessons:
+            destination, was_created = create_work_copy(repo_root, item, args.lang)
+            relative = destination.relative_to(repo_root)
 
-        if was_created:
-            created += 1
-            print(f"Created: {relative}")
-        else:
-            existing += 1
-            print(f"Already exists, kept unchanged: {relative}")
+            if was_created:
+                created += 1
+                print(f"Created: {relative}")
+            else:
+                existing += 1
+                print(f"Already exists, kept unchanged: {relative}")
+    except FileNotFoundError as exc:
+        parser.exit(2, f"error: {exc}\n")
 
     print()
     if created:
