@@ -425,22 +425,82 @@ corruption injection 只用于 CI/dry-run，证明哪怕只改一个 byte，也�
 
 ### LAB-HW-10 — AXI/burst measurement / 协议概念变成真实数据移动
 
-**前置：** LSN-018 与 LAB-HW-09。
+**前置：** LSN-018、LAB-HW-09 integrity PASS，以及之前已经工作的 PS/Linux + JTAG programming path。
 
-**主要新操作：** 在真实平台上比较小/零散访问与连续/burst-oriented 路径的有效带宽和延迟。
+**主要新操作：** 第一次让 programmable logic 中的真实 AXI master 访问 K26 DDR，然后在同一 bitstream、同一 payload、同一 byte count、同一 buffer 与同一 timer boundary 下比较两种 transaction granularity。
 
-必须完成的是“使用与测量”；自己从零写完整 AXI master 属于可选挑战。
+本 Lab 使用 AMD AXI Central Direct Memory Access（AXI CDMA）的 **Simple DMA mode**。学生会真实使用 AXI4 master，但不要求从零手写完整 AXI master state machine。
 
-默认 measurement protocol（Lab prose 可以在有证据时更严格，但不能更模糊）：
+冻结 hardware teaching path：
 
-- 同一 bitstream、同一 data volume、同一 payload 与 measurement boundary；
-- 先做 **5 次 warm-up**，warm-up 不进入统计；
-- 每种 access pattern 至少 **20 次 measured repetitions**；
-- 以 **median** 作为主结果，同时保存 min/max 与原始样本；
-- 在同一实验 session 再重复一批 measurement；两批 median 的相对差异应 **≤10%**。超过 10% 时先报告“measurement unstable”，不得据此下性能结论；
-- workload contract、计时起止点与是否包含 host/software overhead 必须写清楚。
+```text
+PS/Linux
+  ├─ /dev/mem control MMIO
+  │    ↓
+  │  PS M_AXI_HPM0_FPD
+  │    ↓
+  │  AXI CDMA S_AXI_LITE @ 0xA0020000
+  │
+  └─ DMA-safe source/destination buffer in DDR
+             ↑
+             │ AXI CDMA M_AXI, 128 bit, max burst 64
+             │
+       PS S_AXI_HP0_FPD
+             │
+             ↓
+           DDR4
+```
 
-**通过证据：** 至少两种 access pattern 满足上述可重复 benchmark；结果不得脱离 workload contract 宣称“AXI/FPGA 更快”。
+这里选择的 `S_AXI_HP0_FPD` 是 **non-coherent** path。因此本 Lab 不把普通 cached Python allocation 直接拿来当 DMA buffer。physical checker 要求一个 course-approved **u-dma-buf** device（`/dev/udmabuf0`，至少 2 MiB），并使用 `O_SYNC` 打开；physical address 从 driver sysfs 读取。如果选定 Ubuntu/kernel 无法提供这个 buffer/cache contract，T-HW-010 保持 blocked。不能猜 physical address，也不能为了 PASS 去降低 kernel security。
+
+本章不教授 kernel-driver 实现。u-dma-buf 只是 buffer-provider prerequisite，角色类似 vendor toolchain：学生使用并记录它的 identity，但不修改其源代码。
+
+冻结 AXI CDMA build contract：
+
+- target：KV260/K26，part `xck26-sfvc784-2LV-c`；
+- control path：PS `M_AXI_HPM0_FPD` → SmartConnect → AXI CDMA `S_AXI_LITE`；
+- control base：**`0xA0020000`**；
+- data path：AXI CDMA `M_AXI` → PS **`S_AXI_HP0_FPD`** → DDR；
+- AXI CDMA：Simple DMA only，关闭 Scatter/Gather；
+- data width：**128 bits**；
+- maximum burst length：**64 beats**；
+- address width：**64 bits**；
+- DRE 关闭；课程冻结的 source/destination address 与 length 都自然对齐；
+- 第一版只映射 `HP0_DDR_LOW`；physical helper 如果发现 DMA buffer 不在该 aperture，会明确 FAIL，不偷偷依赖另一套 address map；
+- routed implementation 在生成 bitstream 前必须通过 DRC、setup 与 hold timing。
+
+冻结 workload：
+
+- DMA buffer provider：至少 **2 MiB**；
+- source region offset：**0 MiB**；
+- destination region offset：**1 MiB**；
+- 每次 repetition payload：**256 KiB**；
+- deterministic payload：SHAKE256-derived bytes；
+- **contiguous pattern：** 1 次 256 KiB CDMA request；
+- **small/scattered pattern：** 1024 × 256-byte CDMA request，以 deterministic permutation `block = (257*i + 17) mod 1024` 覆盖同一 256 KiB；
+- performance measurement 前，以及每个 measured batch 后，destination 都必须 byte-for-byte 等于 source。
+
+这是 **end-to-end software-controlled DMA workload comparison**。timer 包含 Python register programming/polling，以及 AXI/CDMA/DDR transfer。因此结果不是纯 bus-efficiency measurement，不能推广成 peak-DDR claim。
+
+两种 pattern 都固定执行：
+
+1. same bitstream、DMA buffer、payload、总 256 KiB、timer boundary；
+2. pattern integrity precheck；
+3. **5 次 warm-up**，不进统计；
+4. **20 次 measured repetition**，保存所有 raw elapsed time；
+5. **median** 作为主结果，同时保留 min/max；
+6. 同一 session 再跑第二批完全相同的 5 + 20；
+7. 每批结束后验证 destination integrity；
+8. 分别计算两批 median 的 relative difference；
+9. 两种 pattern 都必须 **≤10%** 才能称 benchmark reproducible；
+10. 任一 pattern >10%，输出 `MEASUREMENT_UNSTABLE`，保留 raw evidence，但不下 performance conclusion。
+
+只有 integrity 与 stability 两个 gate 都通过，checker 才允许报告 contiguous/scattered median ratio，而且只把它当作这个 workload 的 observation。
+
+本章**不**加入 Scatter/Gather descriptor、interrupt、multiple outstanding master、HPC/CCI coherency tuning、cache-policy experiment、custom Linux DMA driver、手写 AXI master、正式 synapse-store migration 或 CPU/GPU/FPGA comparison。
+
+**通过证据：** LAB-HW-10 bitstream SHA-256；Vivado build/program log；DRC/timing/resource report；AXI CDMA configuration；固定 control address；buffer-provider identity/size/physical base/cache-mode contract；deterministic payload hash；pre/post integrity evidence；全部 warm-up/measured raw sample；每种 pattern 两批 median/min/max；stability percentage；允许时的 stable ratio；helper SHA-256；Git commit；OS/kernel；board/carrier revision；experiment date。普通 CI dry-run 只验证 benchmark logic，不能宣称 physical T-HW-010 PASS。
+
 
 ## 6. 哪些内容故意不教
 
