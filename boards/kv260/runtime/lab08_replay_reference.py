@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""LAB-HW-08 deterministic replay oracle for the Lesson-12 teaching event machine."""
+"""LAB-HW-08 deterministic replay oracle for the Lesson-12 teaching event machine.
+
+The v1 fixture deliberately stays in a small teaching numeric domain:
+event-trace accumulator_after_add must fit in 8 bits and the frozen network uses
+non-negative weights. This oracle is not the formal 32-bit/signed LIF numeric
+contract for later MOD/RMD implementation.
+"""
 
 from __future__ import annotations
 
