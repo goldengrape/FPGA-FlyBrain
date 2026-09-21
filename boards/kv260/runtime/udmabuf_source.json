@@ -1,0 +1,17 @@
+{
+  "status": "AUTHORING_CANDIDATE",
+  "provider": "u-dma-buf",
+  "upstream_repository": "https://github.com/ikwzm/udmabuf",
+  "upstream_commit": "15bcde3cb960321e99983e227aeacc5807888333",
+  "driver_version": "5.5.0",
+  "buffer_bytes": 4194304,
+  "minimum_lab10_bytes": 2097152,
+  "required_open_mode": "O_RDWR|O_SYNC",
+  "allowed_sync_modes": [1, 2],
+  "lab10_aperture": {
+    "name": "HP0_DDR_LOW",
+    "base": "0x00000000",
+    "end_exclusive": "0x80000000"
+  },
+  "physical_validation": "PENDING_REAL_KV260"
+}
