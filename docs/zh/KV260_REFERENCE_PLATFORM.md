@@ -144,40 +144,44 @@ boards/kv260/
 
 ## 7. 当前已实现实体 Lab 冻结了什么——什么仍然只是 provisional
 
-documentation-first 决策已经推进到 **LAB-HW-00~09** 的实际实现阶段。
+documentation-first 决策已经推进到 **LAB-HW-00~10** 的实际实现阶段。
 
 仓库现在冻结：
 
 - reference target part：`xck26-sfvc784-2LV-c`；
 - LAB-HW-03 board-visible logical output 与 Bank 45 XDC mapping；
 - LAB-HW-04 的 PS `pl_clk0` / `pl_resetn0` clock-reset 教学路径；
-- LAB-HW-03/04/06/07/08 使用 direct Vivado/JTAG programming；
+- LAB-HW-03/04/06/07/08/10 使用 direct Vivado/JTAG programming；
 - LAB-HW-05 Ubuntu Server 24.04 LTS first-boot/UART path；
-- LAB-HW-06 PS `M_AXI_HPM0_FPD` → SmartConnect → AXI GPIO `0xA0010000` 教学 loopback；
-- LAB-HW-07 的 `0xA0000000` 4 KiB BRAM teaching state path；
-- LAB-HW-08 deterministic 四神经元 board replay 与共享 BRAM trace；
-- KV260/K26 external system memory 为 4 GB DDR4；
-- LAB-HW-09 external-memory sanity boundary：使用 **PS/Linux-managed anonymous memory**，不猜 raw physical DDR address；
-- LAB-HW-09 固定 geometry：**总计 64 MiB、1 MiB contiguous chunk**；
-- LAB-HW-09 integrity oracle：deterministic chunk generation、byte-for-byte readback、expected/observed SHA-256 完全一致；
-- LAB-HW-09 performance gate：任何 mismatch 都输出 `PERFORMANCE_BLOCKED=1`；只有 integrity PASS 后才报告 host-path timing；
-- LAB-HW-09 timing scope：只代表 PS/Linux/userspace path observation，不是 peak DDR 或 PL/AXI bandwidth；
-- LAB-HW-09 不需要新 bitstream、root privilege、DMA driver 或 PL AXI master。
+- LAB-HW-06 PS `M_AXI_HPM0_FPD` → AXI GPIO 教学 loopback；
+- LAB-HW-07 4 KiB BRAM teaching state path；
+- LAB-HW-08 deterministic 四神经元 board replay；
+- LAB-HW-09 64 MiB PS/Linux-managed system-memory integrity sanity path；
+- KV260/K26 external system memory：4 GB DDR4；
+- LAB-HW-10 control path：PS `M_AXI_HPM0_FPD` → AXI CDMA `S_AXI_LITE`，base **`0xA0020000`**；
+- LAB-HW-10 data path：AXI CDMA `M_AXI` → PS **`S_AXI_HP0_FPD`** → DDR；
+- LAB-HW-10 AXI CDMA teaching configuration：Simple DMA、128-bit data、max burst 64、64-bit addressing、DRE disabled；
+- LAB-HW-10 第一版 PL-DDR mapped aperture：`HP0_DDR_LOW`；
+- LAB-HW-10 non-coherent buffer contract：course-approved u-dma-buf，至少 2 MiB，physical address 来自 sysfs，device 以 `O_SYNC` 打开；
+- LAB-HW-10 workload：完全相同 256 KiB payload；contiguous = 1 次 request，small/scattered = fixed permutation 下 1024 × 256-byte request；
+- LAB-HW-10 benchmark oracle：每种 pattern 两批，每批 5 warm-up + 20 measured sample；带 byte-integrity gate、raw sample + median/min/max，以及 ≤10% inter-batch median drift；
+- LAB-HW-10 measurement scope：包含 Python register programming/polling 的 end-to-end software-controlled DMA workload，不是 peak-DDR 或 pure AXI bus-efficiency specification measurement。
 
 以下内容**还不能升级成已验证的实体事实**：
 
 - 早期 Bank 45 marker 在真实板上的具体可见 polarity 等细节；
 - Vivado 2026.1 是否可从 authoring candidate 升级为 tested/supported course baseline；
 - LAB-HW-05 Ubuntu archive 的可信 expected SHA-256；
-- 选定 Ubuntu 24.04 image/kernel 在真实 KV260 上是否允许早期 LAB-HW-06~08 使用的 fixed `/dev/mem` 教学 mapping；
-- 真实 Vivado LAB-HW-08 build 与真实 KV260 T-HW-008 replay PASS；
-- 真实 KV260 T-HW-009 64 MiB physical DDR-integrity PASS；
-- LAB-HW-10 通过 `S_AXI_HP*_FPD` high-performance PS slave interface 的 PL→DDR path、buffer allocation/coherency contract 与 burst measurement 方法；
-- 最终正式 MOD-004~010、正式 DDR-backed synapse store 与最终 performance claim。
+- 选定 Ubuntu 24.04 image/kernel 在真实 KV260 上是否允许 LAB-HW-06~08/10 的 fixed `/dev/mem` 教学 mapping；
+- 真实 KV260 T-HW-007/008/009/010 physical PASS；
+- 真实 Vivado LAB-HW-08 / LAB-HW-10 full build；
+- course Ubuntu/kernel image 是否具备所需 u-dma-buf buffer/cache contract，以及 physical placement 是否落在第一版 `HP0_DDR_LOW` aperture；
+- LAB-HW-05 boot firmware 是否能在不运行 PS reinitialization 的情况下，让 direct PL JTAG programming 后的 `S_AXI_HP0_FPD` runtime path 可用；
+- 最终正式 MOD-004~010、正式 DDR-backed synapse store、production DMA/buffer API、coherent-memory strategy 与最终 performance claim。
 
-这些事实只有在真实 KV260 dry run 针对具体 Git commit 与 artifact 留下 T-HW evidence 后，才能升级为 tested fact。
+这些事实只有在真实 KV260 dry run 针对具体 Git commit、适用的 bitstream、software/buffer-provider identity 与 raw evidence 留下 T-HW evidence 后，才能升级为 tested fact。
 
-已实现的 board-support code 位于 `boards/kv260/`。FlyBrain core RTL 仍然不得依赖 KV260 connector 名、package pin、Vivado project layout、Linux device path 或 teaching-only userspace memory test。
+已实现的 board-support code 位于 `boards/kv260/`。FlyBrain core RTL 仍然不得依赖 KV260 connector 名、package pin、Vivado project layout、Linux device path 或 teaching-only AXI CDMA/u-dma-buf 选择。
 
 ## 8. 参考板卡决策
 
