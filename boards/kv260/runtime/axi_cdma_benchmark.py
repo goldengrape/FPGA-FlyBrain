@@ -214,10 +214,18 @@ class PhysicalTransport:
 
         phys_addr = parse_int_text(read_text(udmabuf_sysfs / "phys_addr"))
         size = parse_int_text(read_text(udmabuf_sysfs / "size"))
+        sync_mode = parse_int_text(read_text(udmabuf_sysfs / "sync_mode"))
         if phys_addr is None:
             raise BenchmarkError("DMA_BUFFER_PHYS_ADDR_MISSING", str(udmabuf_sysfs))
         if size is None:
             raise BenchmarkError("DMA_BUFFER_SIZE_MISSING", str(udmabuf_sysfs))
+        if sync_mode is None:
+            raise BenchmarkError("DMA_BUFFER_SYNC_MODE_MISSING", str(udmabuf_sysfs))
+        if sync_mode not in (1, 2):
+            raise BenchmarkError(
+                "DMA_BUFFER_UNSAFE_SYNC_MODE",
+                f"sync_mode={sync_mode} allowed=[1, 2]",
+            )
         if size < DMA_BUFFER_MIN_BYTES:
             raise BenchmarkError(
                 "DMA_BUFFER_TOO_SMALL",
@@ -243,7 +251,7 @@ class PhysicalTransport:
             "open_flags": "O_RDWR|O_SYNC",
             "cache_contract": "noncoherent-hp0-buffer-opened-o-sync",
             "dma_coherent": read_text(udmabuf_sysfs / "dma_coherent"),
-            "sync_mode": read_text(udmabuf_sysfs / "sync_mode"),
+            "sync_mode": sync_mode,
             "sync_owner": read_text(udmabuf_sysfs / "sync_owner"),
         }
 
