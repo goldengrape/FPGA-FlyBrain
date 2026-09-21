@@ -75,6 +75,8 @@ Host / Python
 初版：BRAM/behavioral memory。  
 后期：BRAM/URAM + arbitration。
 
+LAB-HW-07 提供的是一个**教学 slice**，不等于正式 MOD-004 已完成：只实现一个 1024 × 32-bit single-port state memory、synchronous read，并通过 AXI BRAM Controller 暴露给 KV260 PS。固定 4 KiB geometry 与 `0xA0000000` platform mapping 只用于教学 memory boundary，不冻结最终 neuron-state record、banking、arbitration 或正式 MOD-004 interface。
+
 ### MOD-005 `spike_fifo`
 职责：缓存待处理 spike events。  
 契约：明确 full/empty/backpressure。
@@ -211,17 +213,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~06 已实现
+    en/             # LAB-HW-00~07 已实现
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04/06 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06/07 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbench
       constraints/  # 冻结的 Bank 45 XDC mapping
       scripts/      # preflight、discovery、build、program helper
-      runtime/      # LAB-HW-05/06 Ubuntu identity、boot evidence 与 MMIO checker
+      runtime/      # LAB-HW-05~07 boot/MMIO/state-memory checker
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -253,7 +255,7 @@ okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~06 的教学/support slice，其中包括 marker/blink RTL、冻结的 Bank 45 physical mapping、PS/Linux image/UART/boot-evidence helper，以及第一条 PS↔PL MMIO loopback 教学路径。LAB-HW-06 包含 `kv260_loopback_transform`、testbench、Vivado build helper 与 runtime checker；这不代表正式 MOD-010、通用 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~07 的教学/support slice。LAB-HW-07 新增 1024 × 32-bit synchronous teaching state store、AXI-BRAM platform build path、runtime multi-address checker 与 resource oracle；这不代表正式 MOD-004 或 MOD-010、通用 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 

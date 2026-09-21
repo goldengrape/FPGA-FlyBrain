@@ -16,6 +16,7 @@ BUILD03 = ROOT / "boards" / "kv260" / "scripts" / "build_lab03_marker.tcl"
 BUILD04 = ROOT / "boards" / "kv260" / "scripts" / "build_lab04_blink.tcl"
 PROGRAM = ROOT / "boards" / "kv260" / "scripts" / "program_bitstream.tcl"
 BUILD06 = ROOT / "boards" / "kv260" / "scripts" / "build_lab06_loopback.tcl"
+BUILD07 = ROOT / "boards" / "kv260" / "scripts" / "build_lab07_bram_state.tcl"
 TCLSH = shutil.which("tclsh")
 
 
@@ -353,4 +354,33 @@ def test_lab06_build_script_freezes_minimal_mmio_transport():
     assert "NEGATIVE_SETUP_SLACK" in text
     assert "NEGATIVE_HOLD_SLACK" in text
     assert text.index("DRC_ERROR_PRESENT") < text.index("write_bitstream -force")
+    assert text.index("NEGATIVE_HOLD_SLACK") < text.index("write_bitstream -force")
+
+
+
+def test_lab07_build_script_freezes_bram_state_path_and_resource_oracle():
+    text = BUILD07.read_text(encoding="utf-8")
+    assert 'set state_base 0xA0000000' in text
+    assert 'set state_range 0x00001000' in text
+    assert 'set state_words 1024' in text
+    assert "CONFIG.PSU__USE__M_AXI_GP0 {1}" in text
+    assert "xilinx.com:ip:axi_bram_ctrl:" in text
+    assert "CONFIG.PROTOCOL {AXI4LITE}" in text
+    assert "CONFIG.SINGLE_PORT_BRAM {1}" in text
+    assert "ps/M_AXI_HPM0_FPD" in text
+    assert "axi_smc/S00_AXI" in text
+    assert "axi_smc/M00_AXI" in text
+    assert "axi_bram/S_AXI" in text
+    assert "axi_bram/BRAM_PORTA" in text
+    assert "state_store/BRAM_PORT" in text
+    assert "assign_bd_address" in text
+    assert "get_bd_addr_spaces ps/Data" in text
+    assert "RAMB18_COUNT" in text
+    assert "RAMB36_COUNT" in text
+    assert "BRAM_PRIMITIVE_COUNT" in text
+    assert "NO_BLOCK_RAM_PRIMITIVE" in text
+    assert "DRC_ERROR_PRESENT" in text
+    assert "NEGATIVE_SETUP_SLACK" in text
+    assert "NEGATIVE_HOLD_SLACK" in text
+    assert text.index("NO_BLOCK_RAM_PRIMITIVE") < text.index("write_bitstream -force")
     assert text.index("NEGATIVE_HOLD_SLACK") < text.index("write_bitstream -force")

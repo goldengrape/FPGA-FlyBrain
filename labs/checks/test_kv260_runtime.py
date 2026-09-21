@@ -15,6 +15,7 @@ HASH_IMAGE = RUNTIME / "hash_image.py"
 IMAGE_MANIFEST = RUNTIME / "ubuntu24_image.json"
 COLLECT_BOOT_INFO = RUNTIME / "collect_boot_info.sh"
 LOOPBACK = RUNTIME / "loopback_mmio.py"
+STATE_BRAM = RUNTIME / "state_bram_mmio.py"
 
 
 def test_image_manifest_freezes_identity_without_inventing_checksum():
@@ -166,3 +167,65 @@ def test_loopback_cli_does_not_expose_arbitrary_physical_base():
     assert 'MMIO_BASE = 0xA0010000' in text
     assert 'parser.add_argument("--base"' not in text
     assert "TRANSPORT_REQUIRES_ROOT" in text
+
+
+
+def test_state_bram_dry_run_checks_multiple_addresses_and_rewrite(tmp_path):
+    trace = tmp_path / "lab-hw-07-trace.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(STATE_BRAM),
+            "--dry-run",
+            "--json-out",
+            str(trace),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "FPGA_FLYBRAIN_LAB=LAB-HW-07" in result.stdout
+    assert "state_base=0xa0000000" in result.stdout.lower()
+    assert "STATE_WORDS=1024" in result.stdout
+    assert "STATE_BYTES=4096" in result.stdout
+    assert "TRANSPORT=DRY_RUN_MODEL" in result.stdout
+    assert "CHECKED_READS=14" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+
+    payload = json.loads(trace.read_text(encoding="utf-8"))
+    assert payload["lab_id"] == "LAB-HW-07"
+    assert payload["state_base"] == 0xA0000000
+    assert payload["state_words"] == 1024
+    assert payload["state_bytes"] == 4096
+    assert len(payload["trace"]) == 14
+    final = {
+        row["index"]: row["read"]
+        for row in payload["trace"]
+        if row["phase"] == "REWRITE_PRESERVATION"
+    }
+    assert final[1] == 0x01020304
+    assert final[511] == 0xCAFEBABE
+    assert final[7] == 0x55667788
+    assert final[1023] == 0xFFFFFFFF
+
+
+def test_state_bram_reports_missing_transport_before_mapping(tmp_path):
+    missing = tmp_path / "no-dev-mem"
+    result = subprocess.run(
+        [sys.executable, str(STATE_BRAM), "--device", str(missing)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 3
+    assert "ERROR=TRANSPORT_DEVICE_MISSING" in result.stdout
+
+
+def test_state_bram_cli_freezes_window_and_no_arbitrary_base():
+    text = STATE_BRAM.read_text(encoding="utf-8")
+    assert "STATE_BASE = 0xA0000000" in text
+    assert "STATE_WORDS = 1024" in text
+    assert 'parser.add_argument("--base"' not in text
+    assert "TRANSPORT_REQUIRES_ROOT" in text
+    assert "STATE_READBACK_OR_ALIAS_MISMATCH" in text

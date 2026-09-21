@@ -1,4 +1,4 @@
-"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-06."""
+"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-07."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ LABS = [
     "04_clock_reset_io.ipynb",
     "05_ps_linux_first_boot.ipynb",
     "06_host_pl_loopback.ipynb",
+    "07_bram_neuron_state.ipynb",
 ]
 
 
@@ -137,9 +138,9 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
 def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06", "LAB-HW-07"):
             assert lab in text
-        assert "LAB-HW-07~10" in text
+        assert "LAB-HW-08~10" in text
 
 
 def test_trace_register_points_to_implemented_labs():
@@ -152,6 +153,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/en/04_clock_reset_io.ipynb",
             "labs/en/05_ps_linux_first_boot.ipynb",
             "labs/en/06_host_pl_loopback.ipynb",
+            "labs/en/07_bram_neuron_state.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
@@ -161,6 +163,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/zh/04_clock_reset_io.ipynb",
             "labs/zh/05_ps_linux_first_boot.ipynb",
             "labs/zh/06_host_pl_loopback.ipynb",
+            "labs/zh/07_bram_neuron_state.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -314,3 +317,33 @@ def test_lab06_freezes_minimal_ps_pl_roundtrip_without_turning_into_axi_course()
             assert "performance" in text.lower()
         else:
             assert "性能" in text
+
+
+
+def test_lab07_freezes_bram_state_geometry_and_resource_oracle():
+    required = (
+        "1024",
+        "32",
+        "4 KiB",
+        "0xA0000000",
+        "M_AXI_HPM0_FPD",
+        "AXI BRAM Controller",
+        "kv260_neuron_state_store",
+        "build_lab07_bram_state.tcl",
+        "state_bram_mmio.py",
+        "BRAM_PRIMITIVE_COUNT",
+        "RAMB18",
+        "RAMB36",
+        "synchronous",
+        "read-first",
+        "T-HW-007",
+        "T-HW-011",
+    )
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "07_bram_neuron_state.ipynb"))
+        for marker in required:
+            assert marker in text
+        assert "DDR" in text
+        assert "LAB-HW-08" in text
+        assert "--base" not in text
+        assert "<svg " in text

@@ -61,7 +61,7 @@
 | LAB-HW-04 | clock/design-local reset/I/O constraints | T-HW-004/T-HW-011 | RMD-012A | `labs/zh/04_clock_reset_io.ipynb` + `boards/kv260/rtl/kv260_blink_core.sv` |
 | LAB-HW-05 | PS/Linux first boot + UART console | T-HW-005/T-HW-011 | RMD-012B | `labs/zh/05_ps_linux_first_boot.ipynb` + `boards/kv260/runtime/` |
 | LAB-HW-06 | real host↔PL loopback | T-HW-006/T-HW-011 | RMD-012B | `labs/zh/06_host_pl_loopback.ipynb` + `boards/kv260/rtl/kv260_loopback_transform.sv` + `boards/kv260/runtime/loopback_mmio.py` |
-| LAB-HW-07 | BRAM neuron-state store | T-HW-007/T-HW-011 | RMD-013 | planned `labs/zh/07_*` |
+| LAB-HW-07 | BRAM neuron-state store | T-HW-007/T-HW-011 | RMD-013 | `labs/zh/07_bram_neuron_state.ipynb` + `boards/kv260/rtl/kv260_neuron_state_store.sv` + `boards/kv260/runtime/state_bram_mmio.py` |
 | LAB-HW-08 | small FlyBrain FPGA replay | T-HW-008/T-HW-011 | RMD-013 | planned `labs/zh/08_*` |
 | LAB-HW-09 | DDR integrity + real measurement | T-HW-009/T-HW-011 | RMD-014 | planned `labs/zh/09_*` |
 | LAB-HW-10 | AXI/burst measurement | T-HW-010/T-HW-011 | RMD-014A | planned `labs/zh/10_*` |
@@ -187,7 +187,7 @@ DP：PDP1
 - LSN-009~012：第三组双语课程已建立；Python teaching models 不代表 MOD-004~009 已完成
 - LSN-013~018：第四组双语课程已建立；概念 Notebook 不代表实体平台实现已完成
 - Reference board：**AMD Kria KV260 Vision AI Starter Kit** 已冻结
-- LAB-HW-00~10：Physical Lab 教学结构、RMD 映射与 T-HW oracle 已冻结；**LAB-HW-00~06** 已建立双语 Notebook 与 CI contract checks；LAB-HW-03/04 已加入 board-specific RTL、Bank 45 XDC、build/program helper 与 open-source self-checking simulation；LAB-HW-05 已加入 image identity、UART 与 boot-evidence helper；LAB-HW-06 已加入冻结的 PS→PL AXI-GPIO 教学路径、transform RTL/testbench、Vivado build contract 与 self-checking MMIO helper。当前不宣称真实 KV260 T-HW-006 或真实 Vivado LAB-HW-06 full build 已通过；LAB-HW-07~10 仍待实现
+- LAB-HW-00~10：Physical Lab 教学结构、RMD 映射与 T-HW oracle 已冻结；**LAB-HW-00~07** 已建立双语 Notebook 与 CI contract checks；LAB-HW-07 已加入 1024 × 32-bit synchronous BRAM 教学 store、`0xA0000000` AXI BRAM Controller platform path、resource oracle、RTL testbench 与 multi-address runtime self-check。当前不宣称真实 KV260 T-HW-007 或真实 Vivado LAB-HW-07 full build 已通过；LAB-HW-08~10 仍待实现
 - LSN-019~023：第五组双语课程已建立；connectome teaching fixture、synthetic scale/benchmark 与 toy closed loop 不代表 RMD-017~028 的正式数据 artifact、全系统实现或真实性能结论已完成
 - TRACE：已同步工程路径与教学路径至 LSN-023
 - First formal implementation slice：not started

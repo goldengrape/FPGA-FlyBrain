@@ -302,19 +302,34 @@ runtime access 使用 Python `mmap` 访问固定的 `/dev/mem` MMIO region，因
 
 ### LAB-HW-07 — BRAM neuron state / 第一次使用真实片上 RAM resource
 
-**主要新操作：** 把 L9 的抽象 `state[address]` 映射为真实 FPGA on-chip memory。
+**前置：** LSN-009、LAB-HW-06，以及 LAB-HW-06 已建立的 PS/Linux runtime path。
 
-只要求：
+**本 Lab 只新增一个主要操作：** 把 Lesson 9 的抽象 `state[address]` 变成 KV260 上真实、可寻址的片上 Block RAM（BRAM）state store。
 
-- register array 与 block RAM 的角色差异；
-- address；
-- read/write；
-- 本实现实际采用的 synchronous read behavior；
-- synthesis/resource report 中确认 memory resource。
+先冻结教学 memory contract，再谈网络：
 
-不展开 primitive 全参数、ECC 或复杂多端口仲裁。
+- state word：**32 bits**；
+- depth：**1024 words**；
+- logical capacity：**4096 bytes（4 KiB）**；
+- word index：`0..1023`；
+- PS-visible base：**`0xA0000000`**；
+- state word `i` 的 byte offset：`4 * i`；
+- physical path：PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → `kv260_neuron_state_store`；
+- native memory behavior：**synchronous read**；教学 RTL 在同周期读写同一地址时采用 read-first semantics；
+- implementation intent：`(* ram_style = "block" *)`，Vivado resource oracle 要求至少出现一个 RAMB18/RAMB36 primitive。
 
-**通过证据：** 多地址 state 的读写结果正确，resource report 与设计预期一致。
+base address 沿用 AMD/Xilinx K26 `base_gpio_bram` reference 的 BRAM region：`0xA0000000`。runtime helper 继续复用 LAB-HW-06 的 fixed `/dev/mem` 教学 transport，但只映射这 4 KiB state window。
+
+这里必须把两类 proof 分开：
+
+1. **cycle-level proof：** SystemVerilog testbench 证明 native BRAM 是同步读；先给 address，再经过 clocked memory operation 才得到对应 read data。
+2. **board-level proof：** PS/Linux 向多个 word index 写入不同 32-bit state，再通过 AXI BRAM Controller 读回。它证明“真实片上 memory 可寻址”，**不**把 Python/MMIO 的软件延迟冒充成“一个 clock cycle”。
+
+实体 self-check 会覆盖低地址、中间地址和最后地址，再改写部分位置，并确认未改写的 neighbor state 没有被破坏。address alias、错误数据与 transport failure 必须分开分类。
+
+本 Lab **不**加入 LAB-HW-08 的 network/spike replay，不教 DDR/performance measurement、ECC、复杂 dual-port arbitration，也不要求学生手工实例化 BRAM primitive。
+
+**通过证据：** LAB-HW-07 bitstream SHA-256；Vivado build/program log；DRC/timing report；显示 block-RAM primitive 非零的 resource report；冻结的 base/window/word geometry；runtime helper hash；每个 address/write/read triple；rewrite + neighbor-preservation trace；最终 `STATUS=PASS`；Git commit；OS/image identity；board/carrier revision。Cloud simulation/resource-contract check 不能替代真实 T-HW-007 board evidence。
 
 ### LAB-HW-08 — Small FlyBrain replay / 小网络第一次跑在真实 FPGA
 

@@ -144,34 +144,31 @@ If a step is revision-specific, the lab must state that explicitly.
 
 ## 7. What the implemented Physical-Lab slice now freezes — and what remains provisional
 
-The documentation-first decision has now advanced through the implemented **LAB-HW-00~06** teaching slice.
+The documentation-first decision has now advanced through the implemented **LAB-HW-00~07** teaching slice.
 
 The repository now freezes:
 
 - reference target part: `xck26-sfvc784-2LV-c`;
-- LAB-HW-03 board-visible logical output: `bank45_gpio[4:0]`;
-- Bank 45 XDC mapping for those five logical bits;
-- LAB-HW-04 platform clock source: PS `pl_clk0`, taught as nominal 100 MHz;
-- LAB-HW-04 platform reset source: PS `pl_resetn0`;
-- LAB-HW-04 design-local active-low reset: `proc_sys_reset/peripheral_aresetn` delivered to the teaching RTL;
-- direct Vivado/JTAG as the LAB-HW-03/04/06 programming path;
-- the evidence rule that direct-JTAG programming is proven by Vivado/device status plus the design's own observable/readback evidence, not by DS34 alone;
-- LAB-HW-05 distribution: **Ubuntu Server 24.04 LTS** for the AMD Kria K26 starter-kit path;
-- LAB-HW-05 authoring image identity: `iot-limerick-kria-classic-server-2404-classic-24.04-x07-20250423.img.xz`;
-- LAB-HW-05 physical path: J11 microSD + J4 FTDI USB UART + J12 12 V / 3 A board power;
-- LAB-HW-05 UART contract: 115200 baud, 8 data bits, no parity, 1 stop bit, and no flow control;
-- LAB-HW-06 hardware path: PS `M_AXI_HPM0_FPD` → SmartConnect → dual-channel AXI GPIO → `kv260_loopback_transform`;
-- LAB-HW-06 AXI GPIO base: `0xA0010000`, matching AMD/Xilinx K26 `base_gpio_bram`; Channel 1 `GPIO_DATA` is `+0x0`, Channel 2 `GPIO2_DATA` is `+0x8`;
-- LAB-HW-06 semantic contract: `read = (write + 1) mod 2^32`;
-- LAB-HW-06 teaching software transport: a fixed-address, root-only Python `/dev/mem` mapping. The helper intentionally does not expose arbitrary physical base addresses.
+- LAB-HW-03 board-visible logical output and Bank 45 XDC mapping;
+- LAB-HW-04 PS `pl_clk0` / `pl_resetn0` clock-reset teaching path;
+- direct Vivado/JTAG programming for LAB-HW-03/04/06/07;
+- LAB-HW-05 Ubuntu Server 24.04 LTS first-boot/UART path;
+- LAB-HW-06 PS `M_AXI_HPM0_FPD` → SmartConnect → AXI GPIO teaching loopback at `0xA0010000`;
+- LAB-HW-07 teaching state geometry: **1024 × 32-bit words = 4 KiB**;
+- LAB-HW-07 PS-visible BRAM base: **`0xA0000000`**, matching the BRAM region in AMD/Xilinx's K26 `base_gpio_bram` reference;
+- LAB-HW-07 hardware path: PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → `kv260_neuron_state_store`;
+- LAB-HW-07 native memory semantics: synchronous read and read-first behavior for same-cycle read/write;
+- LAB-HW-07 implementation intent/resource oracle: `ram_style="block"` plus at least one implemented RAMB18/RAMB36 primitive;
+- LAB-HW-07 runtime oracle: separated multi-address write/read, selected rewrite, and untouched-neighbor preservation through a fixed 4 KiB MMIO window.
 
 The following are **not yet promoted to tested physical facts**:
 
-- the exact physically observed silkscreen LED designator and visible polarity for each Bank 45 bit;
+- the exact physically observed visible-polarity details for the early Bank 45 marker;
 - Vivado 2026.1 as the tested/supported course baseline rather than the current authoring candidate;
-- a trusted expected SHA-256 for the LAB-HW-05 Ubuntu archive. The visible upstream download directory used during authoring did not publish one, so `ubuntu24_image.json` intentionally keeps `expected_sha256: null`; local hashes are recorded as `RECORDED_UNVERIFIED`, and formal T-HW-005 image-hash PASS remains blocked;
-- whether the selected Ubuntu 24.04 image/kernel permits the frozen LAB-HW-06 `/dev/mem` mapping on a real KV260. If policy blocks it, T-HW-006 remains blocked and the repository transport must be revised without weakening system security;
-- the later formal MOD-010 software stack and DDR access software stack.
+- a trusted expected SHA-256 for the LAB-HW-05 Ubuntu archive;
+- whether the selected Ubuntu 24.04 image/kernel permits the fixed `/dev/mem` teaching mappings on a real KV260; if policy blocks them, the relevant T-HW checkpoint remains blocked and the repository transport must be revised without weakening system security;
+- a real Vivado LAB-HW-07 build proving the BRAM interface grouping, timing, DRC, and non-zero RAMB resource on the target device;
+- the final formal MOD-004 state record, banking, arbitration, BRAM/URAM strategy, and the later formal MOD-010/DDR software stack.
 
 Those remaining facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit and artifact.
 

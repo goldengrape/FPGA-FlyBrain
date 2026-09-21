@@ -75,6 +75,8 @@ Responsibility: store many virtual-neuron states and support banked access.
 Initial: BRAM/behavioral memory.  
 Later: BRAM/URAM + arbitration.
 
+LAB-HW-07 provides a **teaching slice**, not the completed formal MOD-004: one 1024 × 32-bit single-port state memory with synchronous read, exposed to the KV260 PS through an AXI BRAM Controller. Its fixed 4 KiB geometry and `0xA0000000` platform mapping teach the memory boundary; they do not freeze the final neuron-state record, banking scheme, arbitration, or formal MOD-004 interface.
+
 ### MOD-005 `spike_fifo`
 Responsibility: buffer pending spike events.  
 Contract: explicit full/empty/backpressure behavior.
@@ -211,17 +213,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~06 implemented
+    en/             # LAB-HW-00~07 implemented
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04/06 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06/07 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbenches
       constraints/  # frozen Bank 45 XDC mapping
       scripts/      # preflight, discovery, build, and program helpers
-      runtime/      # LAB-HW-05/06 Ubuntu identity, boot evidence, and MMIO checker
+      runtime/      # LAB-HW-05~07 boot/MMIO/state-memory checkers
       evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
@@ -253,7 +255,7 @@ okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/` implement the LAB-HW-00~06 teaching/support slice, including marker/blink RTL, frozen Bank 45 physical mapping, PS/Linux image/UART/boot-evidence helpers, and the first PS↔PL MMIO loopback teaching path. LAB-HW-06 includes `kv260_loopback_transform`, its testbench, Vivado build helper, and the runtime checker. This does not declare formal MOD-010, the general KV260 platform shell, MOD-003, or any later formal hardware module complete.
+Current `labs/` and `boards/kv260/` implement the LAB-HW-00~07 teaching/support slice. LAB-HW-07 adds a 1024 × 32-bit synchronous teaching state store, AXI-BRAM platform build path, runtime multi-address checker, and resource oracle. This does not declare formal MOD-004 or MOD-010, the general KV260 platform shell, MOD-003, or any later formal hardware module complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
