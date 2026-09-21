@@ -293,21 +293,51 @@ Pass criteria:
 
 ### RMD-014A AXI burst practical bridge
 
-Major new concept: **move contiguous data efficiently through standardized bus transactions**.
+Major new concept: **transaction granularity and access ordering change effective DMA throughput even when total bytes and hardware are held constant**.
 
-This maps to **LAB-HW-10**. Learn only the project-required AXI subset and compare small/scattered versus burst-oriented transfers on a real KV260. The required objective is “use + measure”; implementing a complete AXI master from scratch is optional.
+This maps to **LAB-HW-10**. The Lab uses AMD AXI CDMA rather than requiring the learner to hand-write a complete AXI master.
 
-Default measurement protocol:
-- same bitstream, data volume, payload, and measurement boundary;
+Freeze the first real PL→DDR benchmark as:
+
+```text
+PS/Linux programs AXI CDMA
+        ↓
+AXI CDMA M_AXI
+        ↓
+PS S_AXI_HP0_FPD
+        ↓
+DDR
+```
+
+The buffer contract is intentionally explicit because `S_AXI_HP0_FPD` is non-coherent. Physical runs use a course-approved u-dma-buf allocation opened with `O_SYNC`; ordinary cached Python memory is not accepted as a DMA buffer.
+
+Workload contract:
+- one bitstream and one 2 MiB-or-larger DMA-safe buffer;
+- 256 KiB deterministic payload;
+- contiguous pattern = one 256 KiB CDMA request;
+- small/scattered pattern = 1024 × 256-byte requests in a frozen deterministic permutation;
+- timer includes Python register programming/polling plus DMA completion;
+- both patterns must pass byte-for-byte integrity before and after benchmark batches.
+
+Default benchmark protocol:
 - 5 warm-up runs excluded from statistics;
-- at least 20 measured repetitions per access pattern;
-- median as the primary result, retaining all raw samples plus min/max;
-- repeat a second batch in the same session; the two medians must differ by ≤10% to call the measurement reproducible, otherwise label it `measurement unstable`;
-- state whether host/software overhead is inside the timer.
+- 20 measured repetitions per pattern;
+- median as primary result, retain min/max and every raw sample;
+- repeat a second batch in the same session;
+- median difference between batches must be ≤10% for both patterns;
+- unstable measurements retain evidence but support no performance conclusion.
+
+This is an end-to-end **software-controlled DMA workload** comparison, not a peak-DDR specification measurement and not a CPU/GPU/FPGA benchmark.
 
 Pass criteria:
-- at least two access patterns satisfy the reproducible-measurement protocol;
-- workload contract is explicit and no single measurement is generalized into “AXI/FPGA is faster.”
+- AXI CDMA build contract uses 128-bit data, max burst 64, Simple DMA, and `S_AXI_HP0_FPD`;
+- fixed control base `0xA0020000`;
+- DMA-safe buffer/cache-mode preflight passes;
+- identical source/destination payload checks pass for both patterns;
+- all raw samples and two batch summaries are retained;
+- both patterns satisfy the ≤10% stability gate;
+- only then may the contiguous/scattered median ratio be reported;
+- physical T-HW-010 PASS requires real KV260 evidence.
 
 ### RMD-015 Move synapse store to DDR
 Replace the storage backend without changing `IF-SYNAPSE-STREAM`.  
