@@ -19,6 +19,7 @@ STATE_BRAM = RUNTIME / "state_bram_mmio.py"
 REPLAY_REF = RUNTIME / "lab08_replay_reference.py"
 REPLAY_CHECKER = RUNTIME / "small_replay_mmio.py"
 REPLAY_FIXTURE = ROOT / "boards" / "kv260" / "fixtures" / "lab08_four_neuron_replay_v1.json"
+DDR_INTEGRITY = RUNTIME / "ddr_integrity.py"
 
 
 def test_image_manifest_freezes_identity_without_inventing_checksum():
@@ -309,3 +310,70 @@ def test_lab08_checker_freezes_addresses_and_no_arbitrary_base():
     assert "ENGINE_ALREADY_BUSY" in text
     assert "ENGINE_TIMEOUT" in text
     assert "REPLAY_DIFFERENTIAL_MISMATCH" in text
+
+
+
+def test_lab09_ddr_integrity_dry_run_passes_and_records_scope(tmp_path):
+    out = tmp_path / "lab-hw-09-dry-run.json"
+    result = subprocess.run(
+        [sys.executable, str(DDR_INTEGRITY), "--dry-run", "--json-out", str(out)],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "FPGA_FLYBRAIN_LAB=LAB-HW-09" in result.stdout
+    assert "MODE=DRY_RUN_HOST_MEMORY_MODEL" in result.stdout
+    assert "TEST_BYTES=4194304" in result.stdout
+    assert "CHUNK_BYTES=1048576" in result.stdout
+    assert "CHUNK_COUNT=4" in result.stdout
+    assert "INTEGRITY=PASS" in result.stdout
+    assert "PERFORMANCE_BLOCKED=0" in result.stdout
+    assert "HOST_PATH_WRITE_MIB_PER_S=" in result.stdout
+    assert "HOST_PATH_READ_MIB_PER_S=" in result.stdout
+    assert "BANDWIDTH_SCOPE=HOST_PATH_OBSERVATION_NOT_PEAK_DDR_OR_PL_AXI" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["lab_id"] == "LAB-HW-09"
+    assert payload["byte_count"] == 4 * 1024 * 1024
+    assert payload["chunk_bytes"] == 1024 * 1024
+    assert payload["integrity_pass"] is True
+    assert payload["performance_blocked"] is False
+    assert payload["expected_sha256"] == payload["observed_sha256"]
+
+
+def test_lab09_corruption_blocks_performance_claims(tmp_path):
+    out = tmp_path / "corrupt.json"
+    result = subprocess.run(
+        [sys.executable, str(DDR_INTEGRITY), "--dry-run", "--inject-corruption-for-test", "--json-out", str(out)],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 6
+    assert "INTEGRITY=FAIL" in result.stdout
+    assert "PERFORMANCE_BLOCKED=1" in result.stdout
+    assert "ERROR=DDR_INTEGRITY_MISMATCH" in result.stdout
+    assert "HOST_PATH_WRITE_MIB_PER_S=" not in result.stdout
+    assert "HOST_PATH_READ_MIB_PER_S=" not in result.stdout
+    assert "STATUS=FAIL" in result.stdout
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["integrity_pass"] is False
+    assert payload["performance_blocked"] is True
+    assert payload["mismatch"] is not None
+
+
+def test_lab09_physical_injection_is_rejected():
+    result = subprocess.run(
+        [sys.executable, str(DDR_INTEGRITY), "--physical", "--inject-corruption-for-test"],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 2
+    assert "ERROR=INJECTION_NOT_ALLOWED_PHYSICAL" in result.stdout
+
+
+def test_lab09_helper_freezes_geometry_and_avoids_raw_physical_ddr():
+    text = DDR_INTEGRITY.read_text(encoding="utf-8")
+    assert "PHYSICAL_BYTES = 64 * 1024 * 1024" in text
+    assert "CHUNK_BYTES = 1 * 1024 * 1024" in text
+    assert "PAYLOAD_ID = \"shake256-chunk-index-v1\"" in text
+    assert 'parser.add_argument("--bytes"' not in text
+    assert 'Path("/dev/mem")' not in text
+    assert "NOT_KV260_RUNTIME_ENVIRONMENT" in text
+    assert "BANDWIDTH_SCOPE=HOST_PATH_OBSERVATION_NOT_PEAK_DDR_OR_PL_AXI" in text
