@@ -91,6 +91,17 @@ def test_lab07_bram_state_store(tmp_path):
 
 
 @pytest.mark.skipif(IVERILOG is None or VVP is None, reason="Icarus Verilog is not installed")
+def test_lab08_replay_state_store_dualport_contract(tmp_path):
+    stdout = _simulate(
+        tmp_path,
+        "kv260_replay_state_store_dualport_tb",
+        "boards/kv260/rtl/kv260_replay_state_store.sv",
+        "boards/kv260/tb/kv260_replay_state_store_dualport_tb.sv",
+    )
+    assert "PASS: kv260_replay_state_store same-clock dual-port teaching contract" in stdout
+
+
+@pytest.mark.skipif(IVERILOG is None or VVP is None, reason="Icarus Verilog is not installed")
 def test_lab08_small_replay_matches_lesson12_trace(tmp_path):
     out = tmp_path / "kv260_small_replay_engine_tb"
     compile_result = subprocess.run(

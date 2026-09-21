@@ -13,7 +13,7 @@ LEARNING_PATH.md
     ↓ 定义概念顺序、术语引入顺序与学习目标
 Jupyter Notebook lessons
     ↓ 像教材一样解释 + 像实验室一样运行 + AI 协作 + 人类检查
-正式工程文件（python/ rtl/ tb/ tests/）
+正式工程文件（例如规划中的 python/、现有 rtl/、tb/ 与各层 checks/）
     ↓ 可测试、可复用、可进入 CI 的实现
 ```
 
@@ -306,5 +306,5 @@ Notebook imports formal module for teaching and experiments
 - LSN-009~012：第三组双语 Notebook 已建立；先用小规模 Python event-machine 实验讲清 time multiplexing、FIFO/backpressure、sparse lookup 与 event-driven causal chain，不宣称 MOD-004~009 已完成。
 - LSN-013~018：第四组双语 Notebook 已建立；正式作业仍可无板完成，但 **KV260 Physical Lab Track（LAB-HW-00~10）已在文档层冻结为正式学习路径**，不再把实体 FPGA/DDR 实验仅作为可选“工程延伸”。
 - LSN-019~023：第五组双语 Notebook 与独立作业已建立；connectome teaching fixture、synthetic scaling/benchmark 数字与 toy closed loop 只教学 contract，不冒充 RMD-017~028 的正式 MaleCNS artifact、全系统结果或真实性能 measurement。
-- KV260 reference board 与 `LAB-HW-00~10` 的教学/验收规范已完成 documentation-first 决策。**LAB-HW-00~04** 已建立双语 Lab Notebook 与 CI contract；LAB-HW-03/04 已加入首批 board-specific RTL、经文档冻结的 Bank 45 XDC mapping、Vivado build/program helper 与 open-source self-checking RTL simulation。这不代表真实 KV260 或真实 Vivado full build 已通过；LAB-HW-05~10 尚未实现。
+- KV260 reference board 与 `LAB-HW-00~10` 的教学/验收规范已完成 documentation-first 决策。**LAB-HW-00~10 均已建立双语 Lab Notebook、board-support/runtime helper 与 CI contract checks**；LAB-HW-03~08 包含对应教学 RTL/runtime 路径，LAB-HW-09/10 包含 DDR integrity 与 AXI CDMA/u-dma-buf 路径。当前仍不宣称真实 KV260 T-HW physical PASS，也不宣称 Vivado authoring candidate 已升级为 tested/supported baseline。
 - 第一项正式工程实现仍为 `RMD-001`，尚未声明完成。

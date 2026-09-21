@@ -86,7 +86,7 @@ Tasks: RMD-001, 002, 003, 003A, 004, 005, 005A
 Requirement: only downstream connections of an actual spike are processed.  
 FR: FR4/FR5  
 DP: DP4/DP5  
-Modules: MOD-005, 006, 007, 008  
+Modules: MOD-005, MOD-006, MOD-007, MOD-008  
 Tests: T-007~T-010  
 Tasks: RMD-007A, 008~011
 

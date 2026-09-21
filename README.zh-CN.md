@@ -35,7 +35,7 @@ Jupyter Notebook 被当作真正的教材章节，而不是代码外面包几句
 
 ## 快速开始：本地运行环境
 
-本项目使用 [uv](https://github.com/astral-sh/uv) 统一管理 Python 依赖、虚拟环境与 Jupyter 运行流程。克隆仓库后，无需手动建立 Conda 环境或逐个执行 `pip install`。
+本项目要求 **Python 3.11 或更高版本**，并使用 [uv](https://github.com/astral-sh/uv) 统一管理 Python 依赖、虚拟环境与 Jupyter 运行流程。克隆仓库后，无需手动建立 Conda 环境或逐个执行 `pip install`。
 
 ### 1. 同步依赖
 
@@ -87,7 +87,7 @@ uv run jupyter lab
 
 ### 4. 注册课程专属内核（必须）
 
-课程与作业 Notebook 的元数据指定了 `fpga-flybrain` 内核，因此第一次使用前需要先注册它。JupyterLab 在交互界面里有时可以通过手动选择其他内核恢复，但 `nbconvert --execute` 这类无交互执行会在缺少该内核时直接报 `NoSuchKernel`。
+Exercise、Physical Lab，以及第 13–23 课 Notebook 的元数据指定了 `fpga-flybrain` 内核，因此第一次进入这些内容前需要注册它。较早的第 1–12 课仍使用标准 `python3` kernelspec；两者都应由同一个 `uv` 项目环境启动。对声明为 `fpga-flybrain` 的 Notebook，缺少该内核时 `nbconvert --execute` 会直接报 `NoSuchKernel`。
 
 执行：
 

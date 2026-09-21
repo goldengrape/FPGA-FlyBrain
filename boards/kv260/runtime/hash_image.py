@@ -33,9 +33,15 @@ def main() -> int:
         print(f"IMAGE={args.image}")
         return 2
 
-    manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
-    expected_name = manifest["image_filename"]
-    expected_hash = manifest.get("expected_sha256")
+    try:
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        expected_name = manifest["image_filename"]
+        expected_hash = manifest.get("expected_sha256")
+    except (OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError) as exc:
+        print("STATUS=FAIL")
+        print("ERROR=MANIFEST_INVALID")
+        print(f"DETAIL={exc}")
+        return 2
 
     actual_hash = sha256_file(args.image)
     size = args.image.stat().st_size

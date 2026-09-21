@@ -108,6 +108,14 @@ uv run python -c "import shutil; print(shutil.which('yosys'))"
 
 The second command should print a real path to `yosys`, not `None`.
 
+### One known OSS Icarus diagnostic
+
+With newer OSS CAD Suite / Icarus 14, the LAB-HW-08 replay engine may print a message similar to:
+
+`constant selects in always_* processes are not fully supported`
+
+This means Icarus is using a conservative sensitivity treatment for a function argument inside `always_comb`; it can cause extra combinational reevaluation but does not change the current fixed-replay result. The course still uses the self-checking testbench `PASS` / `$fatal` outcome as the behavioral oracle. Other compile/runtime errors must not be dismissed as this known diagnostic.
+
 If you have already completed Lessons 6–8, you can also run the full teaching RTL check:
 
 ```bash

@@ -13,7 +13,7 @@ LEARNING_PATH.md
     ↓ defines concept order, terminology order, and learning objectives
 Jupyter Notebook lessons
     ↓ textbook-style explanation + laboratory-style execution + AI collaboration + human checks
-formal engineering files (python/ rtl/ tb/ tests/)
+formal engineering files (for example planned python/, existing rtl/ and tb/, plus layered checks/)
     ↓ testable, reusable implementations that can enter CI
 ```
 
@@ -306,5 +306,5 @@ Notebook imports formal module for teaching and experiments
 - LSN-009~012: the third bilingual Notebook block is established; small Python event-machine experiments teach time multiplexing, FIFO/backpressure, sparse lookup, and the event-driven causal chain without declaring MOD-004~009 complete.
 - LSN-013~018: the fourth bilingual Notebook block is established; formal exercises remain board-independent, but the **KV260 Physical Lab Track (LAB-HW-00~10) is now a formal documented learning path** rather than an optional engineering extension.
 - LSN-019~023: the fifth bilingual Notebook and exercise block is established; connectome teaching fixtures, synthetic scaling/benchmark numbers, and the toy closed loop teach contracts without impersonating RMD-017~028 formal MaleCNS artifacts, full-system results, or real performance measurements.
-- The KV260 reference board and `LAB-HW-00~10` teaching/acceptance standards are frozen. **LAB-HW-00~04** now have bilingual Lab Notebooks and CI contracts; LAB-HW-03/04 add the first board-specific RTL, reviewed Bank 45 XDC mapping, Vivado build/program helpers, and open-source self-checking RTL simulations. This does not claim a real-KV260 pass or a real Vivado full-build pass; LAB-HW-05~10 remain unimplemented.
+- The KV260 reference board and `LAB-HW-00~10` teaching/acceptance standards are frozen. **All LAB-HW-00~10 now have bilingual Lab Notebooks, board-support/runtime helpers, and CI contract checks**; LAB-HW-03~08 include the corresponding teaching RTL/runtime paths, while LAB-HW-09/10 include DDR integrity and AXI CDMA/u-dma-buf paths. This still does not claim a real-KV260 T-HW physical PASS, nor does it promote the Vivado authoring candidate to a tested/supported baseline.
 - First formal implementation remains `RMD-001`; it is not yet declared complete.

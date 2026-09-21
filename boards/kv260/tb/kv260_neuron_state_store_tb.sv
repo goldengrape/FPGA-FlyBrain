@@ -34,6 +34,25 @@ module kv260_neuron_state_store_tb;
         end
     endtask
 
+    task automatic rejected_partial_write(
+        input logic [9:0] index,
+        input logic [3:0] byte_enable,
+        input logic [31:0] value
+    );
+        begin
+            @(negedge bram_clk);
+            bram_en = 1'b1;
+            bram_we = byte_enable;
+            bram_addr = {20'd0, index, 2'b00};
+            bram_wrdata = value;
+            @(posedge bram_clk);
+            #1;
+            @(negedge bram_clk);
+            bram_en = 1'b0;
+            bram_we = 4'h0;
+        end
+    endtask
+
     task automatic read_word(input logic [9:0] index, input logic [31:0] expected);
         logic [31:0] before_edge;
         begin
@@ -118,6 +137,12 @@ module kv260_neuron_state_store_tb;
 
         check_read_first(10'd31, 32'h89abcdef, 32'hcafebabe);
         read_word(10'd31, 32'hcafebabe);
+
+        // Partial writes are deliberately outside this teaching contract.
+        // Prove that they are rejected rather than silently changing bytes.
+        rejected_partial_write(10'd7, 4'b0001, 32'h000000aa);
+        rejected_partial_write(10'd7, 4'b1100, 32'hbbbb0000);
+        read_word(10'd7, 32'h55667788);
 
         // Neighbor preservation catches accidental address aliasing.
         read_word(10'd7,    32'h55667788);
