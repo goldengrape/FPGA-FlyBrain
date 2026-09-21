@@ -216,17 +216,26 @@ LAB-HW-06 通过标准：
 
 ### RMD-013 Run small network on FPGA
 
-先用 **LAB-HW-07** 把 L9 的抽象 neuron state memory 映射到真实片上 BRAM resource，再用 **LAB-HW-08** 迁移平台 3 已验证的小网络。
+分成两个互相独立的 Physical Lab slice。
 
-LAB-HW-07 只学习本设计需要的 address/read/write/synchronous-read behavior 与 resource report，不展开 BRAM primitive 全参数。
+**LAB-HW-07 — BRAM neuron state** 只冻结后续 network 所需的 memory substrate：
 
-LAB-HW-08 使用同一 fixed input/seed，把 KV260 输出与 Python fixed-point reference 做 L5 replay。
+- 1024 × 32-bit state word；
+- PS-visible 4 KiB window，base 为 `0xA0000000`；
+- PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → teaching state-store RTL；
+- native synchronous read；
+- block-RAM synthesis intent，以及 RAMB18/RAMB36 非零的 resource oracle；
+- 固定 multi-address write/read/rewrite self-check。
+
+LAB-HW-07 **不**声明完整 MOD-004 已完成。它只是 board-level teaching slice，用一个简单 memory geometry 证明 address/read/write/synchronous-read/resource 这些概念。banking、arbitration、更宽 neuron record、ECC 与最终正式 state layout 留给后续设计。
+
+**LAB-HW-08 — Small FlyBrain replay** 再复用已经验证的 state-memory path，把平台 3 的小网络迁移到硬件。使用同一 fixed input/seed，并把 KV260 输出与 Python fixed-point reference 做 L5 replay。
 
 通过标准：
-- 多地址 neuron state read/write 正确；
-- synthesis/resource report 确认预期的 on-chip memory resource；
-- 小网络 spike/state trace 与 reference 在冻结 contract 下匹配；
-- 保存 bitstream、network fixture、input fixture、输出 hash/trace 与 Git commit。
+- LAB-HW-07 multi-address state read/write 与 rewrite preservation 正确；
+- LAB-HW-07 synthesis/resource report 确认真实 block-RAM mapping；
+- LAB-HW-08 small-network spike/state trace 与冻结 reference contract 匹配；
+- 保存 bitstream、memory/network fixture、input fixture、output hash/trace 与 Git commit。
 
 # Bridge 4 — 内存不是“一个很大的 RAM”
 
