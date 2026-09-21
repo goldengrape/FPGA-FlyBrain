@@ -229,13 +229,28 @@ Implement this in two independent Physical Lab slices.
 
 LAB-HW-07 does **not** declare full MOD-004 complete. It is a board-level teaching slice that proves the address/read/write/synchronous-read/resource concepts with one simple memory geometry. Banking, arbitration, wider neuron records, ECC, and the final formal state layout remain later design work.
 
-**LAB-HW-08 — Small FlyBrain replay** then uses the already verified state-memory path to move the Platform-3 small network onto hardware. It uses the same fixed input/seed and compares KV260 output against the Python fixed-point reference for L5 replay.
+**LAB-HW-08 — Small FlyBrain replay** then moves the already taught Lesson-12 four-neuron event machine onto KV260 without changing its teaching semantics. The source-of-truth fixture is versioned JSON and the Python replay oracle is derived from that fixture.
+
+Freeze this replay:
+- source index `[(0,2), (2,1), (3,1), (4,0)]`;
+- records `[(1,+2), (2,+1), (3,+2), (3,+1)]`;
+- thresholds `[99,2,1,3]`;
+- initial state `[0,0,0,0]`, initial queue `[0]`;
+- expected spike order `[0,1,2,3]`, expected final state `[0,0,0,0]`;
+- fixed 4 KiB state/trace BRAM window at `0xA0000000`;
+- fixed AXI-GPIO control/status block at `0xA0010000`;
+- host BRAM access only while the PL replay engine is idle.
+
+The replay compares not only final state but also spike order and every weighted event. The deterministic Lesson-12 fixture has no PRNG; a seed is required only for a future stochastic replay.
+
+This is an L5 board replay of a **teaching event machine**, not the Python fixed-point LIF oracle and not completion of formal MOD-004~009. It deliberately preserves Lesson 12's warning that leak, refractory behavior, final fixed-point LIF numerics, concurrent target-write conflicts, and formal valid/ready timing remain outside that teaching machine.
 
 Pass criteria:
-- LAB-HW-07 multi-address state read/write and rewrite preservation are correct;
-- LAB-HW-07 synthesis/resource report confirms real block-RAM mapping;
-- LAB-HW-08 small-network spike/state trace matches the frozen reference contract;
-- bitstream, memory/network fixtures, input fixture, output hash/trace, and Git commit are recorded.
+- LAB-HW-07 multi-address state read/write and block-RAM resource proof remain intact;
+- the versioned fixture and Python oracle reproduce the Lesson-12 expected spike order and event trace;
+- open-source RTL simulation matches the same fixture-derived expected trace;
+- physical KV260 spike/state/event readback matches the same Python oracle;
+- fixture/oracle/bitstream hashes, build/program logs, output trace, Git commit, OS/image identity, and board/carrier revision are recorded.
 
 # Bridge 4 — Memory is not “one very large RAM”
 
