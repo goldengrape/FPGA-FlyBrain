@@ -96,6 +96,21 @@ Responsibility: accumulate target-neuron inputs and handle update conflicts.
 Initial: serial/single-event handling.  
 Later: banked accumulator.
 
+### LAB-HW-08 teaching replay boundary
+
+LAB-HW-08 adds `kv260_small_replay_engine` and a dual-access teaching state/trace store only as a **board replay harness** for the exact Lesson-12 four-neuron event machine.
+
+It composes simplified teaching forms of queue → source lookup → weighted event → target accumulator, but it does **not** promote them to formal `MOD-005~009` implementations. In particular:
+
+- the four-neuron source index and four synapse records are compiled fixture constants;
+- target state is a 32-bit integer teaching accumulator, not formal `neuron_state_t`;
+- threshold crossing resets that teaching accumulator exactly as Lesson 12 specifies;
+- host and engine do not arbitrate concurrent BRAM access; host access is allowed only while `busy=0`;
+- the replay engine writes spike/event traces into reserved words of the same 4 KiB teaching memory window;
+- no formal `IF-SPIKE-QUEUE`, `IF-SYNAPSE-STREAM`, final fixed-point LIF, DDR backend, or programmable network loader is frozen by this Lab.
+
+The harness exists to prove one narrow statement: a previously verified event-causality teaching network produces the same deterministic trace when executed in PL on the reference board.
+
 ### MOD-010 `host_if`
 Responsibility: load parameters, deliver stimuli, and read spikes/telemetry.  
 Initial: simulation interface.  
