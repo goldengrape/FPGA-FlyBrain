@@ -13,7 +13,7 @@ LEARNING_PATH.md
     ↓ defines concept order, terminology order, and learning objectives
 Jupyter Notebook lessons
     ↓ textbook-style explanation + laboratory-style execution + AI collaboration + human checks
-formal engineering files (python/ rtl/ tb/ tests/)
+formal engineering files (for example planned python/, existing rtl/ and tb/, plus layered checks/)
     ↓ testable, reusable implementations that can enter CI
 ```
 
