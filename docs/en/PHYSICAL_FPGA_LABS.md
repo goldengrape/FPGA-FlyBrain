@@ -425,22 +425,82 @@ Do **not** add a PL AXI master, AXI CDMA, DMA driver, reserved physical DDR regi
 
 ### LAB-HW-10 — AXI/burst measurement
 
-**Prerequisites:** LSN-018 and LAB-HW-09.
+**Prerequisites:** LSN-018, LAB-HW-09 integrity PASS, and the earlier PS/Linux + JTAG programming path.
 
-**Primary new operation:** compare effective bandwidth/latency for small/scattered versus contiguous/burst-oriented paths on real hardware.
+**Primary new operation:** use a real programmable-logic AXI master path into K26 DDR, then compare two transaction granularities with the same bitstream, payload, byte count, buffer, and timer boundary.
 
-Using and measuring the platform path is mandatory. Writing a full AXI master from scratch is optional.
+The Lab uses AMD AXI Central Direct Memory Access (AXI CDMA) in **Simple DMA mode** so the learner uses a real AXI4 master without implementing the complete AXI master state machine from scratch.
 
-Default measurement protocol (lab prose may be stricter with evidence, but not vaguer):
+Freeze the hardware teaching path:
 
-- same bitstream, data volume, payload, and measurement boundary;
-- perform **5 warm-up runs**, excluded from statistics;
-- at least **20 measured repetitions** for each access pattern;
-- use the **median** as the primary result and retain min/max plus all raw samples;
-- repeat another measurement batch in the same session; the two batch medians should differ by **≤10%**. If they differ by more than 10%, report “measurement unstable” and make no performance conclusion;
-- state the workload contract, timer boundaries, and whether host/software overhead is included.
+```text
+PS/Linux
+  ├─ /dev/mem control MMIO
+  │    ↓
+  │  PS M_AXI_HPM0_FPD
+  │    ↓
+  │  AXI CDMA S_AXI_LITE @ 0xA0020000
+  │
+  └─ DMA-safe source/destination buffer in DDR
+             ↑
+             │ AXI CDMA M_AXI, 128 bit, max burst 64
+             │
+       PS S_AXI_HP0_FPD
+             │
+             ↓
+           DDR4
+```
 
-**Pass evidence:** at least two access patterns satisfy the reproducible-benchmark protocol; results must not claim “AXI/FPGA is faster” without a workload contract.
+The selected `S_AXI_HP0_FPD` path is **non-coherent**. Therefore this Lab does not use an ordinary cached Python allocation as a DMA buffer. The physical checker requires a course-approved **u-dma-buf** device (`/dev/udmabuf0`) of at least 2 MiB and opens it with `O_SYNC`; the physical address is read from the driver's sysfs interface. If that buffer provider or cache mode is unavailable on the selected Ubuntu/kernel combination, T-HW-010 remains blocked. Do not guess a physical address and do not weaken kernel security to force a result.
+
+The course does not teach kernel-driver implementation here. u-dma-buf is a buffer-provider prerequisite, analogous to the vendor toolchain prerequisite: the learner uses it and records its identity, but does not modify its source.
+
+Freeze the AXI CDMA build contract:
+
+- target: KV260 / K26, part `xck26-sfvc784-2LV-c`;
+- control path: PS `M_AXI_HPM0_FPD` → SmartConnect → AXI CDMA `S_AXI_LITE`;
+- control base: **`0xA0020000`**;
+- data path: AXI CDMA `M_AXI` → PS **`S_AXI_HP0_FPD`** → DDR;
+- AXI CDMA mode: Simple DMA only; Scatter/Gather disabled;
+- data width: **128 bits**;
+- maximum burst length: **64 beats**;
+- address width: **64 bits**;
+- DRE disabled; all course source/destination addresses and lengths are naturally aligned;
+- mapped DDR aperture for this first measurement: `HP0_DDR_LOW` only. The physical helper rejects a DMA buffer outside that aperture rather than silently depending on a different address map;
+- routed implementation must pass DRC plus setup/hold timing before bitstream generation.
+
+Freeze the workload:
+
+- DMA buffer provider size: at least **2 MiB**;
+- source region offset: **0 MiB**;
+- destination region offset: **1 MiB**;
+- payload per repetition: **256 KiB**;
+- deterministic payload: SHAKE256-derived bytes;
+- **contiguous pattern:** one 256 KiB CDMA request;
+- **small/scattered pattern:** 1024 × 256-byte CDMA requests covering the same 256 KiB in the deterministic permutation `block = (257*i + 17) mod 1024`;
+- the destination must match the source byte-for-byte before performance measurement and after every measured batch.
+
+This is an **end-to-end software-controlled DMA workload comparison**. The timer includes Python register programming and polling plus the AXI/CDMA/DDR transfer. Therefore a result is not a pure bus-efficiency measurement and must not be generalized into a peak-DDR claim.
+
+Measurement protocol, fixed for both patterns:
+
+1. same bitstream, DMA buffer, payload, total 256 KiB, and timer boundary;
+2. run an integrity precheck for the pattern;
+3. perform **5 warm-up repetitions**, excluded from statistics;
+4. perform **20 measured repetitions** and retain every raw elapsed time;
+5. use the **median** as the primary result; also retain min/max;
+6. run a second batch in the same session with the same 5 + 20 protocol;
+7. verify destination integrity after each batch;
+8. compute relative difference between the two batch medians for each pattern;
+9. require **≤10%** median difference for both patterns to call the benchmark reproducible;
+10. if either pattern exceeds 10%, report `MEASUREMENT_UNSTABLE`, retain the raw evidence, and make no performance conclusion.
+
+Only after both integrity and stability gates pass may the checker report the contiguous/scattered median ratio as an observation for this workload.
+
+Do **not** add Scatter/Gather descriptors, interrupts, multiple outstanding masters, HPC/CCI coherency tuning, cache-policy experiments, a custom Linux DMA driver, a hand-written AXI master, formal synapse-store migration, or a CPU/GPU/FPGA comparison here. Those are later engineering topics.
+
+**Pass evidence:** LAB-HW-10 bitstream SHA-256; Vivado build/program logs; DRC/timing/resource reports; AXI CDMA configuration; fixed control address; buffer-provider identity, size, physical base, and cache-mode contract; deterministic payload hash; pre/post integrity evidence; all warm-up/measured raw samples; two batch medians/min/max per pattern; stability percentages; stable ratio when allowed; helper SHA-256; Git commit; OS/kernel; board/carrier revision; experiment date. Ordinary CI dry-run validates the benchmark logic only and cannot claim physical T-HW-010 PASS.
+
 
 ## 6. Content intentionally not taught in the first physical track
 
