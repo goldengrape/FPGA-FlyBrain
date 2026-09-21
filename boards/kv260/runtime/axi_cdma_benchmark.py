@@ -71,6 +71,8 @@ STABILITY_LIMIT_PCT = 10.0
 HP0_DDR_LOW_BASE = 0x00000000
 HP0_DDR_LOW_END = 0x80000000
 
+UDMABUF_DRIVER_VERSION = "5.5.0"
+
 UDMABUF_DEVICE = Path("/dev/udmabuf0")
 UDMABUF_SYSFS = Path("/sys/class/u-dma-buf/udmabuf0")
 DEVMEM_DEVICE = Path("/dev/mem")
@@ -215,6 +217,17 @@ class PhysicalTransport:
         phys_addr = parse_int_text(read_text(udmabuf_sysfs / "phys_addr"))
         size = parse_int_text(read_text(udmabuf_sysfs / "size"))
         sync_mode = parse_int_text(read_text(udmabuf_sysfs / "sync_mode"))
+        driver_version = read_text(udmabuf_sysfs / "driver_version")
+        if driver_version is None:
+            raise BenchmarkError(
+                "DMA_BUFFER_DRIVER_VERSION_MISSING",
+                str(udmabuf_sysfs / "driver_version"),
+            )
+        if driver_version != UDMABUF_DRIVER_VERSION:
+            raise BenchmarkError(
+                "DMA_BUFFER_DRIVER_VERSION_MISMATCH",
+                f"driver_version={driver_version} required={UDMABUF_DRIVER_VERSION}",
+            )
         if phys_addr is None:
             raise BenchmarkError("DMA_BUFFER_PHYS_ADDR_MISSING", str(udmabuf_sysfs))
         if size is None:
@@ -244,6 +257,7 @@ class PhysicalTransport:
         self.physical_base = phys_addr
         self.provider_info = {
             "provider": "u-dma-buf",
+            "driver_version": driver_version,
             "device": str(udmabuf_device),
             "sysfs": str(udmabuf_sysfs),
             "phys_addr": phys_addr,
