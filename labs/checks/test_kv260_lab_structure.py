@@ -1,4 +1,4 @@
-"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-09."""
+"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-10."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ LABS = [
     "07_bram_neuron_state.ipynb",
     "08_small_flybrain_replay.ipynb",
     "09_ddr_integrity.ipynb",
+    "10_axi_burst_measurement.ipynb",
 ]
 
 
@@ -140,7 +141,7 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
 def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06", "LAB-HW-07", "LAB-HW-08", "LAB-HW-09"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06", "LAB-HW-07", "LAB-HW-08", "LAB-HW-09", "LAB-HW-10"):
             assert lab in text
         assert "LAB-HW-10" in text
 
@@ -158,6 +159,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/en/07_bram_neuron_state.ipynb",
             "labs/en/08_small_flybrain_replay.ipynb",
             "labs/en/09_ddr_integrity.ipynb",
+            "labs/en/10_axi_burst_measurement.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
@@ -170,6 +172,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/zh/07_bram_neuron_state.ipynb",
             "labs/zh/08_small_flybrain_replay.ipynb",
             "labs/zh/09_ddr_integrity.ipynb",
+            "labs/zh/10_axi_burst_measurement.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -415,3 +418,41 @@ def test_lab09_freezes_os_managed_ddr_integrity_before_axi_measurement():
         assert "/dev/mem" in text
         assert "<svg " in text
         assert "mermaid" not in text.lower()
+
+
+
+def test_lab10_freezes_real_axi_cdma_workload_and_measurement_gates():
+    required = (
+        "AXI CDMA",
+        "Simple DMA",
+        "0xA0020000",
+        "M_AXI_HPM0_FPD",
+        "S_AXI_HP0_FPD",
+        "non-coherent",
+        "u-dma-buf",
+        "O_SYNC",
+        "2 MiB",
+        "256 KiB",
+        "1024 requests",
+        "256 B",
+        "block = (257*i + 17) mod 1024",
+        "5 warm-up",
+        "20",
+        "≤10%",
+        "MEASUREMENT_UNSTABLE",
+        "PERFORMANCE_CONCLUSION_ALLOWED=0",
+        "axi_cdma_benchmark.py",
+        "build_lab10_axi_cdma.tcl",
+        "T-HW-010",
+        "T-HW-011",
+    )
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "10_axi_burst_measurement.ipynb"))
+        for marker in required:
+            assert marker in text
+        assert "128-bit" in text
+        assert "max burst 64" in text
+        assert "HP0_DDR_LOW" in text
+        assert "<svg " in text
+        assert "mermaid" not in text.lower()
+        assert "'''text".replace("'''", "```") not in text
