@@ -456,3 +456,70 @@ def test_lab10_freezes_real_axi_cdma_workload_and_measurement_gates():
         assert "<svg " in text
         assert "mermaid" not in text.lower()
         assert "'''text".replace("'''", "```") not in text
+
+
+
+def test_zero_experience_entry_path_names_all_external_setup_gates():
+    zh = (ROOT / "labs" / "README.zh-CN.md").read_text(encoding="utf-8")
+    en = (ROOT / "labs" / "README.md").read_text(encoding="utf-8")
+    for text in (zh, en):
+        assert "Vivado 2026.1" in text
+        assert "HDL_TOOLCHAIN_SETUP.md" in text
+        assert "iverilog -V" in text
+        assert "vvp -V" in text
+        assert "KV260_UDMABUF_SETUP.md" in text
+        assert "development host" in text
+        assert "runtime host" in text
+
+
+def test_lab05_to_lab06_progression_does_not_fake_image_acceptance():
+    zh05 = _markdown(_read("zh", "05_ps_linux_first_boot.ipynb"))
+    en05 = _markdown(_read("en", "05_ps_linux_first_boot.ipynb"))
+    zh06 = _markdown(_read("zh", "06_host_pl_loopback.ipynb"))
+    en06 = _markdown(_read("en", "06_host_pl_loopback.ipynb"))
+    for text in (zh05, en05):
+        assert "RECORDED_UNVERIFIED" in text
+        assert "progression gate" in text.lower() or "进度 gate" in text
+        assert "formal" in text.lower() or "正式" in text
+        assert "picocom" in text
+    for text in (zh06, en06):
+        assert "progression gate" in text.lower() or "进度 gate" in text
+        assert "ip -brief -4 addr" in text
+        assert "ssh ubuntu@<kv260-ip>" in text
+
+
+def test_lab07_points_missing_iverilog_back_to_toolchain_setup():
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "07_bram_neuron_state.ipynb"))
+        assert "HDL_TOOLCHAIN_SETUP.md" in text
+        assert "iverilog -V" in text
+        assert "vvp -V" in text
+
+
+def test_lab09_to_lab10_has_independent_udmabuf_setup_gate():
+    for language in ("zh", "en"):
+        lab09 = _markdown(_read(language, "09_ddr_integrity.ipynb"))
+        lab10 = _markdown(_read(language, "10_axi_burst_measurement.ipynb"))
+        assert "KV260_UDMABUF_SETUP.md" in lab09
+        assert "preflight_udmabuf.py" in lab09
+        assert "KV260_UDMABUF_SETUP.md" in lab10
+        assert "preflight_udmabuf.py" in lab10
+        assert "sync_mode" in lab10
+        assert "STATUS=PASS" in lab10
+
+
+def test_udmabuf_setup_guides_pin_source_and_forbid_kernel_mismatch():
+    expected_commit = "15bcde3cb960321e99983e227aeacc5807888333"
+    for language in ("zh", "en"):
+        path = ROOT / "docs" / language / "KV260_UDMABUF_SETUP.md"
+        assert path.is_file()
+        text = path.read_text(encoding="utf-8")
+        assert expected_commit in text
+        assert "5.5.0" in text
+        assert "4194304" in text
+        assert "linux-headers-$(uname -r)" in text
+        assert "preflight_udmabuf.py" in text
+        assert "HP0_DDR_LOW" in text
+        assert "sync_mode" in text
+        assert "O_SYNC" in text
+        assert "DMA_BUFFER_OUTSIDE_HP0_DDR_LOW" in text
