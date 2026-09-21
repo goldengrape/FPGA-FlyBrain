@@ -171,7 +171,7 @@ git restore exercises/zh/01_membrane_to_lif.ipynb
 | 22 | [生成 closed-loop position trace](zh/22_closed_loop_world.ipynb) | feedback、target-reaching trace |
 | 23 | [计算 throughput 与 energy per event](zh/23_cpu_gpu_fpga_benchmark.ipynb) | benchmark metric、duration-aware energy |
 
-第 13–18 课进入 FPGA 板、host、DDR 与 AXI 主题，但正式作业仍提供**无板可完成**的 Python/推理版本；实体板实验作为对应 RMD slice 的工程延伸，不把购买硬件变成继续学习的门槛。
+第 13–18 课进入 FPGA 板、host、DDR 与 AXI 主题，但正式作业仍提供**无板可完成**的 Python/推理版本；**KV260 Physical Lab Track 是正式的实体实操配套路径**，而无板作业保留，因此暂时没有硬件不会阻断概念学习。
 
 第 19–23 课进入 connectome integrity、scaling、closed loop 与 benchmark。正式作业使用 teaching fixture 与 synthetic measurement，因此完整 MaleCNS 下载、正式 converter、GPU 或实体 FPGA 都不是继续学习这些 contract 的前置条件。
 
