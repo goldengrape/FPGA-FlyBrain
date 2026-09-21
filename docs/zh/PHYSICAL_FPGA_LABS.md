@@ -333,17 +333,48 @@ base address 沿用 AMD/Xilinx K26 `base_gpio_bram` reference 的 BRAM region：
 
 ### LAB-HW-08 — Small FlyBrain replay / 小网络第一次跑在真实 FPGA
 
-**主要新操作：** 把已经通过 Python/RTL simulation 的小网络迁移到 KV260，不重新发明算法。
+**前置：** LSN-012、LAB-HW-06、LAB-HW-07，以及 Lesson 12 已冻结的 Platform-3 teaching-event semantics。
 
-同一 fixed input / seed：
+**主要新操作：** 在 PL 中执行已经学过的四神经元 event-driven network，并把完整 trace 与 deterministic Python replay oracle 对比；不重新发明教学算法。
 
-```text
-Python fixed reference
-        ↕ compare
-KV260 FlyBrain small network
-```
+本 Lab 原样复用 Lesson 12 的 network：
 
-**通过证据：** spike/state replay 与 reference 在冻结 contract 下匹配；记录 bitstream、network fixture、input fixture 与输出 hash/trace。
+- 4 个 neuron；
+- source index：`[(0,2), (2,1), (3,1), (4,0)]`；
+- synapse records：`[(1,+2), (2,+1), (3,+2), (3,+1)]`；
+- thresholds：`[99, 2, 1, 3]`；
+- initial accumulator state：`[0,0,0,0]`；
+- initial input queue：`[0]`；
+- 达到 threshold 时 target 入队，并把 teaching accumulator reset 为 0；
+- expected spike order：`[0,1,2,3]`；
+- expected final state：`[0,0,0,0]`。
+
+它是 Lesson 12 的 **teaching event machine**，不是正式 LIF numeric model。因此 LAB-HW-08 不得把简单 integer-threshold semantics 冒充 `MOD-003` 或最终 `MOD-004~009`。这里的 L5 是**冻结教学网络的 board-level replay**。
+
+冻结 replay artifact：
+
+- versioned fixture：`boards/kv260/fixtures/lab08_four_neuron_replay_v1.json`；
+- Python oracle：`boards/kv260/runtime/lab08_replay_reference.py`；
+- PL engine：`kv260_small_replay_engine`；
+- 共享的 4 KiB state/trace BRAM window：`0xA0000000`；
+- 固定 AXI GPIO control/status：`0xA0010000`；
+- host 只能在 engine 报告 `busy=0` 时访问共享 BRAM；本章不教 concurrent host/engine arbitration。
+
+PL replay 在 BRAM 写入 machine-readable evidence：
+
+- word `0..3`：accumulator state；
+- word `16..19`：emitted spike order；
+- word `20`：spike count；
+- word `32..35`：weighted-event trace；
+- word `36`：weighted-event count。
+
+每个 event-trace word 编码 source、target、signed 8-bit weight、reset 前的 accumulator-after-add，以及 target 是否 spike。host checker 先从 fixture 计算 oracle，再启动 PL engine，读回 spike/state/event trace，逐字段比较。
+
+该 fixture 完全 deterministic，不使用 PRNG。只有未来 replay contract 真正含 stochastic behavior 时 seed 才是必需项；不能为了“看起来完整”而伪造无意义 seed。
+
+本章**不**引入 DDR、performance claim、真实 MaleCNS image、最终 LIF numerics、concurrent BRAM arbitration 或通用 programmable network loader。
+
+**通过证据：** fixture SHA-256、Python-oracle SHA-256、bitstream SHA-256、build/program log、DRC/timing/resource report、control/status contract、完整 Python expected trace、完整 PL readback trace、differential `STATUS=PASS`、Git commit、OS/image identity、board/carrier revision。普通 CI 可以证明 oracle/RTL/host-checker 一致，但不能宣称真实 T-HW-008 PASS。
 
 ### LAB-HW-09 — DDR integrity / 第一次真实读写外部内存
 
