@@ -2,6 +2,24 @@
 //
 // This is deliberately a board-level teaching replay harness for the exact
 // Lesson-12 event machine. It is not the formal LIF neuron or MOD-004~009.
+//
+// Register contract:
+//   control_word[0]   = start pulse/rising edge
+//   control_word[31:1] = reserved; write zero
+//   status_word[0]    = busy
+//   status_word[1]    = done
+//   status_word[2]    = error
+//   status_word[7:4]  = spike_count
+//   status_word[15:8] = event_count
+//   status_word[31:16] = reserved
+//
+// Numeric/trace boundary:
+//   - the frozen Lesson-12 fixture uses non-negative signed-8-bit weights;
+//   - threshold comparison is therefore valid in this teaching slice;
+//   - event trace stores accumulator_after_add[7:0] only;
+//   - the fixed four-neuron topology can emit at most four spikes, so words
+//     16..19 cannot overlap SPIKE_COUNT_WORD=20. Widening the network requires
+//     revisiting this memory map and the oracle.
 module kv260_small_replay_engine (
     input  logic        clk,
     input  logic        resetn,
@@ -53,7 +71,6 @@ module kv260_small_replay_engine (
     logic [2:0] edge_count;
     logic [2:0] edge_pos;
 
-    logic [31:0] accumulator_before;
     logic [31:0] accumulator_after_add;
     logic event_spiked;
 
@@ -206,7 +223,6 @@ module kv260_small_replay_engine (
             edge_start <= 3'd0;
             edge_count <= 3'd0;
             edge_pos <= 3'd0;
-            accumulator_before <= 32'd0;
             accumulator_after_add <= 32'd0;
             event_spiked <= 1'b0;
             spike_count <= 4'd0;
@@ -268,7 +284,6 @@ module kv260_small_replay_engine (
                 end
 
                 S_READ_CAPTURE: begin
-                    accumulator_before <= mem_rdata;
                     accumulator_after_add <= mem_rdata + {{24{current_weight[7]}}, current_weight};
                     event_spiked <=
                         (mem_rdata + {{24{current_weight[7]}}, current_weight})
