@@ -6,7 +6,7 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-The board-support layer now implements **LAB-HW-00~06**:
+The board-support layer now implements **LAB-HW-00~07**:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
@@ -16,10 +16,12 @@ The board-support layer now implements **LAB-HW-00~06**:
 - `runtime/ubuntu24_image.json`, `hash_image.py`, and `collect_boot_info.sh` — LAB-HW-05 image/UART evidence helpers;
 - `rtl/kv260_loopback_transform.sv` + `scripts/build_lab06_loopback.tcl` — LAB-HW-06 PS↔PL MMIO loopback design;
 - `runtime/loopback_mmio.py` — LAB-HW-06 self-checking runtime-host helper;
+- `rtl/kv260_neuron_state_store.sv` + `scripts/build_lab07_bram_state.tcl` — LAB-HW-07 1024 × 32-bit synchronous BRAM state store and AXI-BRAM build path;
+- `runtime/state_bram_mmio.py` — LAB-HW-07 multi-address/rewrite state-memory checker;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-BRAM network state, small-network replay, DDR, and AXI/burst measurement belong to LAB-HW-07~10 and are not implemented by this stage. LAB-HW-06 implements only the first fixed-address PS↔PL teaching roundtrip; it does not freeze the later production MOD-010 software stack.
+Small-network replay, DDR, and AXI/burst measurement belong to LAB-HW-08~10 and are not implemented by this stage. LAB-HW-07 implements only a 1024 × 32-bit teaching state store and does not freeze the final MOD-004 state layout, banking, or arbitration.
 
 ## Authoring baseline
 
@@ -27,7 +29,7 @@ The current lab prose selects **Vivado 2026.1** as the **authoring candidate bas
 
 This is not yet a declaration that Vivado 2026.1 is the physically validated course-support baseline. That promotion requires a real-KV260 dry run and retained evidence.
 
-This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~06. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence or as a real Vivado LAB-HW-06 full-build pass.
+This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~07. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence or as a real Vivado LAB-HW-06 full-build pass.
 
 ## LAB-HW-00
 
@@ -181,3 +183,49 @@ sudo python3 /tmp/loopback_mmio.py \
 ```
 
 The physical helper maps only the frozen `0xA0010000` region and intentionally has no arbitrary `--base` option. If Ubuntu policy rejects the `/dev/mem` mapping, retain the failure evidence and keep T-HW-006 blocked; do not weaken system security to force a PASS. The long-term MOD-010 software stack may later use UIO, XRT, a driver, or another supported transport without changing the semantic contract.
+
+## LAB-HW-07
+
+Native state-store semantics can be checked without Vivado:
+
+```bash
+iverilog -g2012 \
+  -s kv260_neuron_state_store_tb \
+  -o /tmp/lab07_state \
+  boards/kv260/rtl/kv260_neuron_state_store.sv \
+  boards/kv260/tb/kv260_neuron_state_store_tb.sv
+vvp /tmp/lab07_state
+```
+
+Build the KV260 bitstream:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-07-build.log \
+  -source boards/kv260/scripts/build_lab07_bram_state.tcl
+```
+
+Frozen memory geometry:
+
+- `1024 × 32-bit` state words;
+- `4096` bytes / 4 KiB;
+- PS-visible base `0xA0000000`;
+- word `i` lives at byte offset `4*i`;
+- PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → `kv260_neuron_state_store`;
+- synchronous native read, read-first on same-cycle read/write;
+- at least one RAMB18/RAMB36 primitive required before bitstream generation.
+
+Host oracle without physical hardware:
+
+```bash
+python boards/kv260/runtime/state_bram_mmio.py --dry-run
+```
+
+After programming the LAB-HW-07 bitstream, run on PS/Linux:
+
+```bash
+sudo python3 /tmp/state_bram_mmio.py \
+  --json-out /tmp/lab-hw-07-trace.json
+```
+
+The checker writes separated low/middle/high addresses, reads them back, rewrites selected locations, and verifies that untouched locations keep their state. As in LAB-HW-06, `/dev/mem` is a fixed teaching transport. If Ubuntu policy rejects the mapping, retain the evidence and keep T-HW-007 blocked rather than weakening system security.
