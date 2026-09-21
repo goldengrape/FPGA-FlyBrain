@@ -238,18 +238,16 @@ These are the foundational sources currently used or repeatedly referenced by th
 
 ## Current status
 
-Planning, system architecture, and the first curriculum audit are complete. **The KV260 reference board and LAB-HW-00~10 physical-teaching/acceptance standards are frozen.** LAB-HW-00~10 now have bilingual Notebooks and CI contracts. LAB-HW-03/04 include board-specific RTL, Bank 45 XDC, Vivado build/program helpers, and open-source simulations; LAB-HW-05 adds Ubuntu image/UART/boot-evidence helpers; LAB-HW-06 adds the frozen PS→PL AXI-GPIO path, transform RTL/testbench, Vivado build contract, and self-checking MMIO helper. All first-track Physical Lab teaching/CI contracts are now implemented; real-board T-HW evidence remains pending. The first formal implementation slice has not yet been declared complete.
+The teaching layer now covers **LSN-001~023, their Exercise paths, and LAB-HW-00~10**. The KV260 reference board, Physical-Lab boundaries, board-support/runtime helpers, and CI contracts are all present in the repository. This means the learner path and executable teaching materials are established, but it **does not mean every formal MOD/RMD product implementation is complete, and it does not mean real-board acceptance has passed**.
 
-Current first implementation batch:
+Current verification state:
 
-1. `RMD-001` — Python LIF float reference
-2. `RMD-002` — fixed-point exploration
-3. `RMD-003` — freeze v0 neuron semantics
+- Python Exercise/lesson paths are protected by automated student-flow and grader tests;
+- the generic RTL path for Lessons 6–8 / 13 is checked with Icarus, Verilator, and Yosys and has been exercised in both Ubuntu CI and OSS CAD Suite environments;
+- LAB-HW-00~10 notebook/helper/RTL/runtime contracts are checked by Physical Lab CI;
+- real-KV260 T-HW evidence, promotion of Vivado 2026.1 to a tested/supported baseline, a controlled LAB-HW-05 image SHA-256, and the real LAB-HW-10 u-dma-buf/HP0 DDR/AXI CDMA path remain pending physical dry runs.
 
-`RMD-003A` — Digital Hardware Bridge is the **first item of the next batch**, not part of the current first batch.
-
-Hardware purchase is intentionally deferred until the early simulation stages are understood and verified.
-
+RMD-001~003 remain semantic/numeric prerequisites for the **formal product implementation**. The teaching track has already progressed within explicitly marked teaching-artifact boundaries, so the early instruction to defer the FPGA toolchain/hardware no longer describes the current repository. The next high-priority step is a complete real-KV260 instructor dry run, with physical results written back into TDD/TRACE and the reference-platform documentation.
 
 ## License
 
