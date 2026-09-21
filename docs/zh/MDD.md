@@ -264,7 +264,7 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~09 已实现
+    en/             # LAB-HW-00~10 已实现
     zh/
     checks/
   boards/
@@ -274,7 +274,7 @@ FPGA-FlyBrain/
       tb/           # open-source self-checking teaching testbench
       constraints/  # 冻结的 Bank 45 XDC mapping
       scripts/      # preflight、discovery、build、program helper
-      runtime/      # LAB-HW-05~09 boot/MMIO/state/replay/DDR sanity checker
+      runtime/      # LAB-HW-05~10 boot/MMIO/state/replay/DDR/benchmark checker
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -306,7 +306,7 @@ okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~09 的教学/support slice。LAB-HW-09 新增 fixed 64 MiB 的 PS/Linux-managed external-memory integrity sanity checker 与 host-path timing observation，不增加新 PL bitstream，也不冻结正式 DDR backend；这不代表正式 MOD-004~010、通用 KV260 platform shell 或正式 LIF/event/memory module 已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~10 的教学/support slice。LAB-HW-10 新增 board-specific AXI CDMA → non-coherent `S_AXI_HP0_FPD` DDR benchmark harness、u-dma-buf/O_SYNC buffer contract、deterministic 双 pattern workload、integrity gate 与 two-batch reproducibility oracle；这不代表正式 MOD-004~010、通用 KV260 platform shell、production DMA API 或正式 LIF/event/memory module 已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
