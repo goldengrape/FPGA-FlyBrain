@@ -1,6 +1,15 @@
 // LAB-HW-08 shared state/trace BRAM.
 // Port A is the PS-visible AXI BRAM Controller side.
 // Port B is used only by the replay engine while the host promises not to access Port A.
+//
+// Teaching clock/access contract:
+//   - a_clk and b_clk are driven by the same LAB-HW-08 clock net;
+//   - host Port A stays idle while the replay engine owns Port B;
+//   - cross-port same-address concurrent writes are outside the contract;
+//   - Port A accepts full-word writes only (a_we == 4'hf).
+//
+// The two-process memory inference intentionally triggers Verilator MULTIDRIVEN;
+// the course static-check script waives that warning only for this module.
 module kv260_replay_state_store (
     (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA CLK" *)
     input  logic        a_clk,
