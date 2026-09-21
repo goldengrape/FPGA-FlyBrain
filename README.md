@@ -35,7 +35,7 @@ The project combines:
 
 ## Quickstart / Local Setup
 
-This project uses [uv](https://github.com/astral-sh/uv) to manage Python dependencies, the virtual environment, and the Jupyter workflow. After cloning the repository, there is no need to manually configure Conda or run individual `pip install` commands.
+This project requires **Python 3.11 or newer** and uses [uv](https://github.com/astral-sh/uv) to manage Python dependencies, the virtual environment, and the Jupyter workflow. After cloning the repository, there is no need to manually configure Conda or run individual `pip install` commands.
 
 ### 1. Synchronize Dependencies
 
@@ -87,7 +87,7 @@ When doing exercises, open your personal copy under `exercises/work/en/`; `exerc
 
 ### 4. Register the Dedicated Kernel (Required)
 
-The course and exercise notebooks declare the `fpga-flybrain` kernel spec. Register it before opening or executing the notebooks. JupyterLab can sometimes recover interactively by asking you to choose another kernel, but headless execution such as `nbconvert --execute` will fail with `NoSuchKernel` if this kernel is missing.
+Exercise Notebooks, Physical Labs, and Lessons 13–23 declare the `fpga-flybrain` kernel spec. Register it before entering those materials. Earlier Lessons 1–12 still use the standard `python3` kernelspec; both kernel families should be launched from the same `uv` project environment. For notebooks that declare `fpga-flybrain`, headless execution such as `nbconvert --execute` fails with `NoSuchKernel` if the named kernel is missing.
 
 Register the named kernel with:
 
