@@ -264,7 +264,7 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~09 implemented
+    en/             # LAB-HW-00~10 implemented
     zh/
     checks/
   boards/
@@ -274,7 +274,7 @@ FPGA-FlyBrain/
       tb/           # open-source self-checking teaching testbenches
       constraints/  # frozen Bank 45 XDC mapping
       scripts/      # preflight, discovery, build, and program helpers
-      runtime/      # LAB-HW-05~09 boot/MMIO/state/replay/DDR sanity checkers
+      runtime/      # LAB-HW-05~10 boot/MMIO/state/replay/DDR/benchmark checkers
       evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
@@ -306,7 +306,7 @@ okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/` implement the LAB-HW-00~09 teaching/support slice. LAB-HW-09 adds a fixed 64 MiB PS/Linux-managed external-memory integrity sanity checker and host-path timing observation, without introducing a new PL bitstream or formal DDR backend. This does not declare formal MOD-004~010, the general KV260 platform shell, or the formal LIF/event/memory modules complete.
+Current `labs/` and `boards/kv260/` implement the LAB-HW-00~10 teaching/support slice. LAB-HW-10 adds a board-specific AXI CDMA → non-coherent `S_AXI_HP0_FPD` DDR benchmark harness, u-dma-buf/O_SYNC buffer contract, deterministic two-pattern workload, integrity gates, and two-batch reproducibility oracle. This does not declare formal MOD-004~010, the general KV260 platform shell, a production DMA API, or the formal LIF/event/memory modules complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
