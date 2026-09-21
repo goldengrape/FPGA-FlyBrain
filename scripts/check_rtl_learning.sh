@@ -20,6 +20,7 @@ mkdir -p "${BUILD_DIR}/lesson06" "${BUILD_DIR}/lesson08"
 
 echo "== Tool versions =="
 iverilog -V 2>&1 | sed -n '1p'
+vvp -V 2>&1 | sed -n '1p'
 verilator --version
 yosys -V
 
