@@ -44,10 +44,11 @@ export PATH="/path/to/oss-cad-suite/bin:$PATH"
 ```bash
 yosys -V
 iverilog -V
+vvp -V
 verilator --version
 ```
 
-至少应当能找到这三个命令。
+至少应当能找到这四个命令。`iverilog` 负责把 SystemVerilog 编译成仿真程序，`vvp` 负责真正执行该仿真程序，因此两者都必须可用。
 
 ### macOS 下载文件不能执行时
 
@@ -99,6 +100,9 @@ shutil.which("yosys")
 
 ```bash
 yosys -V
+iverilog -V
+vvp -V
+verilator --version
 uv run python -c "import shutil; print(shutil.which('yosys'))"
 ```
 
