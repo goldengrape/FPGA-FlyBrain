@@ -1,9 +1,11 @@
 """Tests for scripts/start_exercise.py."""
 
 from pathlib import Path
+import sys
 
 import pytest
 
+import scripts.start_exercise as start_exercise
 from scripts.start_exercise import (
     EXERCISE_FILES,
     create_work_copy,
@@ -70,3 +72,22 @@ def test_all_declared_exercises_can_be_copied_without_overwriting(tmp_path: Path
         destination, created = create_work_copy(tmp_path, lesson, "zh")
         assert created is False
         assert destination.read_text(encoding="utf-8") == f"official starter {lesson}"
+
+
+def test_main_reports_missing_template_without_traceback(monkeypatch, capsys):
+    monkeypatch.setattr(
+        start_exercise,
+        "create_work_copy",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            FileNotFoundError("Official exercise template not found: missing.ipynb")
+        ),
+    )
+    monkeypatch.setattr(sys, "argv", ["start_exercise.py", "01"])
+
+    with pytest.raises(SystemExit) as exc_info:
+        start_exercise.main()
+
+    captured = capsys.readouterr()
+    assert exc_info.value.code == 2
+    assert "Official exercise template not found" in captured.err
+    assert "Traceback" not in captured.err
