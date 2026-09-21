@@ -228,17 +228,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~07 已实现
+    en/             # LAB-HW-00~08 已实现
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04/06/07 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06/07/08 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbench
       constraints/  # 冻结的 Bank 45 XDC mapping
       scripts/      # preflight、discovery、build、program helper
-      runtime/      # LAB-HW-05~07 boot/MMIO/state-memory checker
+      runtime/      # LAB-HW-05~08 boot/MMIO/state/replay checker
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -270,7 +270,7 @@ okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~07 的教学/support slice。LAB-HW-07 新增 1024 × 32-bit synchronous teaching state store、AXI-BRAM platform build path、runtime multi-address checker 与 resource oracle；这不代表正式 MOD-004 或 MOD-010、通用 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~08 的教学/support slice。LAB-HW-08 新增 fixed Lesson-12 四神经元 replay fixture、deterministic Python oracle、PL replay harness、共享 state/trace BRAM 与 differential checker；这不代表正式 MOD-004~010、通用 KV260 platform shell 或正式 LIF/event module 已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 
