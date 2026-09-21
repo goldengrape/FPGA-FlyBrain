@@ -302,19 +302,34 @@ The initial runtime access implementation uses Python `mmap` over `/dev/mem` bec
 
 ### LAB-HW-07 — BRAM neuron state
 
-**Primary new operation:** map Lesson 9's abstract `state[address]` onto real FPGA on-chip memory.
+**Prerequisites:** LSN-009, LAB-HW-06, and the LAB-HW-06 PS/Linux runtime path.
 
-Require only:
+**Primary new operation:** turn Lesson 9's abstract `state[address]` into a real, addressable on-chip Block RAM (BRAM) state store on KV260.
 
-- role difference between register arrays and block RAM;
-- address;
-- read/write;
-- actual synchronous-read behavior used by this design;
-- confirmation of memory resources in synthesis/resource reports.
+Freeze the teaching memory before adding a network:
 
-Primitive parameters, ECC, and complex multi-port arbitration are deferred.
+- state word: **32 bits**;
+- depth: **1024 words**;
+- total logical capacity: **4096 bytes (4 KiB)**;
+- word index: `0..1023`;
+- PS-visible base: **`0xA0000000`**;
+- byte offset for state word `i`: `4 * i`;
+- physical path: PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → `kv260_neuron_state_store`;
+- native memory behavior: synchronous read, with the teaching RTL using read-first semantics on a same-cycle read/write;
+- implementation intent: `(* ram_style = "block" *)`, with the Vivado resource oracle requiring at least one RAMB18/RAMB36 primitive.
 
-**Pass evidence:** multi-address state read/write is correct and the resource report matches the intended mapping.
+The base address follows AMD/Xilinx's K26 `base_gpio_bram` reference, which maps its BRAM controller at `0xA0000000`. The runtime helper reuses the LAB-HW-06 fixed `/dev/mem` teaching transport, but maps only this 4 KiB state window.
+
+Two different proofs are required and must not be confused:
+
+1. **Cycle-level proof:** the SystemVerilog testbench demonstrates synchronous native BRAM behavior. A new address is presented before the clock edge; valid read data appears only after the clocked memory operation.
+2. **Board-level proof:** PS/Linux writes distinct 32-bit state words to multiple word indices and reads them back through the AXI BRAM Controller. This proves addressable physical memory, not a one-cycle host-software latency claim.
+
+The physical self-check uses separated addresses including low, middle, and last locations; it then rewrites selected locations and verifies that untouched locations retain their values. Address aliasing, wrong data, and transport failures are distinct failures.
+
+Do **not** add the LAB-HW-08 network, spike replay, DDR, performance measurement, ECC, complicated dual-port arbitration, or manual BRAM primitive instantiation here.
+
+**Pass evidence:** LAB-HW-07 bitstream SHA-256; Vivado build/program logs; DRC/timing reports; resource report showing non-zero block-RAM primitives; frozen base/window/word geometry; runtime helper hash; every address/write/read triple; rewrite-and-neighbor-preservation trace; final `STATUS=PASS`; Git commit; OS/image identity; board/carrier revision. Cloud simulation/resource-contract checks do not substitute for real T-HW-007 board evidence.
 
 ### LAB-HW-08 — Small FlyBrain replay
 
