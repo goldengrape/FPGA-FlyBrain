@@ -378,21 +378,50 @@ PL replay 在 BRAM 写入 machine-readable evidence：
 
 ### LAB-HW-09 — DDR integrity / 第一次真实读写外部内存
 
-**前置：** LSN-016、LSN-017。
+**课程顺序：** LAB-HW-08 之后。  
+**实际操作前置：** LSN-016、LSN-017，以及 LAB-HW-05 已工作的 PS/Linux boot path。
 
-**主要新操作：** 使用 KV260 平台现成 DDR/PS/PL 基础设施完成稳定读写，不手写 DDR PHY/controller。
+**主要新操作：** 在引入 PL AXI master、DMA engine 或 burst benchmark 之前，先证明 deterministic payload 能稳定经过 K26 system-memory write/read roundtrip。
 
-实验顺序：
+KV260/K26 提供 4 GB DDR4 system memory。本 Lab 刻意使用 **PS/Linux 管理的 anonymous memory mapping**，而不是用 `/dev/mem` 猜一个物理 DDR 地址。这样 Linux 继续拥有 memory ownership，本章只新增一个大概念：external-memory integrity。
+
+冻结 physical sanity contract：
+
+- test allocation：**64 MiB**；
+- chunk size：**1 MiB**；
+- access pattern：只做 contiguous sequential chunk；
+- payload：由固定 LAB-HW-09 seed string + chunk index 生成 deterministic bytes；
+- timed payload write 前先 prefault pages；
+- 每个 read chunk 都与重新生成的 expected chunk 做 byte-for-byte compare；
+- expected / observed SHA-256 必须一致；
+- 任意 mismatch 立即输出 `PERFORMANCE_BLOCKED=1`，不能接受任何 bandwidth 结论；
+- physical mode 必须在 PS/Linux 上运行，并记录 board model、kernel、OS identity、`MemTotal`、`MemAvailable` 与 swap 信息；
+- 不需要 root，也不需要固定 physical DDR address。
+
+integrity 成功以后，脚本只记录两个 **host-path observation**：
+
+- timed payload-copy write elapsed time / effective write bandwidth；
+- timed contiguous read elapsed time / effective read bandwidth。
+
+这些数字包含 PS/Linux/userspace memory path，**不是** peak DDR bandwidth、PL bandwidth、AXI burst efficiency 或 hardware-only latency。可重复 multi-pattern benchmark 留给 LAB-HW-10。
+
+顺序强制为：
 
 ```text
-known payload
-→ write
-→ read
-→ byte-for-byte/checksum compare
-→ only then measure
+verify runtime environment
+→ allocate + prefault OS-managed memory
+→ deterministic payload write
+→ byte-for-byte readback
+→ SHA-256 compare
+→ integrity PASS
+→ only then report host-path timing observations
 ```
 
-**通过证据：** integrity PASS + transfer size + elapsed time + effective bandwidth，并记录 access pattern。任何 integrity failure 都阻断性能结论。
+corruption injection 只用于 CI/dry-run，证明哪怕只改一个 byte，也必须阻断 performance conclusion。
+
+本章**不**加入 PL AXI master、AXI CDMA、DMA driver、reserved physical DDR region、random/scattered comparison、burst tuning、cache/coherency claim、DDR PHY training 或 synapse-store migration；这些属于 HW-10/RMD-015 之后。
+
+**通过证据：** `ddr_integrity.py` SHA-256；固定 64 MiB/1 MiB geometry；payload seed/algorithm identifier；board model；kernel/OS identity；memory snapshot；expected/observed SHA-256；byte-compare result；integrity `STATUS=PASS`；write/read timer boundary 与 elapsed time；observed host-path effective bandwidth；access-pattern label；Git commit/date。本 Lab 不需要 bitstream。普通 CI dry-run 不能宣称 physical T-HW-009 PASS。
 
 ### LAB-HW-10 — AXI/burst measurement / 协议概念变成真实数据移动
 
