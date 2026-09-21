@@ -333,17 +333,48 @@ Do **not** add the LAB-HW-08 network, spike replay, DDR, performance measurement
 
 ### LAB-HW-08 — Small FlyBrain replay
 
-**Primary new operation:** move an already verified small network onto KV260 without redefining the algorithm.
+**Prerequisites:** LSN-012, LAB-HW-06, LAB-HW-07, and the frozen Platform-3 teaching-event semantics from Lesson 12.
 
-Use the same fixed input/seed:
+**Primary new operation:** execute the already taught four-neuron event-driven network in PL, then compare its complete trace against a deterministic Python replay oracle without changing the teaching algorithm.
 
-```text
-Python fixed reference
-        ↕ compare
-KV260 FlyBrain small network
-```
+The Lab reuses the exact Lesson-12 network:
 
-**Pass evidence:** spike/state replay matches the frozen reference contract, with bitstream, network fixture, input fixture, and output hash/trace recorded.
+- four neurons;
+- source index: `[(0,2), (2,1), (3,1), (4,0)]`;
+- synapse records: `[(1,+2), (2,+1), (3,+2), (3,+1)]`;
+- thresholds: `[99, 2, 1, 3]`;
+- initial accumulator state: `[0,0,0,0]`;
+- initial input queue: `[0]`;
+- threshold crossing enqueues the target and resets its teaching accumulator to zero;
+- expected spike order: `[0,1,2,3]`;
+- expected final state: `[0,0,0,0]`.
+
+This is the Lesson-12 **teaching event machine**, not the formal LIF numeric model. Therefore LAB-HW-08 must not relabel its simple integer threshold semantics as `MOD-003` or as the final `MOD-004~009` implementation. L5 here means **board-level replay of a frozen teaching network**.
+
+Freeze the replay artifacts:
+
+- versioned fixture: `boards/kv260/fixtures/lab08_four_neuron_replay_v1.json`;
+- Python oracle: `boards/kv260/runtime/lab08_replay_reference.py`;
+- PL engine: `kv260_small_replay_engine`;
+- shared 4 KiB state/trace BRAM window at `0xA0000000`;
+- fixed AXI GPIO control/status block at `0xA0010000`;
+- host may access the shared BRAM window only while the engine reports `busy=0`; no concurrent host/engine arbitration is taught here.
+
+The PL replay writes machine-readable evidence into BRAM:
+
+- word `0..3`: accumulator state;
+- word `16..19`: emitted spike order;
+- word `20`: spike count;
+- word `32..35`: weighted-event trace;
+- word `36`: weighted-event count.
+
+Each event-trace word encodes source, target, signed 8-bit weight, pre-reset accumulator-after-add, and whether that target spiked. The host checker computes the oracle from the fixture first, launches the PL engine, reads back spike/state/event traces, and compares every field.
+
+The deterministic fixture uses no PRNG. A seed becomes mandatory only when a future replay contract is stochastic; do not invent a meaningless seed merely to satisfy wording.
+
+Do **not** introduce DDR, performance claims, a real MaleCNS image, final LIF numerics, concurrent BRAM arbitration, or a general programmable network loader here.
+
+**Pass evidence:** fixture SHA-256, Python-oracle SHA-256, bitstream SHA-256, build/program logs, DRC/timing/resource reports, exact control/status contract, complete Python expected trace, complete PL readback trace, differential result `STATUS=PASS`, Git commit, OS/image identity, and board/carrier revision. Ordinary CI may prove oracle/RTL/host-checker agreement but cannot claim physical T-HW-008 PASS.
 
 ### LAB-HW-09 — DDR integrity
 
