@@ -96,6 +96,21 @@ LAB-HW-07 提供的是一个**教学 slice**，不等于正式 MOD-004 已完成
 初版：串行/单事件。  
 后期：banked accumulator。
 
+### LAB-HW-08 teaching replay boundary
+
+LAB-HW-08 新增 `kv260_small_replay_engine` 与 dual-access teaching state/trace store，只作为 Lesson-12 四神经元 event machine 的**板级 replay harness**。
+
+它把 queue → source lookup → weighted event → target accumulator 的简化教学形式组合起来，但**不**把它们升级成正式 `MOD-005~009`。具体边界：
+
+- 四神经元 source index 与 4 条 synapse record 是 compiled fixture constant；
+- target state 是 32-bit integer teaching accumulator，不是正式 `neuron_state_t`；
+- threshold crossing 完全按 Lesson 12 将 teaching accumulator reset；
+- host 与 engine 不做 concurrent BRAM arbitration；只有 `busy=0` 时 host 才允许访问；
+- replay engine 把 spike/event trace 写入同一个 4 KiB teaching memory window 的 reserved word；
+- 本 Lab 不冻结正式 `IF-SPIKE-QUEUE`、`IF-SYNAPSE-STREAM`、最终 fixed-point LIF、DDR backend 或 programmable network loader。
+
+这个 harness 只证明一个窄结论：已经验证过 event causality 的教学小网络，在 reference board PL 上执行时产生相同 deterministic trace。
+
 ### MOD-010 `host_if`
 职责：装载参数、输入刺激、读取 spike/telemetry。  
 初版：仿真接口。  
