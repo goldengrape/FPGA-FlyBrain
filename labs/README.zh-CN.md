@@ -17,8 +17,9 @@ Physical Lab 是第 13–18 课的真实硬件配套路径，面向此前没有�
 | LAB-HW-06 | [真实 PS/Linux ↔ PL loopback](zh/06_host_pl_loopback.ipynb) | [Real PS/Linux ↔ PL loopback](en/06_host_pl_loopback.ipynb) | KV260 + LAB-HW-05 passed + Vivado/JTAG connection |
 | LAB-HW-07 | [BRAM neuron state / 第一次使用真实片上 RAM](zh/07_bram_neuron_state.ipynb) | [BRAM neuron state](en/07_bram_neuron_state.ipynb) | KV260 + LAB-HW-06 passed |
 | LAB-HW-08 | [Small FlyBrain replay / 小网络第一次跑在真实 FPGA](zh/08_small_flybrain_replay.ipynb) | [Small FlyBrain replay](en/08_small_flybrain_replay.ipynb) | KV260 + LAB-HW-07 passed |
+| LAB-HW-09 | [DDR integrity / 第一次真实读写外部内存](zh/09_ddr_integrity.ipynb) | [DDR integrity](en/09_ddr_integrity.ipynb) | KV260 PS/Linux + LAB-HW-05 operational path；课程顺序在 LAB-HW-08 之后 |
 
-**LAB-HW-00~08 的教材与 CI contract 已实现。** LAB-HW-08 加入第一套 deterministic 小型 event-network board replay path、fixture/reference oracle 与 differential checker。LAB-HW-09~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
+**LAB-HW-00~09 的教材与 CI contract 已实现。** LAB-HW-09 加入第一套 fixed-size OS-managed DDR integrity sanity check 与 host-path timing observation。LAB-HW-10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
 
 ## Evidence 规则
 
