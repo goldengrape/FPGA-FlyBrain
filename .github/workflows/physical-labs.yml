@@ -5,6 +5,8 @@ on:
     paths:
       - "labs/**"
       - "boards/kv260/**"
+      - "docs/en/KV260_UDMABUF_SETUP.md"
+      - "docs/zh/KV260_UDMABUF_SETUP.md"
       - ".github/workflows/physical-labs.yml"
   pull_request:
     branches:
@@ -12,6 +14,8 @@ on:
     paths:
       - "labs/**"
       - "boards/kv260/**"
+      - "docs/en/KV260_UDMABUF_SETUP.md"
+      - "docs/zh/KV260_UDMABUF_SETUP.md"
       - ".github/workflows/physical-labs.yml"
   workflow_dispatch:
 
