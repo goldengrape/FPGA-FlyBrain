@@ -15,8 +15,9 @@ Physical Lab 是第 13–18 课的真实硬件配套路径，面向此前没有�
 | LAB-HW-04 | [Clock、reset 与 physical I/O](zh/04_clock_reset_io.ipynb) | [Clock, reset, and physical I/O](en/04_clock_reset_io.ipynb) | KV260 + LAB-HW-03 passed |
 | LAB-HW-05 | [第一次启动 PS/Linux + UART Console](zh/05_ps_linux_first_boot.ipynb) | [First PS/Linux boot + UART console](en/05_ps_linux_first_boot.ipynb) | KV260 + 16 GB+ microSD + J4 USB data cable + 12 V / 3 A 电源 |
 | LAB-HW-06 | [真实 PS/Linux ↔ PL loopback](zh/06_host_pl_loopback.ipynb) | [Real PS/Linux ↔ PL loopback](en/06_host_pl_loopback.ipynb) | KV260 + LAB-HW-05 passed + Vivado/JTAG connection |
+| LAB-HW-07 | [BRAM neuron state / 第一次使用真实片上 RAM](zh/07_bram_neuron_state.ipynb) | [BRAM neuron state](en/07_bram_neuron_state.ipynb) | KV260 + LAB-HW-06 passed |
 
-**LAB-HW-00~06 的教材与 CI contract 已实现。** LAB-HW-06 加入第一条 PS↔PL MMIO loopback 教学路径与 self-checking checker。LAB-HW-07~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
+**LAB-HW-00~07 的教材与 CI contract 已实现。** LAB-HW-07 加入第一套真实 BRAM neuron-state store、resource oracle 与 multi-address self-check。LAB-HW-08~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
 
 ## Evidence 规则
 
