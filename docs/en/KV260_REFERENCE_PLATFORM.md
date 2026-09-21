@@ -144,22 +144,23 @@ If a step is revision-specific, the lab must state that explicitly.
 
 ## 7. What the implemented Physical-Lab slice now freezes — and what remains provisional
 
-The documentation-first decision has now advanced through the implemented **LAB-HW-00~07** teaching slice.
+The documentation-first decision has now advanced through the implemented **LAB-HW-00~08** teaching slice.
 
 The repository now freezes:
 
 - reference target part: `xck26-sfvc784-2LV-c`;
 - LAB-HW-03 board-visible logical output and Bank 45 XDC mapping;
 - LAB-HW-04 PS `pl_clk0` / `pl_resetn0` clock-reset teaching path;
-- direct Vivado/JTAG programming for LAB-HW-03/04/06/07;
+- direct Vivado/JTAG programming for LAB-HW-03/04/06/07/08;
 - LAB-HW-05 Ubuntu Server 24.04 LTS first-boot/UART path;
 - LAB-HW-06 PS `M_AXI_HPM0_FPD` → SmartConnect → AXI GPIO teaching loopback at `0xA0010000`;
 - LAB-HW-07 teaching state geometry: **1024 × 32-bit words = 4 KiB**;
-- LAB-HW-07 PS-visible BRAM base: **`0xA0000000`**, matching the BRAM region in AMD/Xilinx's K26 `base_gpio_bram` reference;
-- LAB-HW-07 hardware path: PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → `kv260_neuron_state_store`;
-- LAB-HW-07 native memory semantics: synchronous read and read-first behavior for same-cycle read/write;
-- LAB-HW-07 implementation intent/resource oracle: `ram_style="block"` plus at least one implemented RAMB18/RAMB36 primitive;
-- LAB-HW-07 runtime oracle: separated multi-address write/read, selected rewrite, and untouched-neighbor preservation through a fixed 4 KiB MMIO window.
+- LAB-HW-07 PS-visible BRAM base: **`0xA0000000`** and block-RAM resource oracle;
+- LAB-HW-08 replay source of truth: `lab08_four_neuron_replay_v1.json`, derived from the exact Lesson-12 four-neuron teaching event machine;
+- LAB-HW-08 expected spike order `[0,1,2,3]`, final teaching accumulator state `[0,0,0,0]`, and four encoded weighted-event records;
+- LAB-HW-08 memory/control layout: 4 KiB state/trace BRAM at `0xA0000000` plus AXI GPIO control/status at `0xA0010000`;
+- LAB-HW-08 host-access rule: shared BRAM is accessed by the host only while engine `busy=0`; concurrent host/engine arbitration is not part of this Lab;
+- LAB-HW-08 verification boundary: deterministic Python fixture oracle, open-source RTL replay, then physical differential readback. The teaching event machine remains distinct from the formal LIF model.
 
 The following are **not yet promoted to tested physical facts**:
 
@@ -167,8 +168,9 @@ The following are **not yet promoted to tested physical facts**:
 - Vivado 2026.1 as the tested/supported course baseline rather than the current authoring candidate;
 - a trusted expected SHA-256 for the LAB-HW-05 Ubuntu archive;
 - whether the selected Ubuntu 24.04 image/kernel permits the fixed `/dev/mem` teaching mappings on a real KV260; if policy blocks them, the relevant T-HW checkpoint remains blocked and the repository transport must be revised without weakening system security;
-- a real Vivado LAB-HW-07 build proving the BRAM interface grouping, timing, DRC, and non-zero RAMB resource on the target device;
-- the final formal MOD-004 state record, banking, arbitration, BRAM/URAM strategy, and the later formal MOD-010/DDR software stack.
+- a real Vivado LAB-HW-08 build proving the shared-BRAM/control block design, timing, DRC, and non-zero RAMB resource on the target device;
+- a real-KV260 T-HW-008 differential replay PASS;
+- the final formal MOD-004~009 implementations, final LIF numeric contract, general programmable network image/loader, concurrent memory arbitration, and the later MOD-010/DDR software stack.
 
 Those remaining facts are promoted only after the matching real-KV260 dry run records T-HW evidence for a specific Git commit and artifact.
 

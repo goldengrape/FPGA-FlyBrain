@@ -17,6 +17,7 @@ BUILD04 = ROOT / "boards" / "kv260" / "scripts" / "build_lab04_blink.tcl"
 PROGRAM = ROOT / "boards" / "kv260" / "scripts" / "program_bitstream.tcl"
 BUILD06 = ROOT / "boards" / "kv260" / "scripts" / "build_lab06_loopback.tcl"
 BUILD07 = ROOT / "boards" / "kv260" / "scripts" / "build_lab07_bram_state.tcl"
+BUILD08 = ROOT / "boards" / "kv260" / "scripts" / "build_lab08_small_replay.tcl"
 TCLSH = shutil.which("tclsh")
 
 
@@ -384,3 +385,33 @@ def test_lab07_build_script_freezes_bram_state_path_and_resource_oracle():
     assert "NEGATIVE_HOLD_SLACK" in text
     assert text.index("NO_BLOCK_RAM_PRIMITIVE") < text.index("write_bitstream -force")
     assert text.index("NEGATIVE_HOLD_SLACK") < text.index("write_bitstream -force")
+
+
+
+def test_lab08_build_script_freezes_replay_memory_control_and_resource_contract():
+    text = BUILD08.read_text(encoding="utf-8")
+    assert 'set state_base 0xA0000000' in text
+    assert 'set state_range 0x00001000' in text
+    assert 'set gpio_base 0xA0010000' in text
+    assert "FIXTURE_ID=lesson12_four_neuron_replay_v1" in text
+    assert "CONFIG.PSU__USE__M_AXI_GP0 {1}" in text
+    assert "CONFIG.NUM_MI {2}" in text
+    assert "xilinx.com:ip:axi_bram_ctrl:" in text
+    assert "xilinx.com:ip:axi_gpio:" in text
+    assert "CONFIG.C_IS_DUAL {1}" in text
+    assert "ps/M_AXI_HPM0_FPD" in text
+    assert "axi_smc/M00_AXI" in text
+    assert "axi_smc/M01_AXI" in text
+    assert "axi_bram/BRAM_PORTA" in text
+    assert "state_store/BRAM_PORTA" in text
+    assert "replay_engine/control_word" in text
+    assert "replay_engine/status_word" in text
+    assert "replay_engine/mem_en" in text
+    assert "state_store/b_en" in text
+    assert "HOST_BRAM_ACCESS_RULE=ONLY_WHEN_BUSY_ZERO" in text
+    assert "BRAM_PRIMITIVE_COUNT" in text
+    assert "NO_BLOCK_RAM_PRIMITIVE" in text
+    assert "DRC_ERROR_PRESENT" in text
+    assert "NEGATIVE_SETUP_SLACK" in text
+    assert "NEGATIVE_HOLD_SLACK" in text
+    assert text.index("NO_BLOCK_RAM_PRIMITIVE") < text.index("write_bitstream -force")

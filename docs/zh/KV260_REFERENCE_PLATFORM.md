@@ -144,22 +144,23 @@ boards/kv260/
 
 ## 7. 当前已实现实体 Lab 冻结了什么——什么仍然只是 provisional
 
-documentation-first 决策已经推进到 **LAB-HW-00~07** 的实际实现阶段。
+documentation-first 决策已经推进到 **LAB-HW-00~08** 的实际实现阶段。
 
 仓库现在冻结：
 
 - reference target part：`xck26-sfvc784-2LV-c`；
 - LAB-HW-03 board-visible logical output 与 Bank 45 XDC mapping；
 - LAB-HW-04 的 PS `pl_clk0` / `pl_resetn0` clock-reset 教学路径；
-- LAB-HW-03/04/06/07 使用 direct Vivado/JTAG programming；
+- LAB-HW-03/04/06/07/08 使用 direct Vivado/JTAG programming；
 - LAB-HW-05 Ubuntu Server 24.04 LTS first-boot/UART path；
 - LAB-HW-06 PS `M_AXI_HPM0_FPD` → SmartConnect → AXI GPIO `0xA0010000` 教学 loopback；
 - LAB-HW-07 教学 state geometry：**1024 × 32-bit word = 4 KiB**；
-- LAB-HW-07 PS-visible BRAM base：**`0xA0000000`**，与 AMD/Xilinx K26 `base_gpio_bram` reference 的 BRAM region 一致；
-- LAB-HW-07 hardware path：PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → `kv260_neuron_state_store`；
-- LAB-HW-07 native memory semantics：synchronous read；同周期 read/write 同地址时采用 read-first；
-- LAB-HW-07 implementation intent/resource oracle：`ram_style="block"`，并要求 implemented design 中至少出现一个 RAMB18/RAMB36 primitive；
-- LAB-HW-07 runtime oracle：在固定 4 KiB MMIO window 内做分散 multi-address write/read、部分 rewrite 与 untouched-neighbor preservation。
+- LAB-HW-07 PS-visible BRAM base：**`0xA0000000`**，以及 block-RAM resource oracle；
+- LAB-HW-08 replay 事实源：`lab08_four_neuron_replay_v1.json`，严格来自 Lesson-12 四神经元 teaching event machine；
+- LAB-HW-08 expected spike order `[0,1,2,3]`、final teaching accumulator state `[0,0,0,0]` 与 4 条 encoded weighted-event record；
+- LAB-HW-08 memory/control layout：`0xA0000000` 的 4 KiB state/trace BRAM + `0xA0010000` AXI GPIO control/status；
+- LAB-HW-08 host-access rule：只有 engine `busy=0` 时 host 才访问共享 BRAM；本 Lab 不教 concurrent host/engine arbitration；
+- LAB-HW-08 verification boundary：deterministic Python fixture oracle → open-source RTL replay → physical differential readback。teaching event machine 与正式 LIF model 保持分离。
 
 以下内容**还不能升级成已验证的实体事实**：
 
@@ -167,8 +168,9 @@ documentation-first 决策已经推进到 **LAB-HW-00~07** 的实际实现阶段
 - Vivado 2026.1 是否可从 authoring candidate 升级为 tested/supported course baseline；
 - LAB-HW-05 Ubuntu archive 的可信 expected SHA-256；
 - 选定 Ubuntu 24.04 image/kernel 在真实 KV260 上是否允许 fixed `/dev/mem` 教学 mapping；如果 OS policy 阻止，对应 T-HW checkpoint 继续 blocked，并通过仓库修订 transport，不能降低系统安全设置；
-- 真实 Vivado LAB-HW-07 build 是否能在目标 device 上完成 BRAM interface grouping、timing、DRC，并给出非零 RAMB resource；
-- 最终正式 MOD-004 state record、banking、arbitration、BRAM/URAM strategy，以及后续正式 MOD-010/DDR software stack。
+- 真实 Vivado LAB-HW-08 build 是否能在目标 device 上完成 shared-BRAM/control block design、timing、DRC，并给出非零 RAMB resource；
+- 真实 KV260 T-HW-008 differential replay PASS；
+- 最终正式 MOD-004~009、最终 LIF numeric contract、通用 programmable network image/loader、concurrent memory arbitration，以及后续 MOD-010/DDR software stack。
 
 这些事实只有在真实 KV260 dry run 针对具体 Git commit 与 artifact 留下 T-HW evidence 后，才能升级为 tested fact。
 

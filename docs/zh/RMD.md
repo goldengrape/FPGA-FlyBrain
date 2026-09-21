@@ -229,13 +229,28 @@ LAB-HW-06 通过标准：
 
 LAB-HW-07 **不**声明完整 MOD-004 已完成。它只是 board-level teaching slice，用一个简单 memory geometry 证明 address/read/write/synchronous-read/resource 这些概念。banking、arbitration、更宽 neuron record、ECC 与最终正式 state layout 留给后续设计。
 
-**LAB-HW-08 — Small FlyBrain replay** 再复用已经验证的 state-memory path，把平台 3 的小网络迁移到硬件。使用同一 fixed input/seed，并把 KV260 输出与 Python fixed-point reference 做 L5 replay。
+**LAB-HW-08 — Small FlyBrain replay** 再把 Lesson 12 已经教过的四神经元 event machine 原样迁移到 KV260，不改变教学 semantics。事实源是 versioned JSON fixture，Python replay oracle 从该 fixture 计算。
+
+冻结 replay：
+- source index `[(0,2), (2,1), (3,1), (4,0)]`；
+- records `[(1,+2), (2,+1), (3,+2), (3,+1)]`；
+- thresholds `[99,2,1,3]`；
+- initial state `[0,0,0,0]`、initial queue `[0]`；
+- expected spike order `[0,1,2,3]`、expected final state `[0,0,0,0]`；
+- 固定 4 KiB state/trace BRAM window：`0xA0000000`；
+- 固定 AXI-GPIO control/status：`0xA0010000`；
+- host 只能在 PL replay engine idle 时访问 BRAM。
+
+replay 不只比较 final state，还逐项比较 spike order 与每个 weighted event。Lesson-12 fixture 完全 deterministic，不使用 PRNG；未来只有 stochastic replay 才要求 seed。
+
+这是 **teaching event machine 的 L5 board replay**，不是 Python fixed-point LIF oracle，也不代表正式 MOD-004~009 完成。它保留 Lesson 12 的边界：leak、refractory、最终 fixed-point LIF numerics、concurrent target-write conflict 与正式 valid/ready timing 都不属于这个教学 machine。
 
 通过标准：
-- LAB-HW-07 multi-address state read/write 与 rewrite preservation 正确；
-- LAB-HW-07 synthesis/resource report 确认真实 block-RAM mapping；
-- LAB-HW-08 small-network spike/state trace 与冻结 reference contract 匹配；
-- 保存 bitstream、memory/network fixture、input fixture、output hash/trace 与 Git commit。
+- LAB-HW-07 multi-address state read/write 与 block-RAM resource proof 保持不变；
+- versioned fixture 与 Python oracle 能复现 Lesson-12 expected spike order/event trace；
+- open-source RTL simulation 与同一 fixture-derived expected trace 匹配；
+- 真实 KV260 的 spike/state/event readback 与同一 Python oracle 匹配；
+- 保存 fixture/oracle/bitstream hash、build/program log、output trace、Git commit、OS/image identity、board/carrier revision。
 
 # Bridge 4 — 内存不是“一个很大的 RAM”
 

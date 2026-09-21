@@ -16,8 +16,9 @@ Physical Lab 是第 13–18 课的真实硬件配套路径，面向此前没有�
 | LAB-HW-05 | [第一次启动 PS/Linux + UART Console](zh/05_ps_linux_first_boot.ipynb) | [First PS/Linux boot + UART console](en/05_ps_linux_first_boot.ipynb) | KV260 + 16 GB+ microSD + J4 USB data cable + 12 V / 3 A 电源 |
 | LAB-HW-06 | [真实 PS/Linux ↔ PL loopback](zh/06_host_pl_loopback.ipynb) | [Real PS/Linux ↔ PL loopback](en/06_host_pl_loopback.ipynb) | KV260 + LAB-HW-05 passed + Vivado/JTAG connection |
 | LAB-HW-07 | [BRAM neuron state / 第一次使用真实片上 RAM](zh/07_bram_neuron_state.ipynb) | [BRAM neuron state](en/07_bram_neuron_state.ipynb) | KV260 + LAB-HW-06 passed |
+| LAB-HW-08 | [Small FlyBrain replay / 小网络第一次跑在真实 FPGA](zh/08_small_flybrain_replay.ipynb) | [Small FlyBrain replay](en/08_small_flybrain_replay.ipynb) | KV260 + LAB-HW-07 passed |
 
-**LAB-HW-00~07 的教材与 CI contract 已实现。** LAB-HW-07 加入第一套真实 BRAM neuron-state store、resource oracle 与 multi-address self-check。LAB-HW-08~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
+**LAB-HW-00~08 的教材与 CI contract 已实现。** LAB-HW-08 加入第一套 deterministic 小型 event-network board replay path、fixture/reference oracle 与 differential checker。LAB-HW-09~10 仍按 `docs/*/PHYSICAL_FPGA_LABS.md` 的 documentation-first contract 逐步实现；真实板卡 PASS 仍必须由对应 T-HW evidence 给出。
 
 ## Evidence 规则
 

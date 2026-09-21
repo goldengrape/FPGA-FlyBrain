@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "lab_id": "LAB-HW-08",
+  "fixture_id": "lesson12_four_neuron_replay_v1",
+  "origin": {
+    "lesson": "LSN-012",
+    "notebook": "lessons/en/12_one_spike_journey.ipynb",
+    "cells": [
+      "e1205b",
+      "e1206",
+      "e1207",
+      "e1208"
+    ]
+  },
+  "model": {
+    "kind": "teaching_event_machine",
+    "stochastic": false,
+    "note": "Not formal LIF; preserves Lesson 12 integer threshold/reset semantics."
+  },
+  "network": {
+    "neuron_count": 4,
+    "source_index": [
+      [
+        0,
+        2
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        0
+      ]
+    ],
+    "records": [
+      {
+        "target": 1,
+        "weight": 2
+      },
+      {
+        "target": 2,
+        "weight": 1
+      },
+      {
+        "target": 3,
+        "weight": 2
+      },
+      {
+        "target": 3,
+        "weight": 1
+      }
+    ],
+    "thresholds": [
+      99,
+      2,
+      1,
+      3
+    ]
+  },
+  "input": {
+    "initial_state": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "initial_queue": [
+      0
+    ]
+  },
+  "memory_map": {
+    "state_base_word": 0,
+    "state_words": 4,
+    "spike_trace_base_word": 16,
+    "spike_count_word": 20,
+    "event_trace_base_word": 32,
+    "event_count_word": 36
+  },
+  "event_word_encoding": {
+    "source_bits": "31:28",
+    "target_bits": "27:24",
+    "signed_weight_bits": "23:16",
+    "accumulator_after_add_bits": "15:8",
+    "spiked_bit": 0
+  }
+}

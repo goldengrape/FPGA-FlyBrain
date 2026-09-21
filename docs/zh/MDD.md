@@ -96,6 +96,21 @@ LAB-HW-07 提供的是一个**教学 slice**，不等于正式 MOD-004 已完成
 初版：串行/单事件。  
 后期：banked accumulator。
 
+### LAB-HW-08 teaching replay boundary
+
+LAB-HW-08 新增 `kv260_small_replay_engine` 与 dual-access teaching state/trace store，只作为 Lesson-12 四神经元 event machine 的**板级 replay harness**。
+
+它把 queue → source lookup → weighted event → target accumulator 的简化教学形式组合起来，但**不**把它们升级成正式 `MOD-005~009`。具体边界：
+
+- 四神经元 source index 与 4 条 synapse record 是 compiled fixture constant；
+- target state 是 32-bit integer teaching accumulator，不是正式 `neuron_state_t`；
+- threshold crossing 完全按 Lesson 12 将 teaching accumulator reset；
+- host 与 engine 不做 concurrent BRAM arbitration；只有 `busy=0` 时 host 才允许访问；
+- replay engine 把 spike/event trace 写入同一个 4 KiB teaching memory window 的 reserved word；
+- 本 Lab 不冻结正式 `IF-SPIKE-QUEUE`、`IF-SYNAPSE-STREAM`、最终 fixed-point LIF、DDR backend 或 programmable network loader。
+
+这个 harness 只证明一个窄结论：已经验证过 event causality 的教学小网络，在 reference board PL 上执行时产生相同 deterministic trace。
+
 ### MOD-010 `host_if`
 职责：装载参数、输入刺激、读取 spike/telemetry。  
 初版：仿真接口。  
@@ -213,17 +228,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~07 已实现
+    en/             # LAB-HW-00~08 已实现
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04/06/07 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06/07/08 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbench
       constraints/  # 冻结的 Bank 45 XDC mapping
       scripts/      # preflight、discovery、build、program helper
-      runtime/      # LAB-HW-05~07 boot/MMIO/state-memory checker
+      runtime/      # LAB-HW-05~08 boot/MMIO/state/replay checker
       evidence/     # versioned template + 默认忽略的本地生成 evidence
   rtl/
     learning/
@@ -255,7 +270,7 @@ okf/
 .vibe/
 ```
 
-当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~07 的教学/support slice。LAB-HW-07 新增 1024 × 32-bit synchronous teaching state store、AXI-BRAM platform build path、runtime multi-address checker 与 resource oracle；这不代表正式 MOD-004 或 MOD-010、通用 KV260 platform shell、MOD-003 或后续正式硬件模块已经完成。
+当前 `labs/` 与 `boards/kv260/` 已实现 LAB-HW-00~08 的教学/support slice。LAB-HW-08 新增 fixed Lesson-12 四神经元 replay fixture、deterministic Python oracle、PL replay harness、共享 state/trace BRAM 与 differential checker；这不代表正式 MOD-004~010、通用 KV260 platform shell 或正式 LIF/event module 已经完成。
 
 当前的 `rtl/learning/` 与 `tb/learning/` 是教学 artifact，不等同于正式 `MOD-003` 等模块已经完成。
 

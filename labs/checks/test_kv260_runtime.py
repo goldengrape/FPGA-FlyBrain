@@ -16,6 +16,9 @@ IMAGE_MANIFEST = RUNTIME / "ubuntu24_image.json"
 COLLECT_BOOT_INFO = RUNTIME / "collect_boot_info.sh"
 LOOPBACK = RUNTIME / "loopback_mmio.py"
 STATE_BRAM = RUNTIME / "state_bram_mmio.py"
+REPLAY_REF = RUNTIME / "lab08_replay_reference.py"
+REPLAY_CHECKER = RUNTIME / "small_replay_mmio.py"
+REPLAY_FIXTURE = ROOT / "boards" / "kv260" / "fixtures" / "lab08_four_neuron_replay_v1.json"
 
 
 def test_image_manifest_freezes_identity_without_inventing_checksum():
@@ -229,3 +232,80 @@ def test_state_bram_cli_freezes_window_and_no_arbitrary_base():
     assert 'parser.add_argument("--base"' not in text
     assert "TRANSPORT_REQUIRES_ROOT" in text
     assert "STATE_READBACK_OR_ALIAS_MISMATCH" in text
+
+
+
+def test_lab08_fixture_matches_lesson12_teaching_network():
+    fixture = json.loads(REPLAY_FIXTURE.read_text(encoding="utf-8"))
+    assert fixture["fixture_id"] == "lesson12_four_neuron_replay_v1"
+    assert fixture["model"]["kind"] == "teaching_event_machine"
+    assert fixture["model"]["stochastic"] is False
+    assert fixture["network"]["source_index"] == [[0, 2], [2, 1], [3, 1], [4, 0]]
+    assert fixture["network"]["records"] == [
+        {"target": 1, "weight": 2},
+        {"target": 2, "weight": 1},
+        {"target": 3, "weight": 2},
+        {"target": 3, "weight": 1},
+    ]
+    assert fixture["network"]["thresholds"] == [99, 2, 1, 3]
+    assert fixture["input"]["initial_state"] == [0, 0, 0, 0]
+    assert fixture["input"]["initial_queue"] == [0]
+
+
+def test_lab08_reference_reproduces_lesson12_trace(tmp_path):
+    out = tmp_path / "reference.json"
+    result = subprocess.run(
+        [sys.executable, str(REPLAY_REF), "--fixture", str(REPLAY_FIXTURE), "--json-out", str(out)],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "SPIKE_ORDER=0,1,2,3" in result.stdout
+    assert "FINAL_STATE=0,0,0,0" in result.stdout
+    for word in ("0x01020201", "0x02010101", "0x13020200", "0x23010301"):
+        assert f"WORD={word}" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["spike_order"] == [0, 1, 2, 3]
+    assert payload["event_words"] == [0x01020201, 0x02010101, 0x13020200, 0x23010301]
+    assert payload["final_state"] == [0, 0, 0, 0]
+
+
+def test_lab08_checker_dry_run_is_full_differential(tmp_path):
+    out = tmp_path / "dry-run.json"
+    result = subprocess.run(
+        [sys.executable, str(REPLAY_CHECKER), "--fixture", str(REPLAY_FIXTURE), "--dry-run", "--json-out", str(out)],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "FPGA_FLYBRAIN_LAB=LAB-HW-08" in result.stdout
+    assert "TRANSPORT=DRY_RUN_REPLAY_MODEL" in result.stdout
+    assert "EXPECTED_SPIKES=0,1,2,3" in result.stdout
+    assert "OBSERVED_SPIKES=0,1,2,3" in result.stdout
+    assert "DIFFERENTIAL=PASS" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["lab_id"] == "LAB-HW-08"
+    assert payload["state_base"] == 0xA0000000
+    assert payload["control_base"] == 0xA0010000
+    assert payload["expected"]["event_words"] == payload["observed"]["event_words"]
+    assert payload["differential_errors"] == []
+
+
+def test_lab08_checker_reports_missing_transport_before_mapping(tmp_path):
+    missing = tmp_path / "no-dev-mem"
+    result = subprocess.run(
+        [sys.executable, str(REPLAY_CHECKER), "--fixture", str(REPLAY_FIXTURE), "--device", str(missing)],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 4
+    assert "ERROR=TRANSPORT_DEVICE_MISSING" in result.stdout
+
+
+def test_lab08_checker_freezes_addresses_and_no_arbitrary_base():
+    text = REPLAY_CHECKER.read_text(encoding="utf-8")
+    assert "STATE_BASE = 0xA0000000" in text
+    assert "GPIO_BASE = 0xA0010000" in text
+    assert 'parser.add_argument("--base"' not in text
+    assert "ENGINE_ALREADY_BUSY" in text
+    assert "ENGINE_TIMEOUT" in text
+    assert "REPLAY_DIFFERENTIAL_MISMATCH" in text

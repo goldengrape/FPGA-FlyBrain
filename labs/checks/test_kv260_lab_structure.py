@@ -1,4 +1,4 @@
-"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-07."""
+"""Structural regression tests for implemented KV260 Physical Labs through LAB-HW-08."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ LABS = [
     "05_ps_linux_first_boot.ipynb",
     "06_host_pl_loopback.ipynb",
     "07_bram_neuron_state.ipynb",
+    "08_small_flybrain_replay.ipynb",
 ]
 
 
@@ -138,9 +139,9 @@ def test_lab02_has_inline_svg_connection_map_and_real_discovery_command():
 def test_lab_readmes_name_the_completed_first_stage_and_pending_second_stage():
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / "labs" / name).read_text(encoding="utf-8")
-        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06", "LAB-HW-07"):
+        for lab in ("LAB-HW-00", "LAB-HW-01", "LAB-HW-02", "LAB-HW-03", "LAB-HW-04", "LAB-HW-05", "LAB-HW-06", "LAB-HW-07", "LAB-HW-08"):
             assert lab in text
-        assert "LAB-HW-08~10" in text
+        assert "LAB-HW-09~10" in text
 
 
 def test_trace_register_points_to_implemented_labs():
@@ -154,6 +155,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/en/05_ps_linux_first_boot.ipynb",
             "labs/en/06_host_pl_loopback.ipynb",
             "labs/en/07_bram_neuron_state.ipynb",
+            "labs/en/08_small_flybrain_replay.ipynb",
         ],
         "zh": [
             "labs/zh/00_vendor_toolchain_preflight.ipynb",
@@ -164,6 +166,7 @@ def test_trace_register_points_to_implemented_labs():
             "labs/zh/05_ps_linux_first_boot.ipynb",
             "labs/zh/06_host_pl_loopback.ipynb",
             "labs/zh/07_bram_neuron_state.ipynb",
+            "labs/zh/08_small_flybrain_replay.ipynb",
         ],
     }
     for language, paths in expected.items():
@@ -347,3 +350,34 @@ def test_lab07_freezes_bram_state_geometry_and_resource_oracle():
         assert "LAB-HW-08" in text
         assert "--base" not in text
         assert "<svg " in text
+
+
+
+def test_lab08_freezes_lesson12_replay_without_claiming_formal_lif():
+    required = (
+        "Lesson-12",
+        "lab08_four_neuron_replay_v1.json",
+        "lab08_replay_reference.py",
+        "small_replay_mmio.py",
+        "kv260_small_replay_engine",
+        "0xA0000000",
+        "0xA0010000",
+        "[0,1,2,3]",
+        "0x01020201",
+        "0x02010101",
+        "0x13020200",
+        "0x23010301",
+        "DIFFERENTIAL=PASS",
+        "T-HW-008",
+        "T-HW-011",
+        "busy=1",
+    )
+    for language in ("zh", "en"):
+        text = _markdown(_read(language, "08_small_flybrain_replay.ipynb"))
+        for marker in required:
+            assert marker in text
+        assert "MOD-004~009" in text
+        assert "DDR" in text
+        assert "--base" not in text
+        assert "<svg " in text
+        assert "mermaid" not in text.lower()
