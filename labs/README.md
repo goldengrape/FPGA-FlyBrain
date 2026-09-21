@@ -16,8 +16,9 @@ Reference board: **AMD Kria KV260 Vision AI Starter Kit**.
 | LAB-HW-05 | [First PS/Linux boot + UART console](en/05_ps_linux_first_boot.ipynb) | [第一次启动 PS/Linux + UART Console](zh/05_ps_linux_first_boot.ipynb) | KV260 + 16 GB+ microSD + J4 USB data cable + 12 V / 3 A supply |
 | LAB-HW-06 | [Real PS/Linux ↔ PL loopback](en/06_host_pl_loopback.ipynb) | [真实 PS/Linux ↔ PL loopback](zh/06_host_pl_loopback.ipynb) | KV260 + LAB-HW-05 passed + Vivado/JTAG connection |
 | LAB-HW-07 | [BRAM neuron state](en/07_bram_neuron_state.ipynb) | [BRAM neuron state / 第一次使用真实片上 RAM](zh/07_bram_neuron_state.ipynb) | KV260 + LAB-HW-06 passed |
+| LAB-HW-08 | [Small FlyBrain replay](en/08_small_flybrain_replay.ipynb) | [Small FlyBrain replay / 小网络第一次跑在真实 FPGA](zh/08_small_flybrain_replay.ipynb) | KV260 + LAB-HW-07 passed |
 
-**LAB-HW-00~07 now have implemented prose and CI contracts.** LAB-HW-07 adds the first real BRAM neuron-state store, resource oracle, and multi-address self-check. LAB-HW-08~10 remain documentation-first work items. A physical PASS still requires the corresponding T-HW evidence from a real board.
+**LAB-HW-00~08 now have implemented prose and CI contracts.** LAB-HW-08 adds the first deterministic small-event-network board replay path, fixture/reference oracle, and differential checker. LAB-HW-09~10 remain documentation-first work items. A physical PASS still requires the corresponding T-HW evidence from a real board.
 
 ## Evidence rule
 
