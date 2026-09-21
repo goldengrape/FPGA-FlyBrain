@@ -22,6 +22,7 @@ The board-support layer now implements **LAB-HW-00~10**:
 - `rtl/kv260_replay_state_store.sv` + `rtl/kv260_small_replay_engine.sv` + `scripts/build_lab08_small_replay.tcl` — LAB-HW-08 shared BRAM + fixed four-neuron PL replay path;
 - `runtime/small_replay_mmio.py` — LAB-HW-08 fixed-address differential runtime checker;
 - `runtime/ddr_integrity.py` — LAB-HW-09 fixed 64 MiB OS-managed external-memory integrity checker and host-path timing observer;
+- `runtime/udmabuf_source.json` + `runtime/preflight_udmabuf.py` — LAB-HW-09→10 pinned u-dma-buf source identity plus Ubuntu/runtime prerequisite checker;
 - `scripts/build_lab10_axi_cdma.tcl` + `runtime/axi_cdma_benchmark.py` — LAB-HW-10 AXI CDMA → `S_AXI_HP0_FPD` DDR build contract and end-to-end benchmark checker;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
@@ -331,6 +332,25 @@ Physical mode freezes:
 The reported MiB/s values are not peak DDR or PL/AXI bandwidth. LAB-HW-10 owns the first PL→DDR AXI/burst measurement.
 
 ## LAB-HW-10
+
+Before build/program/measurement, complete the independent Ubuntu/u-dma-buf prerequisite in `docs/*/KV260_UDMABUF_SETUP.md`.
+
+Checker self-test on the development host:
+
+```bash
+python boards/kv260/runtime/preflight_udmabuf.py --dry-run
+```
+
+Physical prerequisite on the KV260 runtime host:
+
+```bash
+sudo python3 /tmp/preflight_udmabuf.py \
+  --physical \
+  --json-out /tmp/lab-hw-10-udmabuf-preflight.json
+```
+
+Do not continue to the DMA benchmark unless this ends in `STATUS=PASS`.
+
 
 Build the AXI CDMA teaching bitstream:
 
