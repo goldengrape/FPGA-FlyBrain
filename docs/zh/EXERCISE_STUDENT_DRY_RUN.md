@@ -221,7 +221,7 @@ LSN-013~018 已满足当前作业册的核心要求：题意可独立理解、�
 - 5 课 × 2 语言的 personal-work copy 路径全部从 `exercises/work/<lang>/` 目录执行；
 - 10 / 10 workbooks 使用独立 reference implementation 后均得到 **3 / 3 groups passed**；
 - 5 课 × 2 语言的 lesson example code 均按学生看到的顺序执行并匹配预期输出；
-- Python exercise infrastructure 当前总结果：**129 passed, 2 skipped**。两个 skip 仍是没有 Yosys 的 Python job 中 Lesson 13 中英文真实 synthesis；RTL workflow 已实际覆盖该路径。
+- Python exercise infrastructure 当前总结果：**131 passed, 2 skipped**。两个 skip 仍是没有 Yosys 的 Python job 中 Lesson 13 中英文真实 synthesis；RTL workflow 已实际覆盖该路径。
 
 ### 11.4 本轮 Dry Run 实际发现并修掉的问题
 
@@ -278,7 +278,7 @@ Platform 5 五张课程图已全部由 Mermaid 改为 inline SVG。最终 GitHub
 3. 按 Notebook code-cell 顺序执行；
 4. 要求最终输出 `3 / 3 groups passed`。
 
-因此 3 课 × 2 语言共 6 条个人作业路径进入持续 CI。当前 Python exercise infrastructure 结果为 **129 passed, 2 skipped**；两个 skip 仍是 Python job 中没有 Yosys 时的 Lesson 13 真实综合检查，RTL workflow 会实际执行该路径。
+因此 3 课 × 2 语言共 6 条个人作业路径进入持续 CI。当前 Python exercise infrastructure 结果为 **131 passed, 2 skipped**；两个 skip 仍是 Python job 中没有 Yosys 时的 Lesson 13 真实综合检查，RTL workflow 会实际执行该路径。
 
 ### 12.4 结论
 
