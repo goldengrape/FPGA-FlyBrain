@@ -228,17 +228,17 @@ FPGA-FlyBrain/
     grader/
     checks/
   labs/
-    en/             # LAB-HW-00~07 implemented
+    en/             # LAB-HW-00~08 implemented
     zh/
     checks/
   boards/
     kv260/
       README.md
-      rtl/          # LAB-HW-03/04/06/07 board-specific teaching RTL
+      rtl/          # LAB-HW-03/04/06/07/08 board-specific teaching RTL
       tb/           # open-source self-checking teaching testbenches
       constraints/  # frozen Bank 45 XDC mapping
       scripts/      # preflight, discovery, build, and program helpers
-      runtime/      # LAB-HW-05~07 boot/MMIO/state-memory checkers
+      runtime/      # LAB-HW-05~08 boot/MMIO/state/replay checkers
       evidence/     # versioned template + ignored generated local evidence
   rtl/
     learning/
@@ -270,7 +270,7 @@ okf/
 .vibe/
 ```
 
-Current `labs/` and `boards/kv260/` implement the LAB-HW-00~07 teaching/support slice. LAB-HW-07 adds a 1024 × 32-bit synchronous teaching state store, AXI-BRAM platform build path, runtime multi-address checker, and resource oracle. This does not declare formal MOD-004 or MOD-010, the general KV260 platform shell, MOD-003, or any later formal hardware module complete.
+Current `labs/` and `boards/kv260/` implement the LAB-HW-00~08 teaching/support slice. LAB-HW-08 adds a fixed Lesson-12 four-neuron replay fixture, deterministic Python oracle, PL replay harness, shared state/trace BRAM, and differential checker. This does not declare formal MOD-004~010, the general KV260 platform shell, or the formal LIF/event modules complete.
 
 Current `rtl/learning/` and `tb/learning/` are teaching artifacts and do not declare formal modules such as `MOD-003` complete.
 
