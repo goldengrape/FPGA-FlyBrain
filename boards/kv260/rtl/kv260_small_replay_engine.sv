@@ -132,7 +132,7 @@ module kv260_small_replay_engine (
             S_WRITE_SPIKE: begin
                 mem_en = 1'b1;
                 mem_we = 1'b1;
-                mem_addr = (SPIKE_TRACE_BASE_WORD + spike_count) * 4;
+                mem_addr = (SPIKE_TRACE_BASE_WORD * 4) + {26'd0, spike_count, 2'b00};
                 mem_wdata = {30'd0, current_source};
             end
 
@@ -152,7 +152,7 @@ module kv260_small_replay_engine (
             S_WRITE_EVENT: begin
                 mem_en = 1'b1;
                 mem_we = 1'b1;
-                mem_addr = (EVENT_TRACE_BASE_WORD + event_count) * 4;
+                mem_addr = (EVENT_TRACE_BASE_WORD * 4) + {22'd0, event_count, 2'b00};
                 mem_wdata = encode_event(
                     current_source,
                     current_target,
