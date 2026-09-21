@@ -186,7 +186,7 @@ def test_state_bram_dry_run_checks_multiple_addresses_and_rewrite(tmp_path):
     )
     assert result.returncode == 0, result.stderr
     assert "FPGA_FLYBRAIN_LAB=LAB-HW-07" in result.stdout
-    assert "STATE_BASE=0xa0000000" in result.stdout.lower()
+    assert "state_base=0xa0000000" in result.stdout.lower()
     assert "STATE_WORDS=1024" in result.stdout
     assert "STATE_BYTES=4096" in result.stdout
     assert "TRANSPORT=DRY_RUN_MODEL" in result.stdout
