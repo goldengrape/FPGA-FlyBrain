@@ -6,7 +6,7 @@ The FlyBrain core remains board-independent. KV260 connector names, Vivado board
 
 ## Current batch
 
-The board-support layer now implements **LAB-HW-00~07**:
+The board-support layer now implements **LAB-HW-00~08**:
 
 - `scripts/check_vivado.tcl` — LAB-HW-00 vendor-toolchain preflight;
 - `scripts/detect_target.tcl` — LAB-HW-02 JTAG target discovery;
@@ -18,10 +18,13 @@ The board-support layer now implements **LAB-HW-00~07**:
 - `runtime/loopback_mmio.py` — LAB-HW-06 self-checking runtime-host helper;
 - `rtl/kv260_neuron_state_store.sv` + `scripts/build_lab07_bram_state.tcl` — LAB-HW-07 1024 × 32-bit synchronous BRAM state store and AXI-BRAM build path;
 - `runtime/state_bram_mmio.py` — LAB-HW-07 multi-address/rewrite state-memory checker;
+- `fixtures/lab08_four_neuron_replay_v1.json` + `runtime/lab08_replay_reference.py` — LAB-HW-08 frozen Lesson-12 replay fixture and deterministic Python oracle;
+- `rtl/kv260_replay_state_store.sv` + `rtl/kv260_small_replay_engine.sv` + `scripts/build_lab08_small_replay.tcl` — LAB-HW-08 shared BRAM + fixed four-neuron PL replay path;
+- `runtime/small_replay_mmio.py` — LAB-HW-08 fixed-address differential runtime checker;
 - `scripts/program_bitstream.tcl` — shared direct-JTAG programming helper;
 - `evidence/manifest.example.json` — T-HW-011 evidence checklist/template.
 
-Small-network replay, DDR, and AXI/burst measurement belong to LAB-HW-08~10 and are not implemented by this stage. LAB-HW-07 implements only a 1024 × 32-bit teaching state store and does not freeze the final MOD-004 state layout, banking, or arbitration.
+DDR and AXI/burst measurement belong to LAB-HW-09~10 and are not implemented by this stage. LAB-HW-08 implements only the frozen Lesson-12 teaching event machine as a board replay harness; it does not freeze formal MOD-004~009 interfaces or final LIF numerics.
 
 ## Authoring baseline
 
@@ -29,7 +32,7 @@ The current lab prose selects **Vivado 2026.1** as the **authoring candidate bas
 
 This is not yet a declaration that Vivado 2026.1 is the physically validated course-support baseline. That promotion requires a real-KV260 dry run and retained evidence.
 
-This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~07. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence or as a real Vivado LAB-HW-06 full-build pass.
+This repository has not yet recorded a real-KV260 physical PASS for LAB-HW-00~08. Cloud CI validates notebook/helper/RTL/runtime contracts only and must not be interpreted as physical T-HW evidence or as a real Vivado LAB-HW-08 full-build pass.
 
 ## LAB-HW-00
 
@@ -229,3 +232,58 @@ sudo python3 /tmp/state_bram_mmio.py \
 ```
 
 The checker writes separated low/middle/high addresses, reads them back, rewrites selected locations, and verifies that untouched locations keep their state. As in LAB-HW-06, `/dev/mem` is a fixed teaching transport. If Ubuntu policy rejects the mapping, retain the evidence and keep T-HW-007 blocked rather than weakening system security.
+
+## LAB-HW-08
+
+The replay source of truth is:
+
+`fixtures/lab08_four_neuron_replay_v1.json`
+
+Generate the deterministic Python oracle:
+
+```bash
+python boards/kv260/runtime/lab08_replay_reference.py \
+  --fixture boards/kv260/fixtures/lab08_four_neuron_replay_v1.json
+```
+
+Run the open-source PL replay simulation:
+
+```bash
+iverilog -g2012 \
+  -s kv260_small_replay_engine_tb \
+  -o /tmp/lab08_replay \
+  boards/kv260/rtl/kv260_replay_state_store.sv \
+  boards/kv260/rtl/kv260_small_replay_engine.sv \
+  boards/kv260/tb/kv260_small_replay_engine_tb.sv
+vvp /tmp/lab08_replay
+```
+
+Build:
+
+```bash
+vivado -mode batch -nojournal \
+  -log lab-hw-08-build.log \
+  -source boards/kv260/scripts/build_lab08_small_replay.tcl
+```
+
+The fixed replay path uses:
+
+- `0xA0000000`: 4 KiB shared state/trace BRAM;
+- `0xA0010000`: dual-channel AXI GPIO control/status;
+- control bit 0: start;
+- status bit 0: busy, bit 1: done, bit 2: engine error;
+- status bits 7:4: spike count;
+- status bits 15:8: weighted-event count.
+
+The host must not access the shared BRAM while `busy=1`. This deliberately avoids adding concurrent BRAM arbitration to the Lab.
+
+Dry-run the differential checker:
+
+```bash
+python boards/kv260/runtime/small_replay_mmio.py \
+  --fixture boards/kv260/fixtures/lab08_four_neuron_replay_v1.json \
+  --dry-run
+```
+
+After programming the LAB-HW-08 bitstream, copy the fixture plus the two runtime Python files to PS/Linux and run the same checker with sudo. A physical T-HW-008 PASS requires real-board differential evidence; CI success is not a substitute.
+
