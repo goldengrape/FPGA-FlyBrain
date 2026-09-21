@@ -260,20 +260,36 @@ First compare sequential, random, and batched/burst-like access and distinguish 
 
 ### RMD-014 DDR hello-world
 
-Major new concept: **external memory has its own latency and control path**.
+Major new concept: **external memory has its own latency/control path, and correctness must be established before performance**.
 
-This maps to **LAB-HW-09** using KV260 platform-provided controllers/IP:
+This maps to **LAB-HW-09** as a PS/Linux-managed external-memory sanity slice. The board has 4 GB DDR4 system memory, but this Lab does not yet add PL→DDR AXI traffic.
+
+Freeze the first physical DDR operation as:
 
 ```text
-known payload → DDR write → DDR read → byte/checksum compare → measurement
+OS-managed anonymous mapping
+→ prefault 64 MiB
+→ deterministic contiguous 1 MiB chunks
+→ write
+→ read
+→ byte-for-byte compare
+→ SHA-256 compare
+→ integrity PASS
+→ only then report host-path timing observations
 ```
 
-Do not implement a DDR PHY/controller.
+This design intentionally avoids a raw physical DDR address, custom DMA driver, AXI master, or CDMA setup. Those are separate dependencies and move to LAB-HW-10 / RMD-015.
+
+The timing observations in LAB-HW-09 are descriptive evidence for this userspace path only. They are not a peak-DDR or PL/AXI bandwidth benchmark.
 
 Pass criteria:
-- integrity PASS;
-- transfer size, elapsed time, access pattern, and effective bandwidth are recorded;
-- corrupted data must fail integrity before any performance result is accepted.
+- 64 MiB allocation and 1 MiB chunk geometry are frozen;
+- every regenerated expected chunk matches readback byte-for-byte;
+- expected and observed SHA-256 match;
+- deliberate corruption in CI/dry-run produces `DDR_INTEGRITY_MISMATCH`, `PERFORMANCE_BLOCKED=1`, and no accepted bandwidth result;
+- successful physical runs record board/OS/kernel/memory identity plus write/read timer boundaries, elapsed times, and host-path effective bandwidth;
+- no bitstream is required;
+- T-HW-009 physical PASS requires a real KV260 PS/Linux run.
 
 ### RMD-014A AXI burst practical bridge
 
