@@ -77,7 +77,7 @@ PASS 必须同时证明：
 3. `u-dma-buf` module 已加载；
 4. `/dev/udmabuf0` 与 sysfs 都存在；
 5. sysfs `driver_version` 与课程冻结版本 **5.5.0** 一致；
-6. size ≥ 2 MiB;
+6. size ≥ 2 MiB；
 7. `sync_mode` 是 1 或 2；
 8. benchmark 使用的 2 MiB window 完整位于 `HP0_DDR_LOW`；
 9. root 可以用 `O_SYNC` 打开并 mmap u-dma-buf；
