@@ -126,6 +126,27 @@ LAB-HW-09 从 PS/Linux 侧验证 K26 external system-memory substrate，不新�
 
 因此 LAB-HW-09 只证明 platform 在 OS-managed memory boundary 的 external-memory sanity，不等于 RMD-015 的正式 DDR-backed synapse store 已完成。
 
+### LAB-HW-10 AXI-CDMA benchmark teaching boundary
+
+LAB-HW-10 增加的是 board-specific measurement harness，不是新的正式 FlyBrain core module。
+
+teaching-only platform component：
+
+- AMD AXI CDMA，Simple DMA mode；
+- PS 通过 `M_AXI_HPM0_FPD` 控制 `0xA0020000` 的 `S_AXI_LITE`；
+- CDMA `M_AXI` 经 non-coherent `S_AXI_HP0_FPD` 访问 DDR；
+- 128-bit data path、maximum burst length 64；
+- course-approved u-dma-buf userspace-visible contiguous DMA buffer，以 `O_SYNC` 打开；
+- 固定 source/destination offset 与两种 benchmark transaction pattern。
+
+这**不**冻结正式 `MOD-010 host_if`、`MOD-014 telemetry` 或 RMD-015 DDR-backed synapse-store implementation。特别是：
+
+- benchmark timer 刻意包含 Python register programming/polling；
+- u-dma-buf 只是 Physical-Lab transport/buffer-provider 选择，不是 core software API；
+- 第一版 Lab 只映射 `HP0_DDR_LOW`，遇到其他 physical-buffer placement 会明确拒绝，不把 address map 泛化；
+- cache-coherent HPC contract、DMA driver API、Scatter/Gather descriptor、interrupt interface 与通用 allocator contract 都不会在这里升级成 formal interface；
+- 后续实现可以替换 AXI CDMA/u-dma-buf，同时保持上层 storage/telemetry contract 不变。
+
 ### MOD-010 `host_if`
 职责：装载参数、输入刺激、读取 spike/telemetry。  
 初版：仿真接口。  
