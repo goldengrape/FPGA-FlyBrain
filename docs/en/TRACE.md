@@ -64,7 +64,7 @@ Link user needs → functional requirements → design parameters → teaching a
 | LAB-HW-07 | BRAM neuron-state store | T-HW-007/T-HW-011 | RMD-013 | `labs/en/07_bram_neuron_state.ipynb` + `boards/kv260/rtl/kv260_neuron_state_store.sv` + `boards/kv260/runtime/state_bram_mmio.py` |
 | LAB-HW-08 | small FlyBrain FPGA replay | T-HW-008/T-HW-011 | RMD-013 | `labs/en/08_small_flybrain_replay.ipynb` + `boards/kv260/fixtures/lab08_four_neuron_replay_v1.json` + `boards/kv260/rtl/kv260_small_replay_engine.sv` + `boards/kv260/runtime/small_replay_mmio.py` |
 | LAB-HW-09 | DDR integrity + host-path observation | T-HW-009/T-HW-011 | RMD-014 | `labs/en/09_ddr_integrity.ipynb` + `boards/kv260/runtime/ddr_integrity.py` |
-| LAB-HW-10 | AXI/burst measurement | T-HW-010/T-HW-011 | RMD-014A | planned `labs/en/10_*` |
+| LAB-HW-10 | AXI/CDMA transaction-granularity measurement | T-HW-010/T-HW-011 | RMD-014A | `labs/en/10_axi_burst_measurement.ipynb` + `boards/kv260/scripts/build_lab10_axi_cdma.tcl` + `boards/kv260/runtime/axi_cdma_benchmark.py` |
 
 Physical-Lab specification sources:
 - `docs/en/KV260_REFERENCE_PLATFORM.md`
@@ -187,7 +187,7 @@ Change routing:
 - LSN-009~012: third bilingual lesson block established; Python teaching models do not declare MOD-004~009 complete
 - LSN-013~018: fourth bilingual lesson block established; concept Notebooks do not declare the physical-platform implementation complete
 - Reference board: **AMD Kria KV260 Vision AI Starter Kit** is frozen
-- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen; **LAB-HW-00~09** now have bilingual Notebooks and CI contract checks; LAB-HW-09 adds a fixed 64 MiB PS/Linux-managed DDR integrity sanity path with deterministic chunk generation, byte/SHA-256 verification, corruption-gate testing, and host-path timing observations. No real-KV260 T-HW-009 physical pass is claimed; LAB-HW-10 remains pending
+- LAB-HW-00~10: Physical Lab teaching structure, RMD mappings, and T-HW oracles are frozen; **LAB-HW-00~10** now have bilingual Notebooks and CI contract checks; LAB-HW-10 adds the first PL→DDR AXI CDMA teaching path, DMA-buffer preflight, deterministic contiguous-vs-small/scattered workload, integrity gates, and two-batch stability oracle. No real-KV260 T-HW-010 physical pass or real Vivado LAB-HW-10 full build is claimed
 - LSN-019~023: fifth bilingual lesson block established; connectome teaching fixtures, synthetic scale/benchmark numbers, and the toy closed loop do not declare RMD-017~028 formal data artifacts, full-system implementation, or real performance results complete
 - TRACE: synchronized across engineering and teaching paths through LSN-023
 - First formal implementation slice: not started
