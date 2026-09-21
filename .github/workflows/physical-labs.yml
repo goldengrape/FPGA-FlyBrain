@@ -35,9 +35,11 @@ jobs:
           enable-cache: true
       - name: Sync Python environment
         run: uv sync --group dev
-      - name: Install Tcl and Icarus Verilog
+      - name: Install Tcl and open-source HDL tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y tcl iverilog
-      - name: Check Physical Lab notebooks and KV260 Tcl helpers
+          sudo apt-get install -y tcl iverilog verilator yosys
+      - name: Check Physical Lab notebooks, runtime helpers, and simulations
         run: uv run pytest labs/checks -q
+      - name: Lint and synthesize KV260 teaching RTL
+        run: bash scripts/check_kv260_rtl_static.sh
