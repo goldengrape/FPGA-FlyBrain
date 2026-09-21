@@ -44,10 +44,11 @@ Verify the tools:
 ```bash
 yosys -V
 iverilog -V
+vvp -V
 verilator --version
 ```
 
-All three commands should be discoverable.
+All four commands should be discoverable. `iverilog` compiles the SystemVerilog simulation while `vvp` actually executes the compiled simulation, so both must be available.
 
 ### If macOS blocks downloaded executables
 
@@ -99,6 +100,9 @@ From the repository root:
 
 ```bash
 yosys -V
+iverilog -V
+vvp -V
+verilator --version
 uv run python -c "import shutil; print(shutil.which('yosys'))"
 ```
 

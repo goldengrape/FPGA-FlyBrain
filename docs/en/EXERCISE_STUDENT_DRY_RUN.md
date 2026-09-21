@@ -186,7 +186,7 @@ Automated learner-path coverage now includes:
 - all 5 × 2 personal-work copies execute from `exercises/work/<lang>/`;
 - all 10 workbooks report **3 / 3 groups passed** with independently derived reference implementations;
 - teaching code for all 5 lessons × 2 languages runs in learner-visible order and matches expected output;
-- Current Python exercise infrastructure result: **129 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job where Yosys is absent; the RTL workflow executes that path for real.
+- Current Python exercise infrastructure result: **131 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job where Yosys is absent; the RTL workflow executes that path for real.
 
 ### 11.4 Problems found and fixed during this dry run
 
@@ -243,7 +243,7 @@ All three results follow from the written contracts without inspecting grader co
 3. execute workbook code cells in order;
 4. require `3 / 3 groups passed`.
 
-That places 3 lessons × 2 languages = 6 personal-workbook paths under continuous CI. The current Python exercise infrastructure result is **129 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job without Yosys; the RTL workflow executes that path for real.
+That places 3 lessons × 2 languages = 6 personal-workbook paths under continuous CI. The current Python exercise infrastructure result is **131 passed, 2 skipped**. The two skips remain the real Lesson 13 synthesis checks in the Python job without Yosys; the RTL workflow executes that path for real.
 
 ### 12.4 Conclusion
 

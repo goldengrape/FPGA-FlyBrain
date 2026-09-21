@@ -82,7 +82,18 @@ def _physical_payload() -> dict[str, object]:
     size = parse_int_text(read_text(UDMABUF_SYSFS / "size"))
     sync_mode = parse_int_text(read_text(UDMABUF_SYSFS / "sync_mode"))
     dma_coherent = parse_int_text(read_text(UDMABUF_SYSFS / "dma_coherent"))
+    driver_version = read_text(UDMABUF_SYSFS / "driver_version")
 
+    if driver_version is None:
+        raise PreflightError(
+            "DMA_BUFFER_DRIVER_VERSION_MISSING",
+            str(UDMABUF_SYSFS / "driver_version"),
+        )
+    if driver_version != DRIVER_VERSION:
+        raise PreflightError(
+            "DMA_BUFFER_DRIVER_VERSION_MISMATCH",
+            f"driver_version={driver_version} required={DRIVER_VERSION}",
+        )
     if phys_addr is None:
         raise PreflightError("DMA_BUFFER_PHYS_ADDR_MISSING", str(UDMABUF_SYSFS))
     if size is None:
@@ -142,6 +153,7 @@ def _physical_payload() -> dict[str, object]:
         "provider": "u-dma-buf",
         "expected_upstream_commit": UPSTREAM_COMMIT,
         "expected_driver_version": DRIVER_VERSION,
+        "driver_version": driver_version,
         "device": str(UDMABUF_DEVICE),
         "sysfs": str(UDMABUF_SYSFS),
         "physical_base": phys_addr,
@@ -169,6 +181,7 @@ def _dry_run_payload() -> dict[str, object]:
         "provider": "u-dma-buf",
         "expected_upstream_commit": UPSTREAM_COMMIT,
         "expected_driver_version": DRIVER_VERSION,
+        "driver_version": DRIVER_VERSION,
         "device": str(UDMABUF_DEVICE),
         "sysfs": str(UDMABUF_SYSFS),
         "physical_base": 0x10000000,
@@ -192,6 +205,7 @@ def emit(payload: dict[str, object]) -> None:
     print(f"BUFFER_PROVIDER={payload['provider']}")
     print(f"EXPECTED_UDMABUF_COMMIT={payload['expected_upstream_commit']}")
     print(f"EXPECTED_UDMABUF_DRIVER_VERSION={payload['expected_driver_version']}")
+    print(f"ACTUAL_UDMABUF_DRIVER_VERSION={payload['driver_version']}")
     print(f"DMA_BUFFER_MIN_BYTES={payload['minimum_bytes']}")
     print(f"COURSE_BUFFER_BYTES={payload['course_buffer_bytes']}")
     print(f"DMA_BUFFER_PHYS_BASE=0x{int(payload['physical_base']):x}")

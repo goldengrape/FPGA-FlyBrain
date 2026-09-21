@@ -39,6 +39,7 @@ uname -a
 uname -m
 cat /etc/os-release
 ls -l /dev/udmabuf0
+cat /sys/class/u-dma-buf/udmabuf0/driver_version
 cat /sys/class/u-dma-buf/udmabuf0/phys_addr
 cat /sys/class/u-dma-buf/udmabuf0/size
 cat /sys/class/u-dma-buf/udmabuf0/sync_mode
@@ -75,11 +76,12 @@ A PASS proves all of the following:
 2. the runtime architecture is ARM64;
 3. the `u-dma-buf` module is loaded;
 4. `/dev/udmabuf0` and its sysfs directory exist;
-5. size is at least 2 MiB;
-6. `sync_mode` is 1 or 2;
-7. the complete 2 MiB benchmark window lies inside `HP0_DDR_LOW`;
-8. root can open and mmap u-dma-buf with `O_SYNC`;
-9. root can open `/dev/mem`.
+5. sysfs `driver_version` exactly matches the course-pinned **5.5.0**;
+6. size is at least 2 MiB;
+7. `sync_mode` is 1 or 2;
+8. the complete 2 MiB benchmark window lies inside `HP0_DDR_LOW`;
+9. root can open and mmap u-dma-buf with `O_SYNC`;
+10. root can open `/dev/mem`.
 
 Success ends with:
 
@@ -129,6 +131,7 @@ One-time test load with a 4 MiB buffer:
 ```bash
 sudo modprobe u-dma-buf udmabuf0=4194304
 ls -l /dev/udmabuf0
+cat /sys/class/u-dma-buf/udmabuf0/driver_version
 cat /sys/class/u-dma-buf/udmabuf0/size
 ```
 

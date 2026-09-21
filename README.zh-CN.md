@@ -238,18 +238,16 @@ documentation-first 规范已经进入实现阶段。**LAB-HW-00~10** 已有中�
 
 ## 当前状态
 
-项目规划、系统架构和第一次课程审计已经完成；**KV260 reference board 与 LAB-HW-00~10 的实体教学/验收规范已冻结。** LAB-HW-00~10 已建立双语 Notebook 与 CI contract。LAB-HW-03/04 已加入 board-specific RTL、Bank 45 XDC、Vivado build/program helper 与 open-source simulation；LAB-HW-05 已加入 Ubuntu image/UART/boot-evidence helper；LAB-HW-06 已加入冻结的 PS→PL AXI-GPIO 路径、transform RTL/testbench、Vivado build contract 与 self-checking MMIO helper。第一轮 Physical Lab 的教材/CI contract 已全部实现；真实板卡 T-HW evidence 仍待执行。第一段正式工程实现尚未声明完成。
+课程教学层目前已经覆盖 **LSN-001~023、对应 Exercise，以及 LAB-HW-00~10**。KV260 reference board、Physical Lab 教学边界、board-support/runtime helper 和 CI contract 都已进入仓库；这意味着学生路线和可执行教学材料已经形成，但**不等于正式 MOD/RMD 产品实现已经全部完成，也不等于真实板验收已经通过**。
 
-当前第一批工程任务：
+当前验证状态：
 
-1. `RMD-001` — Python LIF 浮点参考模型
-2. `RMD-002` — fixed-point 探索
-3. `RMD-003` — 冻结 v0 神经元语义
+- Python Exercise/lesson 路径由自动化 student-flow 与 grader 测试保护；
+- Lessons 6–8 / 13 的 generic RTL 路径同时使用 Icarus、Verilator、Yosys 检查，并已在 Ubuntu CI 与 OSS CAD Suite 环境实跑；
+- LAB-HW-00~10 的 notebook/helper/RTL/runtime contract 由 Physical Lab CI 检查；
+- 真实 KV260 T-HW evidence、Vivado 2026.1 tested/supported baseline、LAB-HW-05 受控 image SHA-256，以及 LAB-HW-10 的真实 u-dma-buf/HP0 DDR/AXI CDMA 路径仍待实体 dry-run。
 
-`RMD-003A` — Digital Hardware Bridge 是**下一批的第一项**，不是当前第一批的一部分。
-
-在早期仿真与概念验证通过之前，暂不购买 FPGA 硬件。
-
+RMD-001~003 仍然是**正式产品实现**的语义/数值前置条件。教学路线已经在明确标注的 teaching-artifact 边界下继续推进，所以早期“暂不启动 FPGA 工具链/暂不购买硬件”的阶段性限制已经不再作为当前仓库状态。下一项高优先级工作是完整真实 KV260 教师 dry-run，并把实体结果回写到 TDD/TRACE 与 reference-platform 文档。
 
 ## 许可证
 

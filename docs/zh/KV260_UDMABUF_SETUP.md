@@ -39,6 +39,7 @@ uname -a
 uname -m
 cat /etc/os-release
 ls -l /dev/udmabuf0
+cat /sys/class/u-dma-buf/udmabuf0/driver_version
 cat /sys/class/u-dma-buf/udmabuf0/phys_addr
 cat /sys/class/u-dma-buf/udmabuf0/size
 cat /sys/class/u-dma-buf/udmabuf0/sync_mode
@@ -75,11 +76,12 @@ PASS 必须同时证明：
 2. runtime architecture 是 ARM64；
 3. `u-dma-buf` module 已加载；
 4. `/dev/udmabuf0` 与 sysfs 都存在；
-5. size ≥ 2 MiB；
-6. `sync_mode` 是 1 或 2；
-7. benchmark 使用的 2 MiB window 完整位于 `HP0_DDR_LOW`；
-8. root 可以用 `O_SYNC` 打开并 mmap u-dma-buf；
-9. root 可以打开 `/dev/mem`。
+5. sysfs `driver_version` 与课程冻结版本 **5.5.0** 一致；
+6. size ≥ 2 MiB；
+7. `sync_mode` 是 1 或 2；
+8. benchmark 使用的 2 MiB window 完整位于 `HP0_DDR_LOW`；
+9. root 可以用 `O_SYNC` 打开并 mmap u-dma-buf；
+10. root 可以打开 `/dev/mem`。
 
 通过时最后出现：
 
@@ -129,6 +131,7 @@ sudo depmod -a
 ```bash
 sudo modprobe u-dma-buf udmabuf0=4194304
 ls -l /dev/udmabuf0
+cat /sys/class/u-dma-buf/udmabuf0/driver_version
 cat /sys/class/u-dma-buf/udmabuf0/size
 ```
 

@@ -505,6 +505,9 @@ def test_lab10_helper_freezes_dma_buffer_workload_and_control_contract():
     assert 'Path("/dev/mem")' in source
     assert 'getattr(os, "O_SYNC", 0)' in source
     assert "DMA_BUFFER_OUTSIDE_HP0_DDR_LOW" in source
+    assert "DMA_BUFFER_DRIVER_VERSION_MISSING" in source
+    assert "DMA_BUFFER_DRIVER_VERSION_MISMATCH" in source
+    assert 'UDMABUF_DRIVER_VERSION = "5.5.0"' in source
     assert "DMA_BUFFER_SYNC_MODE_MISSING" in source
     assert "DMA_BUFFER_UNSAFE_SYNC_MODE" in source
     assert 'sync_mode not in (1, 2)' in source
@@ -549,6 +552,8 @@ def test_lab10_udmabuf_preflight_dry_run_records_full_contract(tmp_path):
     assert "EXPECTED_UDMABUF_COMMIT=15bcde3cb960321e99983e227aeacc5807888333" in result.stdout
     assert "DMA_BUFFER_MIN_BYTES=2097152" in result.stdout
     assert "COURSE_BUFFER_BYTES=4194304" in result.stdout
+    assert "EXPECTED_UDMABUF_DRIVER_VERSION=5.5.0" in result.stdout
+    assert "ACTUAL_UDMABUF_DRIVER_VERSION=5.5.0" in result.stdout
     assert "DMA_BUFFER_SYNC_MODE=1" in result.stdout
     assert "DMA_BUFFER_OPEN_FLAGS=O_RDWR|O_SYNC" in result.stdout
     assert "STATUS=PASS" in result.stdout
@@ -556,6 +561,7 @@ def test_lab10_udmabuf_preflight_dry_run_records_full_contract(tmp_path):
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["lab_id"] == "LAB-HW-10-PREREQ"
     assert payload["provider"] == "u-dma-buf"
+    assert payload["driver_version"] == "5.5.0"
     assert payload["size"] == 4 * 1024 * 1024
     assert payload["minimum_bytes"] == 2 * 1024 * 1024
     assert payload["sync_mode"] in (1, 2)
@@ -566,6 +572,8 @@ def test_lab10_udmabuf_preflight_source_rejects_unsafe_shortcuts():
     source = UDMABUF_PREFLIGHT.read_text(encoding="utf-8")
     assert "PREFLIGHT_REQUIRES_ROOT" in source
     assert "U_DMA_BUF_MODULE_NOT_LOADED" in source
+    assert "DMA_BUFFER_DRIVER_VERSION_MISSING" in source
+    assert "DMA_BUFFER_DRIVER_VERSION_MISMATCH" in source
     assert "DMA_BUFFER_OUTSIDE_HP0_DDR_LOW" in source
     assert "DMA_BUFFER_UNSAFE_SYNC_MODE" in source
     assert "TRANSPORT_PERMISSION_OR_POLICY" in source

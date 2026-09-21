@@ -398,9 +398,14 @@ baseline 正确后才优化：lazy membrane update、cache、banking、多 synap
 | Simulation → FPGA | vendor toolchain、power/cable/JTAG、bitstream、constraint、PS/Linux、host I/O 同时出现 | RMD-011A + LAB-HW-00~08 分成 toolchain preflight、board orientation、target discovery、first bitstream、physical I/O、PS boot、loopback、BRAM、small replay |
 | FPGA → DDR/AXI | memory hierarchy、DDR、AXI、bandwidth 同时出现 | RMD-013A + LAB-HW-09/10 分成 integrity 与 measurement |
 
-## 4. 当前第一批只执行的任务
-1. RMD-001 Python LIF float reference
-2. RMD-002 Fixed-point exploration
-3. RMD-003 Freeze v0 neuron semantics
+## 4. 当前执行状态
 
-前三项完成前，不启动 FPGA 工具链和硬件购买。`RMD-003A` 是下一批第一项。
+RMD-001、RMD-002、RMD-003 仍是**正式产品实现**进入后续 MOD/RMD 的语义与数值前置条件；教学路线已经在明确标注为 teaching artifact / Physical Lab 的边界下继续推进，不能再用早期“暂不启动 FPGA 工具链/暂不购买硬件”的阶段性限制描述当前仓库。
+
+截至当前版本：
+
+1. LSN-001~023 与对应 Exercise 教学路径已建立，并由 Python/RTL CI 持续检查；
+2. LAB-HW-00~10 的双语 Notebook、KV260 board-support/runtime helper 与 CI contract 已建立；
+3. 上述教学完成度**不等于**正式 MOD-003~014 产品实现已经完成；
+4. 当前实体优先事项是完整真实 KV260 教师 dry-run：确认 Vivado authoring candidate、冻结 LAB-HW-05 image identity/hash、验证 HW-05→06 与 HW-09→10，特别是 u-dma-buf/HP0 DDR placement 与 LAB-HW-10 AXI CDMA；
+5. 在真实板证据完成前，不把 cloud CI、dry-run 或 generic OSS synthesis 写成 T-HW physical PASS。
