@@ -398,9 +398,14 @@ Use the same model, data, and inputs to compare latency, throughput, memory traf
 | Simulation → FPGA | vendor toolchain, power/cable/JTAG, bitstream, constraints, PS/Linux, and host I/O arrive together | RMD-011A + LAB-HW-00~08 split toolchain preflight, board orientation, target discovery, first bitstream, physical I/O, PS boot, loopback, BRAM, and small replay |
 | FPGA → DDR/AXI | memory hierarchy/DDR/AXI/bandwidth arrive together | RMD-013A + LAB-HW-09/10 split integrity from measurement |
 
-## 4. Current first execution batch
-1. RMD-001 Python LIF float reference
-2. RMD-002 Fixed-point exploration
-3. RMD-003 Freeze v0 neuron semantics
+## 4. Current execution status
 
-Do not start the FPGA toolchain or buy hardware before these three tasks are complete. `RMD-003A` is the first task in the next batch.
+RMD-001, RMD-002, and RMD-003 remain semantic/numeric prerequisites for the **formal product implementation** to advance through later MOD/RMD items. The teaching track has already progressed under explicitly marked teaching-artifact and Physical-Lab boundaries, so the early-stage instruction not to start the FPGA toolchain or acquire hardware no longer describes the current repository.
+
+At the current revision:
+
+1. LSN-001~023 and their Exercise paths are established and continuously checked by Python/RTL CI;
+2. LAB-HW-00~10 have bilingual Notebooks, KV260 board-support/runtime helpers, and CI contract checks;
+3. that teaching completeness does **not** mean formal MOD-003~014 product implementation is complete;
+4. the highest-priority physical work is a complete real-KV260 instructor dry run: validate the Vivado authoring candidate, freeze the LAB-HW-05 image identity/hash, verify HW-05→06 and HW-09→10, especially u-dma-buf/HP0 DDR placement and LAB-HW-10 AXI CDMA;
+5. until real-board evidence exists, cloud CI, dry runs, and generic OSS synthesis must not be reported as T-HW physical PASS.
