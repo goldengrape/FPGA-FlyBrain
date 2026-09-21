@@ -20,6 +20,8 @@ The board-support layer now implements **LAB-HW-00~10**:
 - `runtime/state_bram_mmio.py` — LAB-HW-07 multi-address/rewrite state-memory checker;
 - `fixtures/lab08_four_neuron_replay_v1.json` + `runtime/lab08_replay_reference.py` — LAB-HW-08 frozen Lesson-12 replay fixture and deterministic Python oracle;
 - `rtl/kv260_replay_state_store.sv` + `rtl/kv260_small_replay_engine.sv` + `scripts/build_lab08_small_replay.tcl` — LAB-HW-08 shared BRAM + fixed four-neuron PL replay path;
+- `tb/kv260_replay_state_store_dualport_tb.sv` — direct same-clock dual-port BRAM contract regression;
+- `scripts/check_kv260_rtl_static.sh` — maintainer/CI Verilator + Yosys static gate for KV260 teaching RTL;
 - `runtime/small_replay_mmio.py` — LAB-HW-08 fixed-address differential runtime checker;
 - `runtime/ddr_integrity.py` — LAB-HW-09 fixed 64 MiB OS-managed external-memory integrity checker and host-path timing observer;
 - `runtime/udmabuf_source.json` + `runtime/preflight_udmabuf.py` — LAB-HW-09→10 pinned u-dma-buf source identity plus Ubuntu/runtime prerequisite checker;
@@ -248,6 +250,16 @@ Generate the deterministic Python oracle:
 python boards/kv260/runtime/lab08_replay_reference.py \
   --fixture boards/kv260/fixtures/lab08_four_neuron_replay_v1.json
 ```
+
+The LAB-HW-08 shared store intentionally uses a same-clock two-port BRAM inference pattern. Port A is host-visible; Port B belongs to the replay engine while `busy=1`. Same-address concurrent cross-port writes are outside the teaching contract. A direct regression checks independent cross-port visibility, full-word-only Port-A writes, and same-clock different-address concurrent writes.
+
+Maintainers can also run the KV260 static gate with OSS tools:
+
+```bash
+bash scripts/check_kv260_rtl_static.sh
+```
+
+The script uses narrow documented Verilator waivers for intentionally ignored address bits and the dual-process BRAM inference, while Yosys still runs `hierarchy -check; proc; opt; check` on all six KV260 teaching RTL modules.
 
 Run the open-source PL replay simulation:
 
