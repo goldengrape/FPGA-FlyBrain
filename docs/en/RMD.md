@@ -216,17 +216,26 @@ LAB-HW-06 pass criteria:
 
 ### RMD-013 Run small network on FPGA
 
-Use **LAB-HW-07** first to map Lesson 9's abstract neuron-state memory onto real on-chip BRAM resources, then use **LAB-HW-08** to move the already-verified Platform 3 network onto hardware.
+Implement this in two independent Physical Lab slices.
 
-LAB-HW-07 teaches only the address/read/write/synchronous-read behavior and resource-report interpretation needed by this design; it does not teach every BRAM primitive parameter.
+**LAB-HW-07 — BRAM neuron state** freezes only the memory substrate needed by the later network:
 
-LAB-HW-08 uses the same fixed input/seed and compares KV260 output against the Python fixed-point reference for L5 replay.
+- 1024 × 32-bit state words;
+- 4 KiB PS-visible window at `0xA0000000`;
+- PS `M_AXI_HPM0_FPD` → SmartConnect → AXI BRAM Controller → teaching state-store RTL;
+- synchronous native reads;
+- block-RAM synthesis intent and a non-zero RAMB18/RAMB36 resource oracle;
+- fixed multi-address write/read/rewrite self-check.
+
+LAB-HW-07 does **not** declare full MOD-004 complete. It is a board-level teaching slice that proves the address/read/write/synchronous-read/resource concepts with one simple memory geometry. Banking, arbitration, wider neuron records, ECC, and the final formal state layout remain later design work.
+
+**LAB-HW-08 — Small FlyBrain replay** then uses the already verified state-memory path to move the Platform-3 small network onto hardware. It uses the same fixed input/seed and compares KV260 output against the Python fixed-point reference for L5 replay.
 
 Pass criteria:
-- multi-address neuron-state read/write is correct;
-- synthesis/resource report confirms the intended on-chip memory resource;
-- small-network spike/state trace matches the frozen reference contract;
-- bitstream, network fixture, input fixture, output hash/trace, and Git commit are recorded.
+- LAB-HW-07 multi-address state read/write and rewrite preservation are correct;
+- LAB-HW-07 synthesis/resource report confirms real block-RAM mapping;
+- LAB-HW-08 small-network spike/state trace matches the frozen reference contract;
+- bitstream, memory/network fixtures, input fixture, output hash/trace, and Git commit are recorded.
 
 # Bridge 4 — Memory is not “one very large RAM”
 
