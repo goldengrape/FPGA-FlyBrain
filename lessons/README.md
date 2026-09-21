@@ -4,9 +4,9 @@ These Jupyter Notebooks are the **student-facing textbook and laboratory layer**
 
 这些 Jupyter Notebook 是 FPGA FlyBrain 的**学生教材与实验界面**。Notebook 里的 Markdown 不是代码之间的说明碎片，而是正式教材正文；代码、图表和实验是教材的一部分。
 
-> Notebooks are not the engineering source of truth. Mature implementations move into `python/`, `rtl/`, `tb/`, or `tests/`, and the Notebook later imports/calls those formal modules.
+> Notebooks are not the engineering source of truth. Mature implementations move into the planned `python/` layer, existing `rtl/` / `tb/`, or the appropriate `*/checks/` test layer, and the Notebook later imports/calls those formal modules.
 >
-> Notebook 不是正式工程实现的唯一事实来源。成熟实现应进入 `python/`、`rtl/`、`tb/` 或 `tests/`，Notebook 后续调用这些正式模块。
+> Notebook 不是正式工程实现的唯一事实来源。成熟实现应进入 规划中的 `python/` 层、现有 `rtl/` / `tb/`，或对应的 `*/checks/` 测试层，Notebook 后续调用这些正式模块。
 
 ## Teaching standard / 教学写作标准
 
@@ -101,9 +101,9 @@ These lessons use small Python models to teach architecture semantics before for
 | LSN-017 | [外部内存是什么？](zh/17_external_memory_ddr.ipynb) | [What is external memory?](en/17_external_memory_ddr.ipynb) | [中文](../exercises/zh/17_external_memory_ddr.ipynb) / [English](../exercises/en/17_external_memory_ddr.ipynb) | DDR / burst / sequential vs random | RMD-014 |
 | LSN-018 | [AXI 只学我们需要的部分](zh/18_axi_subset.ipynb) | [Learn only the AXI we need](en/18_axi_subset.ipynb) | [中文](../exercises/zh/18_axi_subset.ipynb) / [English](../exercises/en/18_axi_subset.ipynb) | AXI transaction / beat / VALID-READY | RMD-014A/015/016 |
 
-The formal workbooks for Lessons 13–18 remain runnable without a physical board. Board-specific labs are engineering extensions, so hardware purchase does not block the learning path.
+The formal workbooks for Lessons 13–18 remain runnable without a physical board. The **KV260 Physical Lab Track is a formal parallel learning path** for learners who are completing the hands-on hardware track; board-independent workbooks remain available so hardware access does not block conceptual progress.
 
-第 13–18 课的正式作业保持无板可完成；板卡专用实验属于对应 RMD 的工程延伸，避免硬件购买阻断课程学习。
+第 13–18 课的正式作业保持无板可完成；**KV260 Physical Lab Track 是正式的并行学习路径**，用于完成实体上板训练；无板作业仍保留，因此暂时没有硬件不会阻断概念学习。
 
 
 ## Fifth learning block / 第五组课程
