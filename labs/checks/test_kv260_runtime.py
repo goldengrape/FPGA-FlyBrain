@@ -82,6 +82,46 @@ def test_hash_image_can_enforce_frozen_hash(tmp_path):
     assert "STATUS=PASS" in result.stdout
 
 
+def test_hash_image_rejects_missing_or_invalid_manifest_without_traceback(tmp_path):
+    image = tmp_path / "image.img.xz"
+    image.write_bytes(b"image")
+
+    missing = tmp_path / "missing.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(HASH_IMAGE),
+            str(image),
+            "--manifest",
+            str(missing),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 2
+    assert "ERROR=MANIFEST_INVALID" in result.stdout
+    assert "Traceback" not in result.stderr
+
+    invalid = tmp_path / "invalid.json"
+    invalid.write_text("{not-json", encoding="utf-8")
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(HASH_IMAGE),
+            str(image),
+            "--manifest",
+            str(invalid),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 2
+    assert "ERROR=MANIFEST_INVALID" in result.stdout
+    assert "Traceback" not in result.stderr
+
+
 def test_hash_image_rejects_wrong_filename(tmp_path):
     image = tmp_path / "wrong.img.xz"
     image.write_bytes(b"wrong")
