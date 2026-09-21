@@ -111,6 +111,21 @@ LAB-HW-08 新增 `kv260_small_replay_engine` 与 dual-access teaching state/trac
 
 这个 harness 只证明一个窄结论：已经验证过 event causality 的教学小网络，在 reference board PL 上执行时产生相同 deterministic trace。
 
+### LAB-HW-09 system-memory teaching boundary
+
+LAB-HW-09 从 PS/Linux 侧验证 K26 external system-memory substrate，不新增 FlyBrain core module。
+
+这个 teaching slice 刻意放在正式 `MOD-004~010` 之外：
+
+- allocation 由 Linux 管理；本 Lab 使用 anonymous userspace mapping，不猜 physical DDR address；
+- 固定 test geometry 为总计 64 MiB、contiguous 1 MiB chunk；
+- deterministic chunk generation + byte-for-byte + SHA-256 compare 定义 integrity oracle；
+- elapsed time/effective bandwidth 明确标记为 **host-path observation**，不是 PL/AXI 或 peak-DDR metric；
+- 不引入 bitstream、custom driver、DMA engine、PL AXI master、cache-coherency contract 或 synapse-stream backend；
+- 第一次 PL→DDR AXI/burst measurement 由 LAB-HW-10 负责。
+
+因此 LAB-HW-09 只证明 platform 在 OS-managed memory boundary 的 external-memory sanity，不等于 RMD-015 的正式 DDR-backed synapse store 已完成。
+
 ### MOD-010 `host_if`
 职责：装载参数、输入刺激、读取 spike/telemetry。  
 初版：仿真接口。  
