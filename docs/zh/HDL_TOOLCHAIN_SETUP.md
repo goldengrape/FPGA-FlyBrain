@@ -108,6 +108,14 @@ uv run python -c "import shutil; print(shutil.which('yosys'))"
 
 第二条命令应打印一个实际的 `yosys` 路径，而不是 `None`。
 
+### OSS Icarus 的一个已知提示
+
+在较新的 OSS CAD Suite / Icarus 14 上，LAB-HW-08 replay engine 可能打印类似：
+
+`constant selects in always_* processes are not fully supported`
+
+这表示 Icarus 对 `always_comb` 中函数参数的敏感度采用更保守的处理；它会多触发组合逻辑重算，不改变当前 fixed replay 的组合结果。课程仍以 self-checking testbench 的 `PASS` / `$fatal` 作为行为判据。若出现其他 compile/runtime error，不能把它归入这条已知提示。
+
 如果已经学完第 6–8 课，也可以运行完整 RTL 教学检查：
 
 ```bash
