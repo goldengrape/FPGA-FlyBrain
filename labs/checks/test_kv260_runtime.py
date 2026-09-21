@@ -21,6 +21,8 @@ REPLAY_CHECKER = RUNTIME / "small_replay_mmio.py"
 REPLAY_FIXTURE = ROOT / "boards" / "kv260" / "fixtures" / "lab08_four_neuron_replay_v1.json"
 DDR_INTEGRITY = RUNTIME / "ddr_integrity.py"
 AXI_CDMA_BENCH = RUNTIME / "axi_cdma_benchmark.py"
+UDMABUF_PREFLIGHT = RUNTIME / "preflight_udmabuf.py"
+UDMABUF_SOURCE = RUNTIME / "udmabuf_source.json"
 
 
 def test_image_manifest_freezes_identity_without_inventing_checksum():
@@ -503,8 +505,70 @@ def test_lab10_helper_freezes_dma_buffer_workload_and_control_contract():
     assert 'Path("/dev/mem")' in source
     assert 'getattr(os, "O_SYNC", 0)' in source
     assert "DMA_BUFFER_OUTSIDE_HP0_DDR_LOW" in source
+    assert "DMA_BUFFER_SYNC_MODE_MISSING" in source
+    assert "DMA_BUFFER_UNSAFE_SYNC_MODE" in source
+    assert 'sync_mode not in (1, 2)' in source
     assert "CDMA_TIMEOUT" in source
     assert "BENCHMARK_INTEGRITY_MISMATCH" in source
     assert "MEASUREMENT_UNSTABLE" in source
     assert 'parser.add_argument("--base"' not in source
     assert 'parser.add_argument("--payload-bytes"' not in source
+
+
+
+def test_lab10_udmabuf_source_manifest_is_pinned_and_still_candidate():
+    manifest = json.loads(UDMABUF_SOURCE.read_text(encoding="utf-8"))
+    assert manifest["status"] == "AUTHORING_CANDIDATE"
+    assert manifest["provider"] == "u-dma-buf"
+    assert manifest["upstream_commit"] == "15bcde3cb960321e99983e227aeacc5807888333"
+    assert manifest["driver_version"] == "5.5.0"
+    assert manifest["buffer_bytes"] == 4 * 1024 * 1024
+    assert manifest["minimum_lab10_bytes"] == 2 * 1024 * 1024
+    assert manifest["required_open_mode"] == "O_RDWR|O_SYNC"
+    assert manifest["allowed_sync_modes"] == [1, 2]
+    assert manifest["physical_validation"] == "PENDING_REAL_KV260"
+
+
+def test_lab10_udmabuf_preflight_dry_run_records_full_contract(tmp_path):
+    out = tmp_path / "udmabuf-preflight.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(UDMABUF_PREFLIGHT),
+            "--dry-run",
+            "--json-out",
+            str(out),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "FPGA_FLYBRAIN_LAB=LAB-HW-10-PREREQ" in result.stdout
+    assert "MODE=DRY_RUN_PREFLIGHT_MODEL" in result.stdout
+    assert "EXPECTED_UDMABUF_COMMIT=15bcde3cb960321e99983e227aeacc5807888333" in result.stdout
+    assert "DMA_BUFFER_MIN_BYTES=2097152" in result.stdout
+    assert "COURSE_BUFFER_BYTES=4194304" in result.stdout
+    assert "DMA_BUFFER_SYNC_MODE=1" in result.stdout
+    assert "DMA_BUFFER_OPEN_FLAGS=O_RDWR|O_SYNC" in result.stdout
+    assert "STATUS=PASS" in result.stdout
+
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["lab_id"] == "LAB-HW-10-PREREQ"
+    assert payload["provider"] == "u-dma-buf"
+    assert payload["size"] == 4 * 1024 * 1024
+    assert payload["minimum_bytes"] == 2 * 1024 * 1024
+    assert payload["sync_mode"] in (1, 2)
+    assert payload["physical_base"] + payload["minimum_bytes"] <= 0x80000000
+
+
+def test_lab10_udmabuf_preflight_source_rejects_unsafe_shortcuts():
+    source = UDMABUF_PREFLIGHT.read_text(encoding="utf-8")
+    assert "PREFLIGHT_REQUIRES_ROOT" in source
+    assert "U_DMA_BUF_MODULE_NOT_LOADED" in source
+    assert "DMA_BUFFER_OUTSIDE_HP0_DDR_LOW" in source
+    assert "DMA_BUFFER_UNSAFE_SYNC_MODE" in source
+    assert "TRANSPORT_PERMISSION_OR_POLICY" in source
+    assert "ALLOWED_SYNC_MODES = {1, 2}" in source
+    assert 'Path("/dev/udmabuf0")' in source
+    assert 'Path("/dev/mem")' in source
