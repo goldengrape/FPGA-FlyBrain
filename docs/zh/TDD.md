@@ -149,6 +149,6 @@ Oracle：Python fixed-point vectors 或直接构造 expected values。
 - lint/format：**部分实现**，尚无统一 Python format/lint gate
 - trace consistency check：**未实现自动化**
 - bilingual ID consistency check：**部分自动化**；作业 Notebook 与 LAB-HW-00~10 已检查双语 cell structure/ID 一致性
-- KV260 Physical Lab contract checks：**LAB-HW-00~10 已实现**；CI 检查双语 Notebook structure、冻结的 XDC/board-helper contract、LAB-HW-03/04/06/07/08 open-source RTL behavior、无需 Vivado 即可检查的 Tcl helper contract、LAB-HW-05 image/boot helper、LAB-HW-06 loopback dry-run、LAB-HW-07 BRAM-state checker、LAB-HW-08 fixture/reference/differential checker，以及 LAB-HW-09 DDR integrity dry-run + deliberate corruption gate；CI 不宣称真实 Vivado LAB-HW-08 build，也不宣称真实 KV260 T-HW-007/008/009 physical PASS
+- KV260 Physical Lab contract checks：**LAB-HW-00~10 已实现**；CI 检查双语 Notebook structure、冻结的 XDC/board-helper contract、LAB-HW-03/04/06/07/08 open-source RTL behavior、无需 Vivado 即可检查的 Tcl helper contract、LAB-HW-05 image/boot helper、LAB-HW-06 loopback dry-run、LAB-HW-07 BRAM-state checker、LAB-HW-08 fixture/reference/differential checker、LAB-HW-09 DDR integrity dry-run/corruption gate，以及 LAB-HW-10 deterministic AXI-CDMA workload dry-run、integrity failure gate 与 measurement-instability gate；CI 不宣称真实 Vivado LAB-HW-08/10 build，也不宣称真实 KV260 T-HW-007~010 physical PASS
 
 FPGA full build 不要求每次 CI 都跑，可按 checkpoint/nightly 处理。实体 KV260 的 `T-HW-*` 还必须遵守 3.2 的 physical-evidence 边界。
