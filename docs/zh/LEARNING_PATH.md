@@ -189,7 +189,7 @@ Notebook 的 Markdown 不是代码之间的装饰文字，而是教材正文。
 
 | Lesson | 第一次重点解释 | 工程映射 |
 |---|---|---|
-| LSN-005 数字逻辑积木 | bit、Boolean logic、AND/OR/NOT、comparator | RMD-003A |
+| LSN-005 布尔逻辑、条件选择与时钟寄存器 | 真值表、比较器、选择器；逐项阅读 `always_ff @(posedge clk)`、同步复位与非阻塞赋值 | RMD-003A |
 | LSN-006 什么是 RTL | Register-Transfer Level、HDL、SystemVerilog、module/port | 准备 RMD-004 |
 | LSN-007 第一个 RTL 神经元 | combinational path、sequential update、`always_comb`/`always_ff` | RMD-004 教学前置 |
 | LSN-008 我们怎么知道硬件是对的 | testbench、waveform、simulation | RMD-005/005A |

@@ -189,7 +189,7 @@ The sequence below is a teaching plan; these Notebooks are not all created yet.
 
 | Lesson | First-use concepts | Engineering mapping |
 |---|---|---|
-| LSN-005 Digital logic building blocks | bit, Boolean logic, AND/OR/NOT, comparator | RMD-003A |
+| LSN-005 Boolean logic, data selection, and clocked registers | truth tables, comparator, mux; reading `always_ff @(posedge clk)`, synchronous reset, and nonblocking assignment | RMD-003A |
 | LSN-006 What is RTL? | Register-Transfer Level, HDL, SystemVerilog, module/port | prepares RMD-004 |
 | LSN-007 First RTL neuron | combinational path, sequential update, `always_comb`/`always_ff` | RMD-004 teaching precursor |
 | LSN-008 How do we know hardware is correct? | testbench, waveform, simulation | RMD-005/005A |

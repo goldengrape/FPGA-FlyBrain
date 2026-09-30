@@ -45,6 +45,12 @@ Every lesson should obey these rules / 每课遵守以下规则：
     Suitable programming exercises live in a separate Exercise Notebook with a fixed function signature, a small TODO region, an external grader call, and a Human Check. Student-facing notebooks do not directly display grading asserts or concrete grader vectors.  
     适合编程判定的作业使用独立 Exercise Notebook：固定函数签名、小范围 TODO、外部 grader 检查和 Human Check。学生可见 Notebook 不直接展示判题 assert 或具体测试向量。
 
+11. **Explain the example / 讲清示例本身**
+
+    Explain each new keyword, operator, data representation, and timing rule beside its first example. Distinguish language keywords from user-defined names. Show concrete input, intermediate values, and output; for HDL, identify the combinational circuit and stored state. Keep necessary example assumptions near the calculation, and put implementation status and project policy in the handoff or trace section.
+
+    新关键字、运算符、数值表示和更新时序要在首次示例旁解释，区分语言关键字和用户名称。给出具体输入、中间值和输出；HDL 示例还要指出组合电路与状态存储。计算所需假设写在示例旁，工程完成状态和项目规范集中放在课末，不能用“以后再学”替代当前代码所需的解释。
+
 Reference / 备查：
 - [中文 Learning Path](../docs/zh/LEARNING_PATH.md)
 - [English Learning Path](../docs/en/LEARNING_PATH.md)
@@ -52,6 +58,7 @@ Reference / 备查：
 - [English Glossary](../docs/en/GLOSSARY.md)
 - [中文作业与检查说明](../exercises/README.zh-CN.md)
 - [English exercise and checking guide](../exercises/README.md)
+- [课程逐课自查与修改记录（2026-09-30）](../docs/zh/LESSON_TEACHING_REVIEW.md)
 
 ## First learning block / 第一组课程
 
@@ -66,7 +73,7 @@ Reference / 备查：
 
 | ID | 中文 | English | Practice / 检查 | Primary concept / 主要概念 | Engineering mapping |
 |---|---|---|---|---|---|
-| LSN-005 | [数字逻辑积木](zh/05_logic_building_blocks.ipynb) | [Digital logic building blocks](en/05_logic_building_blocks.ipynb) | [中文](../exercises/zh/05_logic_building_blocks.ipynb) / [English](../exercises/en/05_logic_building_blocks.ipynb) | Boolean logic | RMD-003A |
+| LSN-005 | [布尔逻辑、条件选择与时钟寄存器](zh/05_logic_building_blocks.ipynb) | [Boolean logic, data selection, and clocked registers](en/05_logic_building_blocks.ipynb) | [中文](../exercises/zh/05_logic_building_blocks.ipynb) / [English](../exercises/en/05_logic_building_blocks.ipynb) | Boolean conditions applied to data selection and stored state | RMD-003A |
 | LSN-006 | [什么是 RTL？](zh/06_what_is_rtl.ipynb) | [What is RTL?](en/06_what_is_rtl.ipynb) | [中文作业](../exercises/zh/06_what_is_rtl.ipynb) / [English](../exercises/en/06_what_is_rtl.ipynb) + compile-only RTL check | RTL / HDL / module / port | prepares RMD-004 |
 | LSN-007 | [第一个 RTL 神经元](zh/07_first_rtl_neuron.ipynb) | [The first RTL neuron](en/07_first_rtl_neuron.ipynb) | [中文作业](../exercises/zh/07_first_rtl_neuron.ipynb) / [English](../exercises/en/07_first_rtl_neuron.ipynb) + RTL review | combinational + sequential | RMD-004 teaching precursor |
 | LSN-008 | [我们怎么知道硬件是对的？](zh/08_testbench_waveform_simulation.ipynb) | [How do we know hardware is correct?](en/08_testbench_waveform_simulation.ipynb) | [中文作业](../exercises/zh/08_testbench_waveform_simulation.ipynb) / [English](../exercises/en/08_testbench_waveform_simulation.ipynb) + self-checking testbench/VCD | simulation/testbench | RMD-005/005A |
