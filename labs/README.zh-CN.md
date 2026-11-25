@@ -9,7 +9,7 @@ Physical Lab 是第 13–18 课的真实硬件配套路径，面向此前没有�
 如果这是第一次使用本仓库，不要直接跳到某个 Lab 中间。按下面顺序建立环境：
 
 1. 按仓库根目录 `README.zh-CN.md` 安装 Git/uv、clone 仓库并执行 `uv sync`；需要用 Notebook 时注册 `fpga-flybrain` kernel。
-2. LAB-HW-00 按 `zh/00_vendor_toolchain_preflight.ipynb` 安装 **Vivado 2026.1 + cable driver + KV260 board definitions**。Vivado 是上板工具，不能用 Yosys 替代。
+2. LAB-HW-00 按 `zh/00_vendor_toolchain_preflight.ipynb` 安装 **Vivado 2026.1 + cable driver + KV260 board definitions**（Ubuntu 图文安装指南见 [Vivado 2026.1 Ubuntu 安装指南](../docs/zh/VIVADO_2026_1_UBUNTU_SETUP.md)）。Vivado 是上板工具，不能用 Yosys 替代。
 3. LAB-HW-07/08 第一次出现 `iverilog` 前，按 `../docs/zh/HDL_TOOLCHAIN_SETUP.md` 安装/激活 OSS CAD Suite，并确认 `iverilog -V`、`vvp -V` 可运行。
 4. 实体阶段至少准备 KV260、12 V / 3 A 电源、J4 USB data cable、16 GB+ microSD；HW-06 之后若使用 `scp`，再准备 J10 Ethernet 到可用网络。
 5. HW-05 的 image expected SHA-256 尚未冻结时，可以在真实 boot/login/OS evidence 完整的前提下满足**学习进度 gate**继续 HW-06；这不等于正式 T-HW-005 acceptance PASS。

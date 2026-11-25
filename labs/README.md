@@ -9,7 +9,7 @@ Reference board: **AMD Kria KV260 Vision AI Starter Kit**.
 If this is your first time using the repository, do not jump into the middle of the Lab sequence.
 
 1. Follow the repository-root `README.md` to install Git/uv, clone the repository, run `uv sync`, and register the `fpga-flybrain` kernel when you want to use Jupyter.
-2. For LAB-HW-00, follow `en/00_vendor_toolchain_preflight.ipynb` to install **Vivado 2026.1 + cable driver + KV260 board definitions**. Vivado is the board toolchain; Yosys is not a replacement for it.
+2. For LAB-HW-00, follow `en/00_vendor_toolchain_preflight.ipynb` to install **Vivado 2026.1 + cable driver + KV260 board definitions** (see the step-by-step [Vivado 2026.1 Ubuntu Setup Guide](../docs/en/VIVADO_2026_1_UBUNTU_SETUP.md)). Vivado is the board toolchain; Yosys is not a replacement for it.
 3. Before LAB-HW-07/08 first uses `iverilog`, follow `../docs/en/HDL_TOOLCHAIN_SETUP.md` to install/activate OSS CAD Suite and verify `iverilog -V` and `vvp -V`.
 4. The physical track needs at least the KV260, a 12 V / 3 A supply, a J4 USB data cable, and a 16 GB+ microSD card. If you use `scp` after HW-05, also connect J10 Ethernet to a usable network.
 5. While the HW-05 expected image SHA-256 remains unfrozen, complete real boot/login/OS evidence may satisfy the **learning progression gate** into HW-06; this is not a formal T-HW-005 acceptance PASS.
